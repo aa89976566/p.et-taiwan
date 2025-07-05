@@ -12,13 +12,16 @@ body {
   justify-content: center;
   align-items: center;
 }
+
 .innerWrapper {
   width: 250px;
   position: relative;
 }
+
 svg {
   width: 250px;
 }
+
 .cnvs {
   background-color: rgba(60, 75, 60, 0.3);
   position: absolute;
@@ -27,22 +30,27 @@ svg {
   border-radius: 10px;
   box-shadow: 5px 4px 0px 1px rgba(40,55,40, 0.4) inset;
 }
+
 .btn-1 {
   position: absolute;
   top: 257px;
   left: 80px;
 }
+
 .btn-2 {
   position: absolute;
   top: 265px;
   left: 120px;
 }
+
 .btn-3 {
   position: absolute;
   top: 257px;
   left: 160px;
 }
+
 button:focus {outline:0;}
+
 .btn {
   border: none;
   background-color: #fdffdf;
@@ -51,6 +59,7 @@ button:focus {outline:0;}
   border-radius: 100%;
   box-shadow: 1px 1px 0px 2px #fdffdf44;
 }
+
 .btn:active {
   box-shadow: -0.5px -0.5px 0px 2px #00000033;
 }
