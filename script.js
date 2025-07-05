@@ -95,26 +95,19 @@ xxxx.
 
   function clear() {
     ctx.clearRect(0, 0, size, size);
-    // ctx.fillRect(0, 0, size, size, 'rgba(0,0,0,0)');
   }
 
   function refresh() {
     clear();
     switch (state.type) {
       case "sleep":
-        {
-          sleepAnimation();
-        }
+        sleepAnimation();
         break;
       case "stand":
-        {
-          standAnimation();
-        }
+        standAnimation();
         break;
       case "walk":
-        {
-          walkAnimation();
-        }
+        walkAnimation();
         break;
       default:
     }
@@ -152,14 +145,11 @@ xxxx.
     state.t++;
     if (state.t > 8) state.t -= 8;
     state.x += state.dir === "left" ? -1 : 1;
-
     if (state.dir === "left" && state.x < -10) state.dir = "right";
     if (state.dir === "right" && state.x > 10) state.dir = "left";
-
     if (state.x === 0) {
       if (Math.random() < 0.5) state = { type: "sleep" };
     }
-
     setTimeout(refresh, 100);
   }
 
