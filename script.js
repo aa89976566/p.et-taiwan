@@ -68,7 +68,7 @@ let state = {
 };
 
 function drawArt(px, py, str, flip, col = "rgb(60, 75, 60)") {
-  const lines = str.trim().split("\n");
+  const lines = str.split("\n");
   for (let y = 0; y < lines.length; y++) {
     let chars = lines[y].split("");
     if (flip) chars.reverse();
@@ -85,27 +85,46 @@ function drawRect(x, y, col = "black", fill = false) {
     return;
   }
   ctx.strokeStyle = col;
+  ctx.fillStyle = "";
   ctx.beginPath();
-  ctx.lineWidth = 1;
+  ctx.lineWidth = "1";
   ctx.rect(x * pxSize, y * pxSize, pxSize, pxSize);
   ctx.stroke();
 }
 
 function clear() {
   ctx.clearRect(0, 0, size, size);
+  // ctx.fillRect(0, 0, size, size, 'rgba(0,0,0,0)');
 }
+
+function drawGrid() {
+  let gridRows = Math.floor(size / pxSize);
+  for (let i = 0; i < gridRows; i++) {
+    for (let j = 0; j < gridRows; j++) {
+      drawRect(j * 2, i * 2, "blue", false);
+    }
+  }
+}
+
+refresh();
 
 function refresh() {
   clear();
   switch (state.type) {
     case "sleep":
-      sleepAnimation();
+      {
+        sleepAnimation();
+      }
       break;
     case "stand":
-      standAnimation();
+      {
+        standAnimation();
+      }
       break;
     case "walk":
-      walkAnimation();
+      {
+        walkAnimation();
+      }
       break;
     default:
   }
@@ -154,24 +173,16 @@ function walkAnimation() {
   setTimeout(refresh, 100);
 }
 
-// Initialize button text and add simple interactivity
-document.querySelectorAll('.btn').forEach((btn, i) => {
-  btn.textContent = `Animate ${i + 1}`;
-});
-document.querySelector('.btn-1').addEventListener('click', () => { state = { type: "sleep" }; refresh(); });
-document.querySelector('.btn-2').addEventListener('click', () => { state = { type: "stand", x: 0 }; refresh(); });
-document.querySelector('.btn-3').addEventListener('click', () => { state = { type: "walk", x: 0 }; refresh(); });
+var elem;
+var colorT;
 
-refresh();
-
-// Color animation for SVG and background
 function easeInOut(t) {
   const sqt = t ** 2;
   return sqt / (2.0 * (sqt - t) + 1.0);
 }
 
-let colorT = 0;
-let elem;
+var colorT = 0;
+var elem;
 function setColor() {
   if (colorT === undefined) colorT = 0;
   if (!elem) elem = document.querySelector("#main-tamago");
@@ -181,7 +192,7 @@ function setColor() {
   const incAm = 0.05;
   if (state.type === "sleep") colorT = Math.min(t + incAm, 1);
   else colorT = Math.max(t - incAm, 0);
-  t = easeInOut(colorT);
+  t = easeInOut(t);
   const rgbOut = colorTweenRGB(orangeRGB, blueRGB, t);
   if (elem) elem.style.fill = `rgb(${rgbOut.join(",")})`;
   document.body.style.backgroundColor = `rgb(${colorTweenRGB(
@@ -194,5 +205,5 @@ function setColor() {
 setInterval(setColor, 30);
 
 function colorTweenRGB(a, b, t) {
-  return a.map((av, i) => Math.round((b[i] - av) * t + av));
+  return a.map((av, i) => (b[i] - av) * t + av);
 }
