@@ -60,3 +60,11 @@ for (let i = 0; i < accordion.length; i++) {
         this.classList.toggle('active');
     })
 }
+<script>
+  const openBtn = document.getElementById('openPopup');
+  const closeBtn = document.getElementById('closePopup');
+  const popup = document.getElementById('popupOverlay');
+
+  openBtn.addEventListener('click', () => popup.classList.add('active'));
+  closeBtn.addEventListener('click', () => popup.classList.remove('active'));
+</script>
