@@ -1,177 +1,175 @@
-// --- Canvas setup ---
-const canvas = document.querySelector('.cnvs');
-const ctx = canvas.getContext('2d');
-const hungryMsg = document.getElementById('hungryMsg');
-const foodBtn = document.getElementById('foodBtn');
-const pxSize = 4;
-const size = 54;
-canvas.width = size * pxSize;
-canvas.height = size * pxSize;
+// Canvas and UI setup
+const canvas = document.getElementById("catCanvas");
+const ctx = canvas.getContext("2d");
+const feedBtn = document.getElementById("feedBtn");
+const fadeOverlay = document.getElementById("fadeOverlay");
+const landingPage = document.getElementById("landingPage");
 
-// --- Cat Pixel Art Sprites ---
-const catFront = `
-..xxx.....
-.xxxxx....
-xxxxxxx...
-xxooxxx...
-xxxxxxx...
-x.xxx.x...
-..xxx.....
-...x......
-.xxxx.....
-x.x..x....
-x.x..x....
-x.x..x....
-..xx......
-`;
+const CAT_W = 64, CAT_H = 48;
+const FLOOR_Y = 150;
+let catX = 10, catY = FLOOR_Y, catDir = 1;
+let sniffFrame = 0;
+let step = 0;
+let snackShown = false, snackScale = 1, snackGrow = false, fade = false, landed = false;
 
-const catLeft = `
-..xxx.....
-.xxxxx....
-xxxxxxx...
-xxooxxx...
-xxxxxxx...
-x.xxx.x...
-..xxx.....
-...x......
-.xxxx.....
-x.x.......
-x.x.......
-x.x.......
-..xx......
-`;
-
-const catRight = `
-..xxx.....
-.xxxxx....
-xxxxxxx...
-xxooxxx...
-xxxxxxx...
-x.xxx.x...
-..xxx.....
-...x......
-.xxxx.....
-...x..x...
-...x..x...
-...x..x...
-..xx......
-`;
-
-const catBack = `
-..xxx.....
-.xxxxx....
-xxxxxxx...
-xxooxxx...
-xxxxxxx...
-x.xxx.x...
-..xxx.....
-...x......
-.xxxx.....
-..x..x....
-..x..x....
-..x..x....
-..xx......
-`;
-
-// --- Food Pixel Art ---
-const foodBowl = `
-..........
-..rrrr....
-.rrwwrr...
-.rrwwrr...
-..rrrr....
-..........
-`;
-
-function drawArt(str, px, py, colorMap) {
-  const lines = str.trim().split('\n');
-  for (let y = 0; y < lines.length; y++) {
-    const chars = lines[y].split('');
-    for (let x = 0; x < chars.length; x++) {
-      let col;
-      switch (chars[x]) {
-        case 'x': col = colorMap.cat; break;
-        case 'o': col = colorMap.eye; break;
-        case 'r': col = colorMap.bowl; break;
-        case 'w': col = colorMap.food; break;
-        default: continue;
-      }
-      ctx.fillStyle = col;
-      ctx.fillRect((px + x) * pxSize, (py + y) * pxSize, pxSize, pxSize);
-    }
-  }
+function drawCat(x, y, sniff=false) {
+  // Head
+  ctx.fillStyle = "#f7ca48";
+  ctx.fillRect(x+16, y, 32, 24);
+  // Ears
+  ctx.beginPath();
+  ctx.moveTo(x+20, y); ctx.lineTo(x+16, y-10); ctx.lineTo(x+24, y); ctx.closePath();
+  ctx.moveTo(x+44, y); ctx.lineTo(x+48, y-10); ctx.lineTo(x+40, y); ctx.closePath();
+  ctx.fill();
+  // Body
+  ctx.fillRect(x+10, y+20, 44, 18);
+  // Tail
+  ctx.save();
+  ctx.translate(x+8, y+32);
+  ctx.rotate(Math.sin(Date.now()/200)*0.2);
+  ctx.fillRect(0, 0, 20, 6);
+  ctx.restore();
+  // Legs
+  ctx.fillRect(x+18, y+36, 8, 11);
+  ctx.fillRect(x+38, y+36, 8, 11);
+  // Face
+  // Eyes
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.arc(x+28, y+10, 4, 0, Math.PI*2);
+  ctx.arc(x+36, y+10, 4, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = "#000";
+  ctx.beginPath();
+  ctx.arc(x+28, y+10, 2, 0, Math.PI*2);
+  ctx.arc(x+36, y+10, 2, 0, Math.PI*2);
+  ctx.fill();
+  // Nose (sniff animates it)
+  ctx.fillStyle = "#ffb347";
+  ctx.beginPath();
+  ctx.ellipse(x+32, y+16 + (sniff?2*Math.sin(sniffFrame):0), 4, 2, 0, 0, Math.PI*2);
+  ctx.fill();
+  // Mouth
+  ctx.strokeStyle = "#bfa529";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x+32, y+18);
+  ctx.lineTo(x+32, y+21);
+  ctx.moveTo(x+32, y+21);
+  ctx.lineTo(x+29, y+23);
+  ctx.moveTo(x+32, y+21);
+  ctx.lineTo(x+35, y+23);
+  ctx.stroke();
+  // Whiskers
+  ctx.strokeStyle = "#c2a343";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(x+24, y+16); ctx.lineTo(x+10, y+14);
+  ctx.moveTo(x+24, y+19); ctx.lineTo(x+10, y+21);
+  ctx.moveTo(x+40, y+16); ctx.lineTo(x+54, y+14);
+  ctx.moveTo(x+40, y+19); ctx.lineTo(x+54, y+21);
+  ctx.stroke();
 }
 
-// --- Animation State ---
-let state = {
-  dir: 0, // 0: front, 1: left, 2: right, 3: back
-  hungry: true,
-  lookTimer: 0,
-  lookSeq: [0, 1, 2, 0, 3, 0], // face front, left, right, front, back, front
-  seqIdx: 0,
-  bowlPresent: false,
-  bowlTimer: 0,
-};
-
-const colorMap = {
-  cat: '#4b3f2f',
-  eye: '#e9e640',
-  bowl: '#e94e77',
-  food: '#ffe477'
-};
-
-function render() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Draw cat in current state
-  let face;
-  switch (state.lookSeq[state.seqIdx]) {
-    case 0: face = catFront; break;
-    case 1: face = catLeft; break;
-    case 2: face = catRight; break;
-    case 3: face = catBack; break;
+function drawSnack(x, y, scale=1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  // Snack base
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 28, 16, 0, 0, Math.PI*2);
+  ctx.fillStyle = "#f7aa2a";
+  ctx.fill();
+  // Snack highlight
+  ctx.beginPath();
+  ctx.ellipse(-8, -3, 10, 6, 0, 0, Math.PI*2);
+  ctx.fillStyle = "#fff7c2";
+  ctx.fill();
+  // Outline
+  ctx.strokeStyle = "#c88624";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 28, 16, 0, 0, Math.PI*2);
+  ctx.stroke();
+  // Smell lines
+  ctx.strokeStyle = "#d7b060";
+  ctx.setLineDash([3,3]);
+  for(let i=-1;i<=1;i++) {
+    ctx.beginPath();
+    ctx.moveTo(i*8, -18);
+    ctx.lineTo(i*8, -32);
+    ctx.stroke();
   }
-  drawArt(face, 18, 22, colorMap);
-
-  // Draw food bowl if present
-  if (state.bowlPresent) {
-    drawArt(foodBowl, 22, 35, colorMap);
-  }
+  ctx.setLineDash([]);
+  ctx.restore();
 }
 
 function animate() {
-  // Switch face direction every 600ms, cycle
-  state.lookTimer++;
-  if (state.lookTimer > 20) {
-    state.seqIdx = (state.seqIdx + 1) % state.lookSeq.length;
-    state.lookTimer = 0;
-  }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Draw ground
+  ctx.fillStyle = "#f3dfab";
+  ctx.fillRect(0, FLOOR_Y+CAT_H/2+8, canvas.width, 24);
 
-  // Show/Hide "I'm hungry!"
-  hungryMsg.style.display = (state.hungry && !state.bowlPresent) ? 'block' : 'none';
-
-  // Handle food bowl
-  if (state.bowlPresent) {
-    state.bowlTimer++;
-    if (state.bowlTimer > 80) {
-      state.bowlPresent = false;
-      state.hungry = false;
-      setTimeout(() => { state.hungry = true; }, 4000); // Cat gets hungry again
+  // Cat movement and sniffing
+  if(!snackShown) {
+    if(step%40 === 0) {
+      sniffFrame = 0;
+    }
+    if(step%60 < 40) {
+      catX += catDir*1.1;
+      if(catX > canvas.width-CAT_W-10) catDir = -1;
+      if(catX < 10) catDir = 1;
+      drawCat(catX, catY, false);
+    } else {
+      sniffFrame++;
+      drawCat(catX, catY, true);
+      // Draw smell lines (cat is sniffing)
+      ctx.strokeStyle = "#e2c45c";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(catX+32, catY+4);
+      ctx.lineTo(catX+32, catY-12+Math.sin(sniffFrame/2)*3);
+      ctx.stroke();
+    }
+    step++;
+  } else {
+    // Show snack, grow it, cat sniffs it
+    drawCat(catX, catY, true);
+    drawSnack(catX+CAT_W/2, catY+CAT_H/2+10, snackScale);
+    if(snackGrow && snackScale < 2.2) {
+      snackScale += 0.07;
+    } else if(snackGrow && snackScale >= 2.2) {
+      // Begin fade after snack grows
+      snackGrow = false;
+      setTimeout(() => { fade = true; }, 800);
     }
   }
 
-  render();
-  requestAnimationFrame(animate);
+  // Fade overlay
+  if(fade) {
+    fadeOverlay.style.opacity = 1;
+    setTimeout(() => {
+      landingPage.style.opacity = 1;
+      landingPage.style.pointerEvents = "auto";
+      landed = true;
+    }, 2000);
+  }
+
+  if(!landed) requestAnimationFrame(animate);
 }
 
-// --- Button Event ---
-foodBtn.onclick = () => {
-  if (!state.bowlPresent && state.hungry) {
-    state.bowlPresent = true;
-    state.bowlTimer = 0;
-    hungryMsg.style.display = 'none';
-  }
+// Button event
+feedBtn.onclick = () => {
+  if(snackShown) return;
+  snackShown = true;
+  snackGrow = true;
+  feedBtn.disabled = true;
+  feedBtn.style.opacity = 0.5;
 };
 
-// --- Start ---
-animate();
+window.onload = () => {
+  fadeOverlay.style.opacity = 0;
+  landingPage.style.opacity = 0;
+  landingPage.style.pointerEvents = "none";
+  animate();
+};
