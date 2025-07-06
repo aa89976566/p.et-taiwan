@@ -1,65 +1,72 @@
-body {
-  padding: 0;
+body, html {
   margin: 0;
+  padding: 0;
   width: 100vw;
   height: 100vh;
-  background: #e7eaff;
+  background: #fdf6e3;
+  overflow: hidden;
 }
 .wrapper {
   width: 100vw;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.innerWrapper {
-  width: 250px;
-  height: 300px;
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
-.cnvs {
-  background: #f7f7f7;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px #c0c0e0;
-  margin-top: 20px;
-}
-.hungry {
-  position: absolute;
-  top: 18px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: #e94e77;
-  font-weight: bold;
-  font-size: 1.2em;
-  display: none;
-  background: #fff3;
-  border-radius: 6px;
-  padding: 2px 8px;
-  pointer-events: none;
+#catCanvas {
+  background: #f8e5b1;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px #e0c37f;
+  margin-bottom: 24px;
   z-index: 1;
-  text-shadow: 1px 1px 0 #fff, 2px 2px 0 #e94e77a1;
 }
-.btn-food {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffe477;
-  color: #333;
+#feedBtn {
+  padding: 10px 32px;
+  border-radius: 20px;
+  font-size: 1.3em;
   border: none;
-  border-radius: 16px;
-  padding: 7px 26px;
-  font-size: 1em;
-  box-shadow: 1px 2px 6px #b3b3b3;
-  cursor: pointer;
+  background: #f7ca48;
+  color: #7c6202;
   font-weight: bold;
-  outline: none;
+  box-shadow: 0 2px 8px #e3c05c;
+  cursor: pointer;
+  z-index: 2;
   transition: background 0.2s;
 }
-.btn-food:hover {
-  background: #f7d444;
+#feedBtn:hover {
+  background: #ffe388;
+}
+#fadeOverlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #fdf6e3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s;
+  z-index: 10;
+}
+#landingPage {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff6dc;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  transition: opacity 2s;
+}
+#landingPage h1 {
+  font-size: 2.5em;
+  color: #e0b800;
+  margin-bottom: 0.5em;
+}
+#landingPage p {
+  font-size: 1.3em;
+  color: #7c6202;
+  margin-top: 0;
 }
