@@ -6,6 +6,14 @@ body, html {
   background: #fdf6e3;
   overflow: hidden;
 }
+body, html {
+  background: #f3e6d3;
+}
+#catCanvas {
+  background: #f7ead9; /* warmer, more home-like */
+  /* other styles unchanged */
+}
+/* You can adjust other colors for #feedBtn, #landingPage, etc., for an even warmer feel */
 .wrapper {
   width: 100vw;
   height: 100vh;
