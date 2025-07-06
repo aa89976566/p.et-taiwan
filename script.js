@@ -157,6 +157,29 @@ function animate() {
 
   if(!landed) requestAnimationFrame(animate);
 }
+// Living room background
+ctx.fillStyle = "#e9d5b4"; // warm wall color
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+// Rug
+ctx.beginPath();
+ctx.ellipse(canvas.width/2, canvas.height-60, 180, 32, 0, 0, Math.PI*2);
+ctx.fillStyle = "#ecd9b0";
+ctx.fill();
+
+// Sofa
+ctx.fillStyle = "#d2b48c";
+ctx.fillRect(120, canvas.height-180, 300, 90);
+ctx.fillStyle = "#bfa078";
+ctx.fillRect(100, canvas.height-210, 340, 40); // sofa backrest
+
+// Potted plant
+ctx.fillStyle = "#8d6748";
+ctx.fillRect(canvas.width-120, canvas.height-120, 24, 40); // pot
+ctx.beginPath();
+ctx.arc(canvas.width-108, canvas.height-120, 28, Math.PI, 0);
+ctx.fillStyle = "#b5cba1";
+ctx.fill();
 
 // Button event
 feedBtn.onclick = () => {
