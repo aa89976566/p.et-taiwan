@@ -1,22 +1,665 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Alien Pet Living Room</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alien Pet Spaceship Living Room</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2ff9fa;
+      --secondary: #232f3e;
+      --accent: #fada5e;
+      --happy: #ffb3ec;
+      --spaceship: #2f2b4a;
+      --cloud: #eafaff;
+      --button: #ffdf6c;
+      --button-active: #ffe9a7;
+      --slider-bg: #191b2a;
+      --slider-btn: #fff;
+    }
+    body {
+      background: radial-gradient(ellipse at 50% 20%, #302b63 40%, #24243e 100%);
+      margin: 0;
+      font-family: 'Quicksand', Arial, sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    .spaceship-room {
+      position: relative;
+      width: 100vw;
+      height: 80vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 4vw;
+    }
+    .spaceship {
+      position: absolute;
+      width: 85vw;
+      height: 58vh;
+      background: linear-gradient(160deg, var(--spaceship) 70%, #3e3565 100%);
+      border-radius: 50% 50% 40% 40% / 65% 65% 35% 35%;
+      box-shadow: 0 8px 60px 0 #0ff6, 0 0 120px 0 #fff2;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      border: 4px solid #3ef6fa70;
+      z-index: 1;
+      overflow: visible;
+    }
+    .window {
+      position: absolute;
+      width: 34vw;
+      height: 20vh;
+      left: 50%;
+      top: 23%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #a8f6ff 65%, #f6e1ff 100%);
+      opacity: 0.8;
+      border-radius: 60% 60% 40% 40% / 70% 70% 30% 30%;
+      box-shadow: 0 0 40px 10px #2ff9fa80 inset;
+      border: 3px solid #fff7;
+      z-index: 2;
+    }
+    .alien-pets {
+      position: absolute;
+      left: 50%;
+      top: 54%;
+      transform: translate(-50%, 0);
+      display: flex;
+      gap: 8vw;
+      z-index: 3;
+    }
+    .alien-pet {
+      width: 13vw;
+      height: 20vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: float 3s ease-in-out infinite;
+    }
+    .alien-pet.dog { animation-delay: 0.5s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1.04); }
+      50% { transform: translateY(-12px) scale(1); }
+    }
+    .pet-cloud {
+      width: 11vw;
+      height: 10vh;
+      background: var(--cloud);
+      border-radius: 50% 60% 60% 50% / 60% 80% 80% 60%;
+      box-shadow: 0 0 36px 10px #fff6, 0 12px 16px 0 #0002;
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      filter: blur(0.6px);
+    }
+    /* Cat features */
+    .cat .ears {
+      position: absolute;
+      top: -2.7vh;
+      left: 50%;
+      width: 7vw;
+      height: 4vh;
+      display: flex;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    .cat .ear {
+      width: 2.1vw;
+      height: 4vh;
+      background: linear-gradient(120deg, #eafaff 70%, #b7e7f3 100%);
+      border-radius: 60% 80% 60% 80% / 100% 100% 60% 60%;
+      transform: rotate(-22deg);
+      box-shadow: 0 0 8px #fff7;
+    }
+    .cat .ear.right {
+      transform: rotate(22deg) scaleX(-1);
+    }
+    .cat .face {
+      position: absolute;
+      width: 5vw;
+      height: 6vh;
+      top: -3vh;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border-radius: 44% 56% 40% 60% / 60% 60% 60% 60%;
+      border: 1px solid #aef6;
+      z-index: 3;
+      box-shadow: 0 2px 8px #0002;
+      overflow: visible;
+    }
+    .cat .eye {
+      position: absolute;
+      width: 0.7vw;
+      height: 1vh;
+      top: 2.1vh;
+      background: #9befff;
+      border-radius: 50%;
+      left: 1vw;
+      box-shadow: 2.5vw 0 #9befff;
+    }
+    .cat .mouth {
+      position: absolute;
+      width: 1.4vw;
+      height: 1.4vh;
+      top: 3.7vh;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0 0 90px 90px/ 0 0 60px 60px;
+      border-bottom: 2.5px solid #50e9;
+    }
+    /* Dog features */
+    .dog .ears {
+      position: absolute;
+      top: -2.2vh;
+      left: 50%;
+      width: 9vw;
+      height: 4vh;
+      display: flex;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    .dog .ear {
+      width: 2.7vw;
+      height: 4.7vh;
+      background: linear-gradient(110deg, #eafaff 70%, #b7d8fa 100%);
+      border-radius: 60% 80% 60% 80% / 100% 100% 60% 60%;
+      box-shadow: 0 0 6px #fff9;
+      transform: rotate(-42deg) scaleY(1.25);
+    }
+    .dog .ear.right {
+      transform: rotate(42deg) scaleX(-1) scaleY(1.25);
+    }
+    .dog .face {
+      position: absolute;
+      width: 6vw;
+      height: 7vh;
+      top: -2.1vh;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border-radius: 52% 60% 65% 45% / 70% 70% 60% 60%;
+      border: 1px solid #bef6;
+      z-index: 3;
+      box-shadow: 0 2px 8px #0002;
+      overflow: visible;
+    }
+    .dog .eye {
+      position: absolute;
+      width: 0.8vw;
+      height: 1vh;
+      top: 2.3vh;
+      background: #8be9fa;
+      border-radius: 50%;
+      left: 1.2vw;
+      box-shadow: 2.6vw 0 #8be9fa;
+    }
+    .dog .mouth {
+      position: absolute;
+      width: 1.7vw;
+      height: 1.7vh;
+      top: 4.1vh;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0 0 90px 90px/ 0 0 60px 60px;
+      border-bottom: 2.5px solid #50e7;
+    }
+    .alien-pet.happy .eye, .alien-pet.happy .mouth {
+      animation: happy-face 0.45s 2 linear;
+    }
+    @keyframes happy-face {
+      0%, 100% { filter: none;}
+      40% { filter: brightness(180%) drop-shadow(0 2px 6px #fada5e);}
+    }
+
+    /* Taste button */
+    .taste-btn {
+      position: absolute;
+      left: 50%;
+      bottom: 8vh;
+      transform: translateX(-50%);
+      background: linear-gradient(120deg, var(--button) 80%, var(--button-active) 100%);
+      color: #3f2b05;
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 2.2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 2.6rem;
+      padding: 1.1rem 3.2rem;
+      box-shadow: 0 6px 24px #fff3, 0 2px 8px #0004;
+      cursor: pointer;
+      z-index: 7;
+      transition: transform .16s, box-shadow .16s;
+      outline: none;
+      letter-spacing: 0.07em;
+      overflow: hidden;
+    }
+    .taste-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 8px #0005;
+    }
+    .snack-anim {
+      position: absolute;
+      left: 50%;
+      bottom: 17vh;
+      transform: translateX(-50%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .snack-bag {
+      width: 90px;
+      height: 120px;
+      background: linear-gradient(135deg, #fff5a1 55%, #fd9df5 100%);
+      border-radius: 26px 26px 42px 42px/ 22px 22px 44px 44px;
+      border: 3px solid #fada5e;
+      box-shadow: 0 12px 40px #fff5, 0 2px 18px #fae6;
+      position: relative;
+      overflow: hidden;
+    }
+    .snack-label {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 1rem;
+      color: #fff;
+      background: #3ef9;
+      padding: 3px 12px;
+      border-radius: 11px;
+      letter-spacing: 0.09em;
+      box-shadow: 0 2px 8px #fff2;
+    }
+    .tear {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      width: 100px;
+      height: 30px;
+      background: repeating-linear-gradient(90deg, #fff 0 8px, #fada5e 8px 16px);
+      border-radius: 30px;
+      transform: translateX(-50%);
+      z-index: 2;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .snack-anim.show .tear {
+      animation: tear-off 0.7s forwards cubic-bezier(.88,.01,.38,1.19);
+    }
+    @keyframes tear-off {
+      0% { opacity: 1; top: -12px;}
+      30% { opacity: 1; top: -8px;}
+      70% { opacity: 1; top: 28px;}
+      100% { opacity: 0; top: 38px;}
+    }
+    /* Smell lines */
+    .smell {
+      position: absolute;
+      left: 50%;
+      top: 10px;
+      transform: translateX(-50%);
+      width: 38px;
+      height: 80px;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 5;
+    }
+    .smell .line {
+      position: absolute;
+      width: 10px;
+      height: 48px;
+      border-radius: 50px;
+      background: linear-gradient(180deg, #fff6 44%, #fada5e 100%);
+      opacity: 0.65;
+      filter: blur(1.2px);
+      left: 14px;
+      top: 0;
+      transform: rotate(-18deg) scaleY(0.6);
+      animation: smell-rise 1.6s 0.6s forwards;
+    }
+    .smell .line.r2 {
+      left: 5px;
+      transform: rotate(-32deg) scaleY(0.5);
+      opacity: 0.46;
+      animation-delay: 0.8s;
+    }
+    .smell .line.r3 {
+      left: 24px;
+      transform: rotate(18deg) scaleY(0.65);
+      opacity: 0.56;
+      animation-delay: 1s;
+    }
+    @keyframes smell-rise {
+      0% { opacity:0; top: 40px;}
+      70% { opacity: .7;}
+      100% { opacity: 0; top: -36px;}
+    }
+
+    /* Fade overlay and landing */
+    .fade-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #2ff9faee;
+      opacity: 0;
+      z-index: 50;
+      pointer-events: none;
+      transition: opacity 1.2s cubic-bezier(.85,0,.42,1.08);
+    }
+    .fade-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .landing-page {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      background: linear-gradient(120deg, #caeaff 70%, #f7efff 100%);
+      z-index: 100;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      animation: slide-in 1.4s cubic-bezier(.95,0,.21,1.02);
+    }
+    .landing-page.active {
+      display: flex;
+    }
+    @keyframes slide-in {
+      from { transform: translateY(50vh); opacity: 0;}
+      to { transform: none; opacity: 1;}
+    }
+    .landing-page h2 {
+      margin-top: 4vh;
+      font-family: 'Orbitron', Arial, sans-serif;
+      color: #2ff9fa;
+      font-size: 2.5rem;
+      margin-bottom: 2vh;
+      letter-spacing: .08em;
+      text-shadow: 0 2px 8px #fff;
+    }
+    /* Slider styles */
+    .slider-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1vw;
+      background: var(--slider-bg);
+      border-radius: 28px;
+      padding: 1.2vw 2vw 1.2vw 2vw;
+      margin-top: 4vh;
+      box-shadow: 0 2px 18px #2ff9fa22;
+      position: relative;
+      z-index: 2;
+    }
+    .slider-wrapper button {
+      background: var(--primary);
+      color: var(--slider-btn);
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: background .15s;
+      outline: none;
+      box-shadow: 0 2px 6px #fff4;
+    }
+    .slider {
+      display: flex;
+      gap: 1vw;
+      overflow: hidden;
+      min-width: 44vw;
+      max-width: 54vw;
+      /* Hide scrollbar */
+      scrollbar-width: none; 
+    }
+    .slide {
+      min-width: 140px;
+      min-height: 180px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px #2ff9fa22;
+      margin: 0 0.2vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      transition: transform .36s cubic-bezier(.7,0,.31,1.17), box-shadow .25s;
+      position: relative;
+      font-family: 'Quicksand', Arial, sans-serif;
+      color: #2ff9fa;
+      font-size: 1.1rem;
+      padding-bottom: 1rem;
+      border: 2px solid #2ff9fa44;
+    }
+    .slide[data-type="active"] {
+      transform: scale(1.08);
+      box-shadow: 0 6px 32px #fada5e44, 0 2px 18px #2ff9fa33;
+      border: 2.5px solid #fada5e;
+      z-index: 2;
+    }
+    .slide[data-type="before"], .slide[data-type="after"] {
+      opacity: 0.68;
+      transform: scale(0.93);
+      z-index: 1;
+    }
+    .slide img {
+      width: 60%;
+      margin: 1.6rem 0 .7rem 0;
+      border-radius: 12px;
+      box-shadow: 0 1px 12px #2ff9fa22;
+      background: #caeaff;
+    }
+    .slide .product-title {
+      font-weight: bold;
+      font-size: 1.06rem;
+      margin-bottom: .2rem;
+      text-align: center;
+    }
+    .slide .product-desc {
+      color: #4a7c8e;
+      font-size: .92rem;
+      margin-bottom: .7rem;
+      text-align: center;
+    }
+    #test {margin-top: 2vh;}
+    @media (max-width: 700px) {
+      .slider {min-width: 92vw; max-width: 98vw;}
+      .slide {min-width: 90px; min-height: 120px;}
+      .spaceship, .window {width: 97vw;}
+      .alien-pet, .pet-cloud {width: 21vw;}
+    }
+  </style>
 </head>
 <body>
-  <div class="wrapper" id="mainWrapper">
-    <canvas id="catCanvas" width="800" height="400"></canvas>
-    <button id="feedBtn" title="Feed Me">
-      <span class="alien-symbol">&#128125;</span>
-    </button>
-    <div id="fadeOverlay"></div>
-    <div id="landingPage">
-      <h1>Welcome!</h1>
-      <p>The pets are happy and full. Thanks for feeding!</p>
+  <main>
+    <div class="spaceship-room">
+      <div class="spaceship"></div>
+      <div class="window"></div>
+      <div class="alien-pets">
+        <!-- Cat -->
+        <div class="alien-pet cat">
+          <div class="ears">
+            <div class="ear left"></div>
+            <div class="ear right"></div>
+          </div>
+          <div class="face">
+            <div class="eye"></div>
+            <div class="mouth"></div>
+          </div>
+          <div class="pet-cloud"></div>
+        </div>
+        <!-- Dog -->
+        <div class="alien-pet dog">
+          <div class="ears">
+            <div class="ear left"></div>
+            <div class="ear right"></div>
+          </div>
+          <div class="face">
+            <div class="eye"></div>
+            <div class="mouth"></div>
+          </div>
+          <div class="pet-cloud"></div>
+        </div>
+      </div>
+      <button class="taste-btn">Taste <span style="font-size:1.5em;">😋</span></button>
+      <div class="snack-anim">
+        <div class="tear"></div>
+        <div class="snack-bag">
+          <div class="snack-label">Alien Snack</div>
+        </div>
+        <div class="smell">
+          <div class="line"></div>
+          <div class="line r2"></div>
+          <div class="line r3"></div>
+        </div>
+      </div>
     </div>
-  </div>
-  <script src="script.js"></script>
+    <div class="fade-overlay"></div>
+    <section class="landing-page">
+      <h2>Alien Snack Products</h2>
+      <div class="slider-wrapper">
+        <button data-btn='previos'>&lt;</button>
+        <div class="slider" id="product-slider">
+          <!-- Slides will be injected here -->
+        </div>
+        <button data-btn='next'>&gt;</button>
+      </div>
+      <div id="test"></div>
+    </section>
+  </main>
+  <script>
+    // Carousel product data
+    const products = [
+      {
+        img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=facearea&w=256&q=80',
+        title: 'Nebula Fish Snack',
+        desc: 'Crispy galaxy fish treats with cosmic aroma.',
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=256&q=80',
+        title: 'Zero-G Cheese Bites',
+        desc: 'Floaty cheese snacks for light-hearted fun.',
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=facearea&w=256&q=80',
+        title: 'Meteorite Jerky',
+        desc: 'Space beef chunks with a meteor crunch.',
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1518715308788-3005759c81d8?auto=format&fit=facearea&w=256&q=80',
+        title: 'Stellar Veggie Crisp',
+        desc: 'Alien garden vegetables, cosmic crisp.',
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1518715308788-3005759c81d8?auto=format&fit=facearea&w=256&q=80',
+        title: 'Comet Berry Drops',
+        desc: 'Sweet & tangy comet berries for pets.',
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1518715308788-3005759c81d8?auto=format&fit=facearea&w=256&q=80',
+        title: 'Plasma Milk Bones',
+        desc: 'Milk-flavored, plasma-infused bones.',
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1518715308788-3005759c81d8?auto=format&fit=facearea&w=256&q=80',
+        title: 'Astro Liver Chews',
+        desc: 'Irresistible liver chews for star pets.',
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1518715308788-3005759c81d8?auto=format&fit=facearea&w=256&q=80',
+        title: 'Quantum Tuna Bites',
+        desc: 'Quantum-flavored tuna for clever pets.',
+      },
+    ];
+
+    // Render carousel
+    function renderSlider(slider, centerIdx) {
+      slider.innerHTML = '';
+      for (let i = 0; i < products.length; i++) {
+        const p = products[i];
+        let type = '';
+        if (i === centerIdx - 2) type = 'before';
+        else if (i === centerIdx - 1) type = 'before';
+        else if (i === centerIdx) type = 'active';
+        else if (i === centerIdx + 1) type = 'active';
+        else if (i === centerIdx + 2) type = 'after';
+
+        const slide = document.createElement('div');
+        slide.className = `slide num${i + 1}`;
+        slide.setAttribute('data-type', type || '');
+        slide.innerHTML = `
+          <img src="${p.img}" alt="${p.title}">
+          <div class="product-title">${p.title}</div>
+          <div class="product-desc">${p.desc}</div>
+        `;
+        slider.appendChild(slide);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Taste Button Animation Logic
+      const tasteBtn = document.querySelector('.taste-btn')
+      const snackAnim = document.querySelector('.snack-anim')
+      const fadeOverlay = document.querySelector('.fade-overlay')
+      const pets = document.querySelectorAll('.alien-pet')
+      const landing = document.querySelector('.landing-page')
+      const smell = snackAnim.querySelector('.smell')
+      let snackStage = 0;
+
+      tasteBtn.addEventListener('click', () => {
+        // Animate snack opening
+        snackAnim.style.display = 'flex'
+        snackAnim.classList.add('show')
+        // Smell lines
+        setTimeout(() => {
+          smell.style.opacity = "1"
+        }, 500)
+        // Pets happy/excited
+        setTimeout(() => {
+          pets.forEach(p => p.classList.add('happy'))
+        }, 800)
+        // Fade overlay, then show landing
+        setTimeout(() => {
+          fadeOverlay.classList.add('active')
+        }, 1800)
+        setTimeout(() => {
+          snackAnim.style.display = 'none'
+          fadeOverlay.classList.remove('active')
+          landing.classList.add('active')
+          document.querySelector('main .spaceship-room').style.display = 'none'
+        }, 2650)
+        // Remove happy effect
+        setTimeout(() => {
+          pets.forEach(p => p.classList.remove('happy'))
+          snackAnim.classList.remove('show')
+          smell.style.opacity = "0"
+        }, 3200)
+      })
+
+      // Product slider logic
+      const slider = document.getElementById('product-slider');
+      let cur = 2; // Show the 3rd as center by default
+      renderSlider(slider, cur);
+
+      document.querySelector('.slider-wrapper [data-btn="previos"]').onclick = () => {
+        if (cur > 0) cur--;
+        renderSlider(slider, cur)
+      }
+      document.querySelector('.slider-wrapper [data-btn="next"]').onclick = () => {
+        if (cur < products.length - 1) cur++;
+        renderSlider(slider, cur)
+      }
+    });
+  </script>
 </body>
 </html>
