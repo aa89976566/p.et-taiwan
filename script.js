@@ -1,65 +1,177 @@
-body {
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  height: 100vh;
-}
-.wrapper {
-  width: 100%;
-  height: 100%;
-  margin-top: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+// --- Canvas setup ---
+const canvas = document.querySelector('.cnvs');
+const ctx = canvas.getContext('2d');
+const hungryMsg = document.getElementById('hungryMsg');
+const foodBtn = document.getElementById('foodBtn');
+const pxSize = 4;
+const size = 54;
+canvas.width = size * pxSize;
+canvas.height = size * pxSize;
+
+// --- Cat Pixel Art Sprites ---
+const catFront = `
+..xxx.....
+.xxxxx....
+xxxxxxx...
+xxooxxx...
+xxxxxxx...
+x.xxx.x...
+..xxx.....
+...x......
+.xxxx.....
+x.x..x....
+x.x..x....
+x.x..x....
+..xx......
+`;
+
+const catLeft = `
+..xxx.....
+.xxxxx....
+xxxxxxx...
+xxooxxx...
+xxxxxxx...
+x.xxx.x...
+..xxx.....
+...x......
+.xxxx.....
+x.x.......
+x.x.......
+x.x.......
+..xx......
+`;
+
+const catRight = `
+..xxx.....
+.xxxxx....
+xxxxxxx...
+xxooxxx...
+xxxxxxx...
+x.xxx.x...
+..xxx.....
+...x......
+.xxxx.....
+...x..x...
+...x..x...
+...x..x...
+..xx......
+`;
+
+const catBack = `
+..xxx.....
+.xxxxx....
+xxxxxxx...
+xxooxxx...
+xxxxxxx...
+x.xxx.x...
+..xxx.....
+...x......
+.xxxx.....
+..x..x....
+..x..x....
+..x..x....
+..xx......
+`;
+
+// --- Food Pixel Art ---
+const foodBowl = `
+..........
+..rrrr....
+.rrwwrr...
+.rrwwrr...
+..rrrr....
+..........
+`;
+
+function drawArt(str, px, py, colorMap) {
+  const lines = str.trim().split('\n');
+  for (let y = 0; y < lines.length; y++) {
+    const chars = lines[y].split('');
+    for (let x = 0; x < chars.length; x++) {
+      let col;
+      switch (chars[x]) {
+        case 'x': col = colorMap.cat; break;
+        case 'o': col = colorMap.eye; break;
+        case 'r': col = colorMap.bowl; break;
+        case 'w': col = colorMap.food; break;
+        default: continue;
+      }
+      ctx.fillStyle = col;
+      ctx.fillRect((px + x) * pxSize, (py + y) * pxSize, pxSize, pxSize);
+    }
+  }
 }
 
-.innerWrapper {
-  width: 250px;
-  position: relative;
+// --- Animation State ---
+let state = {
+  dir: 0, // 0: front, 1: left, 2: right, 3: back
+  hungry: true,
+  lookTimer: 0,
+  lookSeq: [0, 1, 2, 0, 3, 0], // face front, left, right, front, back, front
+  seqIdx: 0,
+  bowlPresent: false,
+  bowlTimer: 0,
+};
+
+const colorMap = {
+  cat: '#4b3f2f',
+  eye: '#e9e640',
+  bowl: '#e94e77',
+  food: '#ffe477'
+};
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw cat in current state
+  let face;
+  switch (state.lookSeq[state.seqIdx]) {
+    case 0: face = catFront; break;
+    case 1: face = catLeft; break;
+    case 2: face = catRight; break;
+    case 3: face = catBack; break;
+  }
+  drawArt(face, 18, 22, colorMap);
+
+  // Draw food bowl if present
+  if (state.bowlPresent) {
+    drawArt(foodBowl, 22, 35, colorMap);
+  }
 }
 
-svg {
-  width: 250px;
+function animate() {
+  // Switch face direction every 600ms, cycle
+  state.lookTimer++;
+  if (state.lookTimer > 20) {
+    state.seqIdx = (state.seqIdx + 1) % state.lookSeq.length;
+    state.lookTimer = 0;
+  }
+
+  // Show/Hide "I'm hungry!"
+  hungryMsg.style.display = (state.hungry && !state.bowlPresent) ? 'block' : 'none';
+
+  // Handle food bowl
+  if (state.bowlPresent) {
+    state.bowlTimer++;
+    if (state.bowlTimer > 80) {
+      state.bowlPresent = false;
+      state.hungry = false;
+      setTimeout(() => { state.hungry = true; }, 4000); // Cat gets hungry again
+    }
+  }
+
+  render();
+  requestAnimationFrame(animate);
 }
 
-.cnvs {
-  background-color: rgba(60, 75, 60, 0.3);
-  position: absolute;
-  top: 108px;
-  left: 70px;
-  border-radius: 10px;
-  box-shadow: 5px 4px 0px 1px rgba(40,55,40, 0.4) inset;
-}
+// --- Button Event ---
+foodBtn.onclick = () => {
+  if (!state.bowlPresent && state.hungry) {
+    state.bowlPresent = true;
+    state.bowlTimer = 0;
+    hungryMsg.style.display = 'none';
+  }
+};
 
-.btn-1 {
-  position: absolute;
-  top: 257px;
-  left: 80px;
-}
-
-.btn-2 {
-  position: absolute;
-  top: 265px;
-  left: 120px;
-}
-
-.btn-3 {
-  position: absolute;
-  top: 257px;
-  left: 160px;
-}
-
-button:focus {outline:0;}
-
-.btn {
-  border: none;
-  background-color: #fdffdf;
-  width: 20px;
-  height: 20px;
-  border-radius: 100%;
-  box-shadow: 1px 1px 0px 2px #fdffdf44;
-}
-
-.btn:active {
-  box-shadow: -0.5px -0.5px 0px 2px #00000033;
-}
+// --- Start ---
+animate();
