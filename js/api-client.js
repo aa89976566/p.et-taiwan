@@ -374,6 +374,51 @@ class ApiClient {
     async getQuizResult(id) {
         return await this.request(`/quiz/${id}`);
     }
+
+    // ==================== 管理員 API ====================
+
+    /**
+     * 獲取所有訂單（管理員）
+     */
+    async getAdminOrders(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        return await this.request(`/admin/orders${queryString ? '?' + queryString : ''}`);
+    }
+
+    /**
+     * 獲取所有用戶（管理員）
+     */
+    async getAdminUsers(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        return await this.request(`/admin/users${queryString ? '?' + queryString : ''}`);
+    }
+
+    /**
+     * 獲取統計數據（管理員）
+     */
+    async getAdminStats() {
+        return await this.request('/admin/stats');
+    }
+
+    /**
+     * 更新訂單狀態（管理員）
+     */
+    async updateOrderStatus(orderId, statusData) {
+        return await this.request(`/orders/${orderId}/status`, {
+            method: 'PUT',
+            body: JSON.stringify(statusData)
+        });
+    }
+
+    /**
+     * 更新訂單完整資訊（管理員）
+     */
+    async updateOrder(orderId, orderData) {
+        return await this.request(`/orders/${orderId}`, {
+            method: 'PUT',
+            body: JSON.stringify(orderData)
+        });
+    }
 }
 
 // 建立全局實例

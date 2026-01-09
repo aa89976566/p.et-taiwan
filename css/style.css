@@ -98,6 +98,25 @@ body {
     }
 }
 
+/* Logo 樣式 - 確保顯示 */
+#main-logo svg,
+nav a[href="index.html"] svg,
+.logo svg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 48px !important;
+    height: 48px !important;
+    flex-shrink: 0;
+}
+
+/* 隱藏所有 fa-paw 圖標 */
+.fa-paw,
+i.fa-paw,
+[class*="fa-paw"] {
+    display: none !important;
+}
+
 .btn-pulse {
     animation: pulse 2s infinite;
 }

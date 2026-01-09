@@ -1,26 +1,80 @@
 /**
  * 匠寵 - 前台商品展示功能
- * Version: 1.0.0
+ * Version: 2.0.0 - 使用 API
  */
 
-// 獲取商品數據
-function getFrontProducts() {
-    if (!window.DataStore) {
-        console.warn('DataStore not loaded, using fallback data');
-        return [];
+// 產品緩存
+let productsCache = [];
+let productsCacheTime = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5分鐘緩存
+
+// 獲取商品數據（從 API 或緩存）
+async function getFrontProducts(useCache = true) {
+    // 檢查緩存是否有效
+    if (useCache && productsCache.length > 0 && (Date.now() - productsCacheTime < CACHE_DURATION)) {
+        return productsCache.filter(p => p.status === 'active');
     }
-    return window.DataStore.getAll('products').filter(p => p.status === 'active');
+    
+    // 從 API 獲取
+    if (window.ApiClient) {
+        try {
+            const response = await window.ApiClient.getProducts({ limit: 1000, status: 'active' });
+            if (response.success && response.data && response.data.products) {
+                productsCache = response.data.products;
+                productsCacheTime = Date.now();
+                console.log('✅ 從 API 載入產品:', productsCache.length, '個');
+                return productsCache.filter(p => p.status === 'active');
+            }
+        } catch (error) {
+            console.error('❌ 載入產品失敗:', error);
+            // 如果有緩存，返回緩存數據
+            if (productsCache.length > 0) {
+                console.warn('⚠️ 使用緩存數據');
+                return productsCache.filter(p => p.status === 'active');
+            }
+        }
+    }
+    
+    // 回退到 DataStore（如果有）
+    if (window.DataStore) {
+        console.warn('⚠️ ApiClient 不可用，使用 DataStore 回退');
+        const products = window.DataStore.getAll('products').filter(p => p.status === 'active');
+        if (products.length > 0) {
+            productsCache = products;
+            productsCacheTime = Date.now();
+            return products;
+        }
+    }
+    
+    return [];
+}
+
+// 同步版本（用於立即渲染，使用緩存）
+function getFrontProductsSync() {
+    if (productsCache.length > 0) {
+        return productsCache.filter(p => p.status === 'active');
+    }
+    return [];
 }
 
 // 渲染商品卡片 (首頁用)
-function renderProductCards(containerId, category = null, limit = null) {
+async function renderProductCards(containerId, category = null, limit = null) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error('Container not found:', containerId);
         return;
     }
     
-    let products = getFrontProducts();
+    // 顯示載入中
+    container.innerHTML = `
+        <div class="col-span-full text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+            <p class="text-gray-500">載入產品中...</p>
+        </div>
+    `;
+    
+    // 從 API 獲取產品
+    let products = await getFrontProducts();
     
     // 分類過濾
     if (category) {
@@ -157,17 +211,42 @@ function renderProductCards(containerId, category = null, limit = null) {
 }
 
 // 查看商品詳情
-function viewProductDetail(productId) {
-    const product = window.DataStore.findById('products', productId);
+async function viewProductDetail(productId) {
+    let product = null;
+    
+    // 先從緩存查找
+    if (productsCache.length > 0) {
+        product = productsCache.find(p => p.id === productId);
+    }
+    
+    // 如果緩存中沒有，從 API 獲取
+    if (!product && window.ApiClient) {
+        try {
+            const response = await window.ApiClient.getProduct(productId);
+            if (response.success && response.data) {
+                product = response.data;
+                // 更新緩存
+                const index = productsCache.findIndex(p => p.id === productId);
+                if (index >= 0) {
+                    productsCache[index] = product;
+                } else {
+                    productsCache.push(product);
+                }
+            }
+        } catch (error) {
+            console.error('❌ 載入商品詳情失敗:', error);
+        }
+    }
+    
+    // 回退到 DataStore
+    if (!product && window.DataStore) {
+        product = window.DataStore.findById('products', productId);
+    }
+    
     if (!product) {
         alert('商品不存在');
         return;
     }
-    
-    // 更新瀏覽次數
-    window.DataStore.update('products', productId, {
-        viewCount: (product.viewCount || 0) + 1
-    });
     
     // 顯示商品詳情 Modal
     showProductDetailModal(product);
@@ -323,11 +402,39 @@ function buyNow(productId) {
     }, 500);
 }
 
-// 加入購物車（使用統一的 addToCart 函數）
-// 注意：這個函數只處理單個 productId 的情況
-// 如果已經有完整的參數（productId, productName, price），應該直接調用 window.addToCart
-function addToCartFromDataStore(productId) {
-    const product = window.DataStore.findById('products', productId);
+// 加入購物車（從 API 獲取產品資訊）
+async function addToCartFromDataStore(productId) {
+    let product = null;
+    
+    // 先從緩存查找
+    if (productsCache.length > 0) {
+        product = productsCache.find(p => p.id === productId);
+    }
+    
+    // 如果緩存中沒有，從 API 獲取
+    if (!product && window.ApiClient) {
+        try {
+            const response = await window.ApiClient.getProduct(productId);
+            if (response.success && response.data) {
+                product = response.data;
+                // 更新緩存
+                const index = productsCache.findIndex(p => p.id === productId);
+                if (index >= 0) {
+                    productsCache[index] = product;
+                } else {
+                    productsCache.push(product);
+                }
+            }
+        } catch (error) {
+            console.error('❌ 載入商品失敗:', error);
+        }
+    }
+    
+    // 回退到 DataStore
+    if (!product && window.DataStore) {
+        product = window.DataStore.findById('products', productId);
+    }
+    
     if (!product) {
         alert('商品不存在');
         return;

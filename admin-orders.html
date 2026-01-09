@@ -16,7 +16,10 @@
         .modal.active { display: flex; }
     </style>
     
-    <!-- 引入數據管理系統 -->
+    <!-- API Client -->
+    <script src="js/api-client.js"></script>
+    
+    <!-- 引入數據管理系統（保留作為回退） -->
     <script src="js/data-store.js"></script>
     <script src="js/mock-data.js"></script>
     <script src="js/admin-orders.js"></script>
@@ -338,23 +341,38 @@
                 <!-- 訂單基本資訊 -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
                     <div>
-                        <p class="text-sm text-gray-600">訂單編號</p>
+                        <p class="text-sm text-gray-600 mb-1">訂單編號</p>
                         <p class="text-lg font-semibold text-gray-800" id="modalOrderId">#2024120001</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">訂單時間</p>
-                        <p class="text-lg font-semibold text-gray-800" id="modalOrderDate">2024-12-20 10:30</p>
+                        <p class="text-sm text-gray-600 mb-1">訂單時間</p>
+                        <input type="datetime-local" id="modalOrderDateInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm">
+                        <p class="text-xs text-gray-500 mt-1" id="modalOrderDateDisplay">2024-12-20 10:30</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">訂單狀態</p>
+                        <p class="text-sm text-gray-600 mb-1">訂單狀態</p>
                         <div id="modalOrderStatus"></div>
+                        <select id="modalOrderStatusSelect" class="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm">
+                            <option value="pending">待確認</option>
+                            <option value="confirmed">已確認</option>
+                            <option value="processing">處理中</option>
+                            <option value="shipped">已出貨</option>
+                            <option value="delivered">已送達</option>
+                            <option value="completed">已完成</option>
+                            <option value="cancelled">已取消</option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- 客戶資訊 -->
                 <div>
-                    <h4 class="text-lg font-semibold text-gray-800 mb-3">客戶資訊</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center justify-between">
+                        <span>客戶資訊</span>
+                        <button onclick="toggleEditMode('customer')" id="editCustomerBtn" class="text-xs px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            <i class="fas fa-edit mr-1"></i>編輯
+                        </button>
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg" id="customerInfoDisplay">
                         <div>
                             <p class="text-sm text-gray-600">姓名</p>
                             <p class="font-medium" id="modalCustomerName">王小明</p>
@@ -368,18 +386,65 @@
                             <p class="font-medium" id="modalCustomerEmail">customer@example.com</p>
                         </div>
                     </div>
+                    <div class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg bg-gray-50" id="customerInfoEdit">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">姓名</p>
+                            <input type="text" id="modalCustomerNameInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="客戶姓名">
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">電話</p>
+                            <input type="tel" id="modalCustomerPhoneInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="聯絡電話">
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-sm text-gray-600 mb-1">Email</p>
+                            <input type="email" id="modalCustomerEmailInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="電子郵件">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 收件資訊 -->
                 <div>
-                    <h4 class="text-lg font-semibold text-gray-800 mb-3">收件資訊</h4>
-                    <div class="p-4 border border-gray-200 rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center justify-between">
+                        <span>收件資訊</span>
+                        <button onclick="toggleEditMode('recipient')" id="editRecipientBtn" class="text-xs px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            <i class="fas fa-edit mr-1"></i>編輯
+                        </button>
+                    </h4>
+                    <div class="p-4 border border-gray-200 rounded-lg" id="recipientInfoDisplay">
                         <p class="text-sm text-gray-600">收件人</p>
                         <p class="font-medium mb-2" id="modalRecipientName">王小明</p>
                         <p class="text-sm text-gray-600">收件地址</p>
                         <p class="font-medium mb-2" id="modalRecipientAddress">台北市信義區信義路五段7號</p>
                         <p class="text-sm text-gray-600">聯絡電話</p>
                         <p class="font-medium" id="modalRecipientPhone">0912-345-678</p>
+                    </div>
+                    <div class="hidden p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3" id="recipientInfoEdit">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">收件人姓名</p>
+                            <input type="text" id="modalRecipientNameInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="收件人姓名">
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">聯絡電話</p>
+                            <input type="tel" id="modalRecipientPhoneInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="聯絡電話">
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">縣市</p>
+                                <input type="text" id="modalRecipientCityInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm" placeholder="縣市">
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">區</p>
+                                <input type="text" id="modalRecipientDistrictInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm" placeholder="區">
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">郵遞區號</p>
+                                <input type="text" id="modalRecipientZipInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm" placeholder="郵遞區號">
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">詳細地址</p>
+                            <input type="text" id="modalRecipientAddressInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="街道地址">
+                        </div>
                     </div>
                 </div>
 
@@ -402,22 +467,51 @@
                 </div>
 
                 <!-- 金額計算 -->
-                <div class="p-4 bg-gray-50 rounded-lg">
-                    <div class="flex justify-between py-2">
-                        <span class="text-gray-600">商品總計</span>
-                        <span class="font-medium" id="modalSubtotal">NT$ 1,980</span>
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center justify-between">
+                        <span>金額資訊</span>
+                        <button onclick="toggleEditMode('amount')" id="editAmountBtn" class="text-xs px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            <i class="fas fa-edit mr-1"></i>編輯
+                        </button>
+                    </h4>
+                    <div class="p-4 bg-gray-50 rounded-lg" id="amountInfoDisplay">
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-600">商品總計</span>
+                            <span class="font-medium" id="modalSubtotal">NT$ 1,980</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-600">運費</span>
+                            <span class="font-medium" id="modalShipping">NT$ 80</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-600">折扣</span>
+                            <span class="font-medium text-red-600" id="modalDiscount">-NT$ 0</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-t border-gray-300 mt-2">
+                            <span class="text-lg font-semibold text-gray-800">應付金額</span>
+                            <span class="text-lg font-bold text-red-600" id="modalTotal">NT$ 2,060</span>
+                        </div>
                     </div>
-                    <div class="flex justify-between py-2">
-                        <span class="text-gray-600">運費</span>
-                        <span class="font-medium" id="modalShipping">NT$ 80</span>
-                    </div>
-                    <div class="flex justify-between py-2">
-                        <span class="text-gray-600">折扣</span>
-                        <span class="font-medium text-red-600" id="modalDiscount">-NT$ 0</span>
-                    </div>
-                    <div class="flex justify-between py-3 border-t border-gray-300 mt-2">
-                        <span class="text-lg font-semibold text-gray-800">應付金額</span>
-                        <span class="text-lg font-bold text-red-600" id="modalTotal">NT$ 2,060</span>
+                    <div class="hidden p-4 bg-gray-50 rounded-lg space-y-3" id="amountInfoEdit">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">商品總計</span>
+                            <input type="number" id="modalSubtotalInput" step="0.01" class="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-right" placeholder="0">
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">運費</span>
+                            <input type="number" id="modalShippingInput" step="0.01" class="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-right" placeholder="0">
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">折扣</span>
+                            <input type="number" id="modalDiscountInput" step="0.01" class="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-right" placeholder="0">
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-gray-300">
+                            <span class="text-lg font-semibold text-gray-800">應付金額</span>
+                            <input type="number" id="modalTotalInput" step="0.01" class="w-32 px-3 py-2 border-2 border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 text-right font-bold" placeholder="0" readonly>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2">
+                            <i class="fas fa-info-circle mr-1"></i>總金額會自動計算（商品總計 + 運費 - 折扣）
+                        </div>
                     </div>
                 </div>
 
@@ -447,12 +541,23 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <p class="text-sm text-gray-600 mb-2">交易編號</p>
-                            <input type="text" id="modalTransactionId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="輸入支付交易編號">
+                            <p class="text-sm text-gray-600 mb-2">付款金額（實際收到金額）</p>
+                            <input type="number" id="modalPaymentAmount" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="輸入實際收到的付款金額">
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">交易編號/轉帳後五碼</p>
+                            <input type="text" id="modalTransactionId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="輸入轉帳後五碼或交易編號">
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">付款備註</p>
+                            <textarea id="modalPaymentNotes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 resize-none" placeholder="例如：用戶於 12/20 完成轉帳，已核對無誤"></textarea>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <button onclick="confirmPayment()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm">
-                                <i class="fas fa-check mr-1"></i>確認付款
+                            <button onclick="savePaymentInfo()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm">
+                                <i class="fas fa-save mr-1"></i>儲存付款資訊
+                            </button>
+                            <button onclick="confirmPayment()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+                                <i class="fas fa-check mr-1"></i>確認已付款
                             </button>
                             <button onclick="processRefund()" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition text-sm">
                                 <i class="fas fa-undo mr-1"></i>處理退款
@@ -553,6 +658,24 @@
                         <button onclick="updateOrderNotes()" class="mt-3 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm">
                             <i class="fas fa-save mr-1"></i>儲存備註
                         </button>
+                    </div>
+                </div>
+
+                <!-- 儲存所有變更按鈕 -->
+                <div class="sticky bottom-0 bg-white border-t border-gray-200 p-4 -mx-6 -mb-6 rounded-b-xl">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-gray-600">
+                            <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                            所有變更將同步到前台會員中心
+                        </p>
+                        <div class="flex space-x-3">
+                            <button onclick="closeOrderDetail()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                                取消
+                            </button>
+                            <button onclick="saveAllOrderChanges()" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-semibold">
+                                <i class="fas fa-save mr-2"></i>儲存所有變更
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
@@ -791,23 +914,82 @@
             { id: '#2024120001', date: '2024-12-19 10:30', customer: '周怡君', phone: '0956-789-012', products: '營養主餐罐 x2', amount: 1198, payment: 'paid', delivery: 'delivered', email: 'chou@example.com', address: '嘉義市東區中山路300號', courier: '黑貓宅急便', tracking: '888999000', items: [{name: '營養主餐罐', price: 599, qty: 2, subtotal: 1198}], subtotal: 1198, shipping: 100, discount: 0, total: 1298, notes: '訂閱會員' },
         ];
 
-        // 渲染訂單列表
-        function renderOrders(filteredOrders = orders) {
+        // 渲染訂單列表（從 API 載入）
+        async function renderOrders(filteredOrders = null) {
+            // 如果沒有提供過濾後的訂單，從 API 載入
+            if (!filteredOrders) {
+                try {
+                    if (window.ApiClient) {
+                        const response = await window.ApiClient.getAdminOrders({ limit: 1000 });
+                        if (response.success && response.data && response.data.orders) {
+                            filteredOrders = response.data.orders;
+                        } else {
+                            filteredOrders = orders; // 回退到測試數據
+                        }
+                    } else {
+                        filteredOrders = orders; // 回退到測試數據
+                    }
+                } catch (error) {
+                    console.error('載入訂單失敗:', error);
+                    filteredOrders = orders; // 回退到測試數據
+                }
+            }
+            
             const tbody = document.getElementById('ordersTableBody');
+            if (!tbody) return;
+            
+            // 顯示載入中
+            tbody.innerHTML = '<tr><td colspan="10" class="px-6 py-12 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl mb-4"></i><p>載入訂單中...</p></td></tr>';
+
+            if (!filteredOrders || filteredOrders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="px-6 py-12 text-center text-gray-500">
+                            <i class="fas fa-shopping-cart text-4xl mb-4 text-gray-300"></i>
+                            <p class="text-lg">目前沒有訂單資料</p>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('totalOrders').textContent = '0';
+                document.getElementById('totalCount').textContent = '0';
+                return;
+            }
+            
             tbody.innerHTML = '';
 
             filteredOrders.forEach(order => {
-                const paymentBadge = getPaymentBadge(order.payment);
-                const deliveryBadge = getDeliveryBadge(order.delivery);
+                // 適配 API 資料結構
+                const orderId = order.id || '';
+                const orderDate = order.orderDate || order.createdAt || Date.now();
+                const dateStr = new Date(orderDate).toLocaleString('zh-TW', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                const customerName = order.receiverName || order.receiver?.name || '未知';
+                const customerPhone = order.receiverPhone || order.receiver?.phone || '';
+                const items = order.items || [];
+                const products = items.length > 0 ? 
+                    items.slice(0, 2).map(item => `${item.name} x${item.quantity || 1}`).join(', ') + (items.length > 2 ? '...' : '') :
+                    '無商品';
+                const total = order.total || 0;
+                const paymentStatus = order.paymentStatus || order.payment || 'pending';
+                const deliveryStatus = order.deliveryStatus || order.delivery || 'preparing';
+                const shippingCourier = order.shippingCourier || order.courier || '';
+                const trackingNumber = order.shippingCourier || order.tracking || '';
+                const paymentBadge = getPaymentBadge(paymentStatus);
+                const deliveryBadge = getDeliveryBadge(deliveryStatus);
                 
                 // 顯示物流方式（簡短版）
-                let shippingLabel = order.courier || '未設定';
+                let shippingLabel = shippingCourier || '未設定';
                 if (shippingLabel.includes('黑貓')) shippingLabel = '🚚 黑貓';
                 else if (shippingLabel.includes('新竹')) shippingLabel = '🚚 新竹';
                 else if (shippingLabel.includes('嘉里')) shippingLabel = '🚚 嘉里';
                 else if (shippingLabel.includes('宅配通')) shippingLabel = '🚚 宅配通';
                 else if (shippingLabel.includes('順豐')) shippingLabel = '🚚 順豐';
-                else if (shippingLabel.includes('7-11')) shippingLabel = '🏪 7-11';
+                else if (shippingLabel.includes('7-11') || shippingLabel.includes('711')) shippingLabel = '🏪 7-11';
                 else if (shippingLabel.includes('全家')) shippingLabel = '🏪 全家';
                 else if (shippingLabel.includes('萊爾富')) shippingLabel = '🏪 萊爾富';
                 else if (shippingLabel.includes('OK')) shippingLabel = '🏪 OK';
@@ -815,29 +997,29 @@
                 const row = `
                     <tr class="table-row">
                         <td class="px-6 py-4">
-                            <input type="checkbox" class="rounded">
+                            <input type="checkbox" class="rounded" value="${orderId}">
                         </td>
                         <td class="px-6 py-4">
-                            <span class="font-semibold text-blue-600 cursor-pointer hover:text-blue-800" onclick='viewOrderDetail(${JSON.stringify(order)})'>${order.id}</span>
+                            <span class="font-semibold text-blue-600 cursor-pointer hover:text-blue-800" onclick='viewOrderDetail("${orderId}")'>${orderId.substring(0, 12)}</span>
                         </td>
-                        <td class="px-6 py-4 text-gray-700 text-sm">${order.date}</td>
+                        <td class="px-6 py-4 text-gray-700 text-sm">${dateStr}</td>
                         <td class="px-6 py-4">
-                            <div class="font-medium text-gray-800">${order.customer}</div>
-                            <div class="text-sm text-gray-500">${order.phone}</div>
+                            <div class="font-medium text-gray-800">${customerName}</div>
+                            <div class="text-sm text-gray-500">${customerPhone}</div>
                         </td>
-                        <td class="px-6 py-4 text-gray-700 text-sm">${order.products}</td>
+                        <td class="px-6 py-4 text-gray-700 text-sm">${products}</td>
                         <td class="px-6 py-4">
                             <div class="text-xs text-gray-600 mb-1">${shippingLabel}</div>
-                            ${order.tracking ? `<div class="text-xs text-blue-600"><i class="fas fa-hashtag"></i> ${order.tracking}</div>` : '<div class="text-xs text-gray-400">未設定</div>'}
+                            ${trackingNumber ? `<div class="text-xs text-blue-600"><i class="fas fa-hashtag"></i> ${trackingNumber.substring(0, 10)}</div>` : '<div class="text-xs text-gray-400">未設定</div>'}
                         </td>
                         <td class="px-6 py-4">
-                            <span class="font-semibold text-gray-800">NT$ ${order.amount}</span>
+                            <span class="font-semibold text-gray-800">NT$ ${total.toLocaleString()}</span>
                         </td>
                         <td class="px-6 py-4">${paymentBadge}</td>
                         <td class="px-6 py-4">${deliveryBadge}</td>
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center space-x-2">
-                                <button onclick='viewOrderDetail(${JSON.stringify(order)})' class="text-blue-600 hover:text-blue-800" title="查看詳情">
+                                <button onclick='viewOrderDetail("${orderId}")' class="text-blue-600 hover:text-blue-800" title="查看詳情">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <button onclick="printOrder()" class="text-gray-600 hover:text-gray-800" title="列印">
@@ -850,8 +1032,12 @@
                 tbody.innerHTML += row;
             });
 
-            document.getElementById('totalOrders').textContent = filteredOrders.length;
-            document.getElementById('totalCount').textContent = filteredOrders.length;
+            if (document.getElementById('totalOrders')) {
+                document.getElementById('totalOrders').textContent = filteredOrders.length;
+            }
+            if (document.getElementById('totalCount')) {
+                document.getElementById('totalCount').textContent = filteredOrders.length;
+            }
         }
 
         // 付款狀態標籤
@@ -879,70 +1065,229 @@
         // 當前查看的訂單
         let currentOrder = null;
 
-        // 查看訂單詳情
-        function viewOrderDetail(order) {
+        // 查看訂單詳情（適配 API 資料結構）
+        async function viewOrderDetail(orderOrOrderId) {
+            let order = null;
+            
+            // 如果是 ID，從 API 獲取
+            if (typeof orderOrOrderId === 'string') {
+                try {
+                    if (window.ApiClient) {
+                        const response = await window.ApiClient.getAdminOrders();
+                        if (response.success && response.data.orders) {
+                            order = response.data.orders.find(o => o.id === orderOrOrderId);
+                        }
+                    }
+                    if (!order) {
+                        // 回退到本地數據
+                        order = orders.find(o => o.id === orderOrOrderId);
+                    }
+                } catch (error) {
+                    console.error('載入訂單詳情失敗:', error);
+                    // 回退到本地數據
+                    order = orders.find(o => o.id === orderOrOrderId);
+                }
+            } else {
+                order = orderOrOrderId;
+            }
+            
+            if (!order) {
+                alert('找不到該訂單');
+                return;
+            }
+            
             currentOrder = order; // 保存當前訂單
-            document.getElementById('modalOrderId').textContent = order.id;
-            document.getElementById('modalOrderDate').textContent = order.date;
-            document.getElementById('modalCustomerName').textContent = order.customer;
-            document.getElementById('modalCustomerPhone').textContent = order.phone;
-            document.getElementById('modalCustomerEmail').textContent = order.email;
-            document.getElementById('modalRecipientName').textContent = order.customer;
-            document.getElementById('modalRecipientAddress').textContent = order.address;
-            document.getElementById('modalRecipientPhone').textContent = order.phone;
+            
+            // 適配不同的資料結構
+            const orderId = order.id || '';
+            const orderDate = order.orderDate || order.createdAt || order.date || Date.now();
+            const receiverName = order.receiverName || order.receiver?.name || order.customer || '';
+            const receiverPhone = order.receiverPhone || order.receiver?.phone || order.phone || '';
+            const receiverEmail = order.receiverEmail || order.receiver?.email || order.email || '';
+            const shippingAddress = order.shippingAddress || order.address || '';
+            const shippingCity = order.shippingCity || '';
+            const shippingDistrict = order.shippingDistrict || '';
+            const shippingZipCode = order.shippingZipCode || '';
+            const fullAddress = `${shippingCity}${shippingDistrict}${shippingAddress}` || shippingAddress;
+            
+            // 設置基本資訊
+            document.getElementById('modalOrderId').textContent = orderId;
+            const dateObj = new Date(orderDate);
+            const dateStr = dateObj.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm
+            document.getElementById('modalOrderDateInput').value = dateStr;
+            document.getElementById('modalOrderDateDisplay').textContent = dateObj.toLocaleString('zh-TW');
+            document.getElementById('modalOrderStatusSelect').value = order.status || 'pending';
+            
+            // 設置客戶資訊（顯示）
+            document.getElementById('modalCustomerName').textContent = receiverName;
+            document.getElementById('modalCustomerPhone').textContent = receiverPhone;
+            document.getElementById('modalCustomerEmail').textContent = receiverEmail;
+            
+            // 設置客戶資訊（編輯）
+            document.getElementById('modalCustomerNameInput').value = receiverName;
+            document.getElementById('modalCustomerPhoneInput').value = receiverPhone;
+            document.getElementById('modalCustomerEmailInput').value = receiverEmail;
+            
+            // 設置收件資訊（顯示）
+            document.getElementById('modalRecipientName').textContent = receiverName;
+            document.getElementById('modalRecipientAddress').textContent = fullAddress;
+            document.getElementById('modalRecipientPhone').textContent = receiverPhone;
+            
+            // 設置收件資訊（編輯）
+            document.getElementById('modalRecipientNameInput').value = receiverName;
+            document.getElementById('modalRecipientPhoneInput').value = receiverPhone;
+            document.getElementById('modalRecipientCityInput').value = shippingCity;
+            document.getElementById('modalRecipientDistrictInput').value = shippingDistrict;
+            document.getElementById('modalRecipientZipInput').value = shippingZipCode;
+            document.getElementById('modalRecipientAddressInput').value = shippingAddress;
             
             // 物流資訊
-            document.getElementById('modalCourier').value = order.courier || '';
-            document.getElementById('modalDeliveryStatus').value = order.delivery || 'preparing';
+            const shippingCourier = order.shippingCourier || order.courier || '';
+            const shippingMethod = order.shippingMethod || order.shipping?.method || '';
+            const deliveryStatus = order.deliveryStatus || order.delivery || 'preparing';
+            
+            document.getElementById('modalCourier').value = shippingCourier;
+            document.getElementById('modalDeliveryStatus').value = deliveryStatus;
             
             // 根據物流方式顯示對應欄位
-            const isStorePickup = order.courier && order.courier.includes('超商取貨');
+            const isStorePickup = shippingCourier.includes('超商取貨') || shippingMethod.includes('store');
             if (isStorePickup) {
                 document.getElementById('homeDeliveryInfo').classList.add('hidden');
                 document.getElementById('storePickupInfo').classList.remove('hidden');
-                document.getElementById('modalStoreName').value = order.storeName || '';
-                document.getElementById('modalStoreAddress').value = order.storeAddress || '';
-                document.getElementById('modalStoreCode').value = order.storeCode || '';
-                document.getElementById('modalPickupCode').value = order.pickupCode || order.tracking || '';
+                document.getElementById('modalStoreName').value = order.shippingStoreName || order.storeName || '';
+                document.getElementById('modalStoreAddress').value = order.shippingStoreAddress || order.storeAddress || '';
+                document.getElementById('modalStoreCode').value = order.shippingStoreId || order.storeCode || '';
+                document.getElementById('modalPickupCode').value = order.shippingTrackingNumber || order.pickupCode || order.tracking || '';
             } else {
                 document.getElementById('homeDeliveryInfo').classList.remove('hidden');
                 document.getElementById('storePickupInfo').classList.add('hidden');
-                document.getElementById('modalDeliveryAddress').value = order.address || '';
-                document.getElementById('modalTrackingNumber').value = order.tracking || '';
+                document.getElementById('modalDeliveryAddress').value = fullAddress || shippingAddress;
+                document.getElementById('modalTrackingNumber').value = order.shippingCourier || order.tracking || '';
             }
             
+            // 備註
             document.getElementById('modalNotes').value = order.notes || '無特別備註';
-            document.getElementById('modalSubtotal').textContent = `NT$ ${order.subtotal}`;
-            document.getElementById('modalShipping').textContent = `NT$ ${order.shipping}`;
-            document.getElementById('modalDiscount').textContent = order.discount > 0 ? `-NT$ ${order.discount}` : 'NT$ 0';
-            document.getElementById('modalTotal').textContent = `NT$ ${order.total}`;
+            
+            // 金額資訊（顯示）
+            const subtotal = order.subtotal || 0;
+            const shippingFee = order.shippingFee || order.shipping || 0;
+            const discount = order.discount || 0;
+            const total = order.total || (subtotal + shippingFee - discount);
+            
+            document.getElementById('modalSubtotal').textContent = `NT$ ${subtotal.toLocaleString()}`;
+            document.getElementById('modalShipping').textContent = `NT$ ${shippingFee.toLocaleString()}`;
+            document.getElementById('modalDiscount').textContent = discount > 0 ? `-NT$ ${discount.toLocaleString()}` : 'NT$ 0';
+            document.getElementById('modalTotal').textContent = `NT$ ${total.toLocaleString()}`;
+            
+            // 金額資訊（編輯）
+            document.getElementById('modalSubtotalInput').value = subtotal;
+            document.getElementById('modalShippingInput').value = shippingFee;
+            document.getElementById('modalDiscountInput').value = discount;
+            document.getElementById('modalTotalInput').value = total;
             
             // 支付信息
-            document.getElementById('modalPaymentStatus').value = order.payment;
-            document.getElementById('modalPaymentMethod').value = order.paymentMethod || 'credit_card';
+            const paymentStatus = order.paymentStatus || order.payment || 'pending';
+            const paymentMethod = order.paymentMethod || order.payment?.method || 'atm';
+            document.getElementById('modalPaymentStatus').value = paymentStatus;
+            document.getElementById('modalPaymentMethod').value = paymentMethod;
             document.getElementById('modalTransactionId').value = order.transactionId || '';
+            document.getElementById('modalPaymentAmount').value = paymentStatus === 'paid' ? total : '';
+            
+            // 計算總金額（監聽輸入變化）
+            ['modalSubtotalInput', 'modalShippingInput', 'modalDiscountInput'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', calculateTotal);
+                }
+            });
 
             // 狀態標籤
-            const paymentBadge = getPaymentBadge(order.payment);
-            const deliveryBadge = getDeliveryBadge(order.delivery);
+            const paymentBadge = getPaymentBadge(paymentStatus);
+            const deliveryBadge = getDeliveryBadge(deliveryStatus);
             document.getElementById('modalOrderStatus').innerHTML = `${paymentBadge} ${deliveryBadge}`;
 
             // 商品列表
             const productList = document.getElementById('modalProductList');
             productList.innerHTML = '';
-            order.items.forEach(item => {
-                const row = `
-                    <tr>
-                        <td class="px-4 py-3 text-gray-800">${item.name}</td>
-                        <td class="px-4 py-3 text-right text-gray-700">NT$ ${item.price}</td>
-                        <td class="px-4 py-3 text-center text-gray-700">${item.qty}</td>
-                        <td class="px-4 py-3 text-right font-medium text-gray-800">NT$ ${item.subtotal}</td>
-                    </tr>
-                `;
-                productList.innerHTML += row;
-            });
+            const items = order.items || [];
+            if (items.length === 0) {
+                productList.innerHTML = '<tr><td colspan="4" class="px-4 py-3 text-center text-gray-500">無商品資訊</td></tr>';
+            } else {
+                items.forEach(item => {
+                    const itemPrice = item.price || 0;
+                    const itemQuantity = item.quantity || item.qty || 1;
+                    const itemSubtotal = itemPrice * itemQuantity;
+                    const row = `
+                        <tr>
+                            <td class="px-4 py-3 text-gray-800">${item.name || '商品'}</td>
+                            <td class="px-4 py-3 text-right text-gray-700">NT$ ${itemPrice.toLocaleString()}</td>
+                            <td class="px-4 py-3 text-center text-gray-700">${itemQuantity}</td>
+                            <td class="px-4 py-3 text-right font-medium text-gray-800">NT$ ${itemSubtotal.toLocaleString()}</td>
+                        </tr>
+                    `;
+                    productList.innerHTML += row;
+                });
+            }
+
+            // 重置編輯模式
+            resetEditModes();
 
             document.getElementById('orderDetailModal').classList.add('active');
+        }
+
+        // 計算總金額
+        function calculateTotal() {
+            const subtotal = parseFloat(document.getElementById('modalSubtotalInput').value) || 0;
+            const shipping = parseFloat(document.getElementById('modalShippingInput').value) || 0;
+            const discount = parseFloat(document.getElementById('modalDiscountInput').value) || 0;
+            const total = subtotal + shipping - discount;
+            document.getElementById('modalTotalInput').value = total.toFixed(2);
+            
+            // 更新顯示
+            document.getElementById('modalSubtotal').textContent = `NT$ ${subtotal.toLocaleString()}`;
+            document.getElementById('modalShipping').textContent = `NT$ ${shipping.toLocaleString()}`;
+            document.getElementById('modalDiscount').textContent = discount > 0 ? `-NT$ ${discount.toLocaleString()}` : 'NT$ 0';
+            document.getElementById('modalTotal').textContent = `NT$ ${total.toLocaleString()}`;
+        }
+
+        // 切換編輯模式
+        function toggleEditMode(mode) {
+            const displayEl = document.getElementById(`${mode}InfoDisplay`);
+            const editEl = document.getElementById(`${mode}InfoEdit`);
+            const btn = document.getElementById(`edit${mode.charAt(0).toUpperCase() + mode.slice(1)}Btn`);
+            
+            if (displayEl && editEl) {
+                const isHidden = editEl.classList.contains('hidden');
+                displayEl.classList.toggle('hidden', isHidden);
+                editEl.classList.toggle('hidden', !isHidden);
+                
+                if (btn) {
+                    btn.textContent = isHidden ? 
+                        '<i class="fas fa-times mr-1"></i>取消' : 
+                        '<i class="fas fa-edit mr-1"></i>編輯';
+                    btn.classList.toggle('bg-red-500', isHidden);
+                    btn.classList.toggle('bg-blue-500', !isHidden);
+                }
+            }
+        }
+
+        // 重置所有編輯模式
+        function resetEditModes() {
+            ['customer', 'recipient', 'amount'].forEach(mode => {
+                const displayEl = document.getElementById(`${mode}InfoDisplay`);
+                const editEl = document.getElementById(`${mode}InfoEdit`);
+                const btn = document.getElementById(`edit${mode.charAt(0).toUpperCase() + mode.slice(1)}Btn`);
+                
+                if (displayEl && editEl) {
+                    displayEl.classList.remove('hidden');
+                    editEl.classList.add('hidden');
+                }
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-edit mr-1"></i>編輯';
+                    btn.classList.remove('bg-red-500');
+                    btn.classList.add('bg-blue-500');
+                }
+            });
         }
 
         // 關閉訂單詳情
@@ -1021,59 +1366,59 @@
         }
 
         // 更新物流資訊
-        function updateShippingInfo() {
-            if (currentOrder) {
-                const courier = document.getElementById('modalCourier').value;
-                const orderIndex = orders.findIndex(o => o.id === currentOrder.id);
+        async function updateShippingInfo() {
+            if (!currentOrder) {
+                alert('請先選擇訂單');
+                return;
+            }
+            
+            const courier = document.getElementById('modalCourier').value;
+            const deliveryStatus = document.getElementById('modalDeliveryStatus').value;
+            
+            try {
+                const updateData = {
+                    shippingCourier: courier,
+                    deliveryStatus: deliveryStatus
+                };
                 
-                if (orderIndex !== -1) {
-                    orders[orderIndex].courier = courier;
-                    
-                    // 根據物流方式更新不同資訊
-                    if (courier.includes('超商取貨')) {
-                        // 超商取貨資訊
-                        orders[orderIndex].storeName = document.getElementById('modalStoreName').value;
-                        orders[orderIndex].storeAddress = document.getElementById('modalStoreAddress').value;
-                        orders[orderIndex].storeCode = document.getElementById('modalStoreCode').value;
-                        orders[orderIndex].pickupCode = document.getElementById('modalPickupCode').value;
-                        orders[orderIndex].tracking = document.getElementById('modalPickupCode').value; // 使用取貨編號作為追蹤號
-                        
-                        alert(`✅ 物流資訊已更新\n\n訂單編號: ${currentOrder.id}\n物流方式: ${courier}\n取貨門市: ${orders[orderIndex].storeName}\n取貨編號: ${orders[orderIndex].pickupCode || '未提供'}`);
-                    } else {
-                        // 宅配到府資訊
-                        orders[orderIndex].deliveryAddress = document.getElementById('modalDeliveryAddress').value;
-                        orders[orderIndex].tracking = document.getElementById('modalTrackingNumber').value;
-                        
-                        alert(`✅ 物流資訊已更新\n\n訂單編號: ${currentOrder.id}\n物流方式: ${courier}\n配送地址: ${orders[orderIndex].deliveryAddress}\n追蹤號碼: ${orders[orderIndex].tracking || '未提供'}`);
-                    }
-                    
-                    renderOrders();
+                if (courier.includes('超商取貨')) {
+                    updateData.shippingMethod = 'store_pickup';
+                    updateData.shippingStoreName = document.getElementById('modalStoreName').value;
+                    updateData.shippingStoreAddress = document.getElementById('modalStoreAddress').value;
+                    updateData.shippingStoreId = document.getElementById('modalStoreCode').value;
+                } else {
+                    updateData.shippingMethod = 'home_delivery';
+                    updateData.shippingAddress = document.getElementById('modalDeliveryAddress').value;
                 }
+                
+                if (window.ApiClient) {
+                    const response = await window.ApiClient.updateOrder(currentOrder.id, updateData);
+                    if (response.success) {
+                        showNotification('物流資訊已更新', 'success');
+                        await viewOrderDetail(currentOrder.id);
+                        await renderOrders();
+                    } else {
+                        throw new Error(response.message || '更新失敗');
+                    }
+                } else {
+                    throw new Error('API 客戶端未載入');
+                }
+            } catch (error) {
+                console.error('更新物流資訊失敗:', error);
+                alert(`更新失敗：${error.message}`);
             }
         }
 
-        // 更新配送狀態
+        // 更新配送狀態（僅更新顯示）
         function updateDeliveryStatus() {
             if (currentOrder) {
                 const deliveryStatus = document.getElementById('modalDeliveryStatus').value;
-                const orderIndex = orders.findIndex(o => o.id === currentOrder.id);
-                if (orderIndex !== -1) {
-                    orders[orderIndex].delivery = deliveryStatus;
-                    // 更新顯示
-                    const paymentBadge = getPaymentBadge(orders[orderIndex].payment);
-                    const deliveryBadge = getDeliveryBadge(deliveryStatus);
-                    document.getElementById('modalOrderStatus').innerHTML = `${paymentBadge} ${deliveryBadge}`;
-                    renderOrders();
-                    
-                    const statusText = {
-                        'preparing': '待出貨',
-                        'shipping': '配送中',
-                        'arrived': '已到店',
-                        'delivered': '已送達/已取貨',
-                        'cancelled': '已取消'
-                    };
-                    alert(`✅ 配送狀態已更新\n\n訂單編號: ${currentOrder.id}\n狀態: ${statusText[deliveryStatus]}`);
-                }
+                const paymentStatus = document.getElementById('modalPaymentStatus').value || currentOrder.paymentStatus || 'pending';
+                
+                // 更新顯示
+                const paymentBadge = getPaymentBadge(paymentStatus);
+                const deliveryBadge = getDeliveryBadge(deliveryStatus);
+                document.getElementById('modalOrderStatus').innerHTML = `${paymentBadge} ${deliveryBadge}`;
             }
         }
 
@@ -1198,56 +1543,40 @@
             });
         });
 
-        // 更新支付狀態
-        function updatePaymentStatus() {
-            if (currentOrder) {
-                const paymentStatus = document.getElementById('modalPaymentStatus').value;
-                const orderIndex = orders.findIndex(o => o.id === currentOrder.id);
-                if (orderIndex !== -1) {
-                    orders[orderIndex].payment = paymentStatus;
-                    // 更新顯示
-                    const paymentBadge = getPaymentBadge(paymentStatus);
-                    const deliveryBadge = getDeliveryBadge(orders[orderIndex].delivery);
-                    document.getElementById('modalOrderStatus').innerHTML = `${paymentBadge} ${deliveryBadge}`;
-                    renderOrders();
-                }
-            }
-        }
-
-        // 確認付款
-        function confirmPayment() {
-            if (currentOrder) {
-                const transactionId = document.getElementById('modalTransactionId').value;
-                const paymentMethod = document.getElementById('modalPaymentMethod').value;
-                
-                const orderIndex = orders.findIndex(o => o.id === currentOrder.id);
-                if (orderIndex !== -1) {
-                    orders[orderIndex].payment = 'paid';
-                    orders[orderIndex].transactionId = transactionId;
-                    orders[orderIndex].paymentMethod = paymentMethod;
-                    
-                    alert(`✅ 付款已確認\n\n訂單編號: ${currentOrder.id}\n付款方式: ${getPaymentMethodName(paymentMethod)}\n交易編號: ${transactionId || '無'}`);
-                    
-                    // 更新顯示
-                    document.getElementById('modalPaymentStatus').value = 'paid';
-                    updatePaymentStatus();
-                }
-            }
-        }
-
         // 處理退款
-        function processRefund() {
-            if (currentOrder && confirm('確定要處理退款嗎？')) {
-                const orderIndex = orders.findIndex(o => o.id === currentOrder.id);
-                if (orderIndex !== -1) {
-                    orders[orderIndex].payment = 'refunded';
-                    orders[orderIndex].delivery = 'cancelled';
-                    
-                    alert(`✅ 退款已處理\n\n訂單編號: ${currentOrder.id}\n退款金額: NT$ ${currentOrder.total}`);
-                    
-                    renderOrders();
-                    closeOrderDetail();
+        async function processRefund() {
+            if (!currentOrder) {
+                alert('請先選擇訂單');
+                return;
+            }
+            
+            if (!confirm('確定要處理退款嗎？此操作無法復原。')) {
+                return;
+            }
+            
+            try {
+                const updateData = {
+                    paymentStatus: 'refunded',
+                    status: 'cancelled',
+                    deliveryStatus: 'cancelled'
+                };
+                
+                if (window.ApiClient) {
+                    const response = await window.ApiClient.updateOrder(currentOrder.id, updateData);
+                    if (response.success) {
+                        showNotification('退款已處理', 'success');
+                        await viewOrderDetail(currentOrder.id);
+                        await renderOrders();
+                        closeOrderDetail();
+                    } else {
+                        throw new Error(response.message || '處理失敗');
+                    }
+                } else {
+                    throw new Error('API 客戶端未載入');
                 }
+            } catch (error) {
+                console.error('處理退款失敗:', error);
+                alert(`處理失敗：${error.message}`);
             }
         }
 
@@ -1264,33 +1593,56 @@
             return methods[method] || method;
         }
 
-        // 套用篩選
-        function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const paymentStatus = document.getElementById('paymentStatus').value;
-            const deliveryStatus = document.getElementById('deliveryStatus').value;
+        // 套用篩選（異步版本，從 API 載入後篩選）
+        async function applyFilters() {
+            const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            const paymentStatus = document.getElementById('paymentStatus')?.value || '';
+            const deliveryStatus = document.getElementById('deliveryStatus')?.value || '';
 
-            let filtered = orders.filter(order => {
+            // 先從 API 載入所有訂單
+            let allOrders = [];
+            try {
+                if (window.ApiClient) {
+                    const response = await window.ApiClient.getAdminOrders({ limit: 1000 });
+                    if (response.success && response.data && response.data.orders) {
+                        allOrders = response.data.orders;
+                    }
+                }
+            } catch (error) {
+                console.error('載入訂單失敗:', error);
+                allOrders = orders; // 回退到測試數據
+            }
+
+            // 客戶端篩選
+            const filtered = allOrders.filter(order => {
+                const orderId = (order.id || '').toLowerCase();
+                const receiverName = (order.receiverName || order.receiver?.name || '').toLowerCase();
+                const receiverPhone = (order.receiverPhone || order.receiver?.phone || '');
+                
                 const matchSearch = !search || 
-                    order.id.toLowerCase().includes(search) ||
-                    order.customer.toLowerCase().includes(search) ||
-                    order.phone.includes(search);
-                const matchPayment = !paymentStatus || order.payment === paymentStatus;
-                const matchDelivery = !deliveryStatus || order.delivery === deliveryStatus;
+                    orderId.includes(search) ||
+                    receiverName.includes(search) ||
+                    receiverPhone.includes(search);
+                
+                const orderPaymentStatus = order.paymentStatus || order.payment || 'pending';
+                const orderDeliveryStatus = order.deliveryStatus || order.delivery || 'preparing';
+                
+                const matchPayment = !paymentStatus || orderPaymentStatus === paymentStatus;
+                const matchDelivery = !deliveryStatus || orderDeliveryStatus === deliveryStatus;
 
                 return matchSearch && matchPayment && matchDelivery;
             });
 
-            renderOrders(filtered);
+            await renderOrders(filtered);
         }
 
         // 重置篩選
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('paymentStatus').value = '';
-            document.getElementById('deliveryStatus').value = '';
-            document.getElementById('dateRange').value = '';
-            renderOrders();
+        async function resetFilters() {
+            if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+            if (document.getElementById('paymentStatus')) document.getElementById('paymentStatus').value = '';
+            if (document.getElementById('deliveryStatus')) document.getElementById('deliveryStatus').value = '';
+            if (document.getElementById('dateRange')) document.getElementById('dateRange').value = '';
+            await renderOrders();
         }
 
         // 統計卡片點擊功能
@@ -1319,19 +1671,182 @@
         }
 
         // 更新訂單備註
-        function updateOrderNotes() {
-            if (currentOrder) {
-                const notes = document.getElementById('modalNotes').value.trim();
-                const orderIndex = orders.findIndex(o => o.id === currentOrder.id);
-                
-                if (orderIndex !== -1) {
-                    orders[orderIndex].notes = notes || '無特別備註';
-                    currentOrder.notes = notes || '無特別備註';
-                    
-                    alert(`✅ 訂單備註已更新\n\n訂單編號: ${currentOrder.id}\n備註內容: ${notes || '無特別備註'}`);
-                    renderOrders();
-                }
+        async function updateOrderNotes() {
+            if (!currentOrder) {
+                alert('請先選擇訂單');
+                return;
             }
+            
+            const notes = document.getElementById('modalNotes').value.trim();
+            
+            try {
+                const updateData = {
+                    notes: notes || ''
+                };
+                
+                if (window.ApiClient) {
+                    const response = await window.ApiClient.updateOrder(currentOrder.id, updateData);
+                    if (response.success) {
+                        showNotification('備註已更新', 'success');
+                        currentOrder.notes = notes;
+                        // 重新載入訂單列表
+                        await renderOrders();
+                    } else {
+                        throw new Error(response.message || '更新失敗');
+                    }
+                } else {
+                    throw new Error('API 客戶端未載入');
+                }
+            } catch (error) {
+                console.error('更新備註失敗:', error);
+                alert(`更新失敗：${error.message}`);
+            }
+        }
+
+        // 儲存所有訂單變更
+        async function saveAllOrderChanges() {
+            if (!currentOrder) {
+                alert('請先選擇訂單');
+                return;
+            }
+            
+            if (!confirm('確定要儲存所有變更嗎？變更將同步到前台會員中心。')) {
+                return;
+            }
+            
+            try {
+                // 收集所有變更
+                const updateData = {};
+                
+                // 訂單日期
+                const orderDateInput = document.getElementById('modalOrderDateInput');
+                if (orderDateInput && orderDateInput.value) {
+                    const dateValue = new Date(orderDateInput.value).getTime();
+                    updateData.orderDate = dateValue;
+                }
+                
+                // 訂單狀態
+                const orderStatus = document.getElementById('modalOrderStatusSelect').value;
+                if (orderStatus) {
+                    updateData.status = orderStatus;
+                }
+                
+                // 客戶資訊（如果編輯模式打開）
+                const customerEditEl = document.getElementById('customerInfoEdit');
+                if (customerEditEl && !customerEditEl.classList.contains('hidden')) {
+                    updateData.receiverName = document.getElementById('modalCustomerNameInput').value;
+                    updateData.receiverPhone = document.getElementById('modalCustomerPhoneInput').value;
+                    updateData.receiverEmail = document.getElementById('modalCustomerEmailInput').value;
+                }
+                
+                // 收件資訊（如果編輯模式打開）
+                const recipientEditEl = document.getElementById('recipientInfoEdit');
+                if (recipientEditEl && !recipientEditEl.classList.contains('hidden')) {
+                    updateData.receiverName = document.getElementById('modalRecipientNameInput').value || updateData.receiverName;
+                    updateData.receiverPhone = document.getElementById('modalRecipientPhoneInput').value || updateData.receiverPhone;
+                    updateData.shippingCity = document.getElementById('modalRecipientCityInput').value;
+                    updateData.shippingDistrict = document.getElementById('modalRecipientDistrictInput').value;
+                    updateData.shippingZipCode = document.getElementById('modalRecipientZipInput').value;
+                    updateData.shippingAddress = document.getElementById('modalRecipientAddressInput').value;
+                }
+                
+                // 金額資訊（如果編輯模式打開）
+                const amountEditEl = document.getElementById('amountInfoEdit');
+                if (amountEditEl && !amountEditEl.classList.contains('hidden')) {
+                    updateData.subtotal = parseFloat(document.getElementById('modalSubtotalInput').value) || 0;
+                    updateData.shippingFee = parseFloat(document.getElementById('modalShippingInput').value) || 0;
+                    updateData.discount = parseFloat(document.getElementById('modalDiscountInput').value) || 0;
+                    updateData.total = parseFloat(document.getElementById('modalTotalInput').value) || 0;
+                }
+                
+                // 付款資訊
+                updateData.paymentStatus = document.getElementById('modalPaymentStatus').value;
+                updateData.paymentMethod = document.getElementById('modalPaymentMethod').value;
+                
+                // 配送狀態
+                updateData.deliveryStatus = document.getElementById('modalDeliveryStatus').value;
+                
+                // 物流資訊
+                const courier = document.getElementById('modalCourier').value;
+                if (courier) {
+                    updateData.shippingCourier = courier;
+                    
+                    if (courier.includes('超商取貨')) {
+                        updateData.shippingMethod = 'store_pickup';
+                        updateData.shippingStoreName = document.getElementById('modalStoreName').value;
+                        updateData.shippingStoreAddress = document.getElementById('modalStoreAddress').value;
+                        updateData.shippingStoreId = document.getElementById('modalStoreCode').value;
+                    } else {
+                        updateData.shippingMethod = 'home_delivery';
+                        const address = document.getElementById('modalDeliveryAddress').value;
+                        if (address) {
+                            // 解析地址（簡單處理）
+                            updateData.shippingAddress = address;
+                        }
+                        updateData.shippingCourier = document.getElementById('modalTrackingNumber').value || courier;
+                    }
+                }
+                
+                // 備註
+                const notes = document.getElementById('modalNotes').value.trim();
+                if (notes) {
+                    updateData.notes = notes;
+                }
+                
+                // 交易編號（儲存在備註中，或可以擴展後端欄位）
+                const transactionId = document.getElementById('modalTransactionId').value;
+                if (transactionId) {
+                    updateData.notes = (updateData.notes || currentOrder.notes || '') + `\n[轉帳資訊] 後五碼: ${transactionId}`;
+                }
+                
+                // 發送更新請求
+                if (window.ApiClient) {
+                    const response = await window.ApiClient.updateOrder(currentOrder.id, updateData);
+                    if (response.success) {
+                        showNotification('所有變更已儲存並同步到前台', 'success');
+                        // 重新載入訂單詳情
+                        await viewOrderDetail(currentOrder.id);
+                        // 重新載入訂單列表
+                        await renderOrders();
+                        // 重置編輯模式
+                        resetEditModes();
+                    } else {
+                        throw new Error(response.message || '儲存失敗');
+                    }
+                } else {
+                    throw new Error('API 客戶端未載入');
+                }
+            } catch (error) {
+                console.error('儲存變更失敗:', error);
+                alert(`儲存失敗：${error.message}\n\n請確認後端伺服器已啟動在 http://localhost:3000`);
+            }
+        }
+
+        // 顯示通知
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white ${colors[type]} transform transition-all duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} text-xl"></i>
+                    <span class="font-semibold">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
 
         // 複製 LINE 連結
@@ -1545,7 +2060,49 @@
         });
 
         // 初始化
-        renderOrders();
+        // 頁面初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 檢查管理員登入
+            const adminToken = localStorage.getItem('admin_token') || localStorage.getItem('auth_token');
+            if (!adminToken) {
+                const adminUser = JSON.parse(localStorage.getItem('adminUser') || 'null');
+                if (!adminUser) {
+                    alert('請先登入管理員帳號');
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+            }
+            
+            // 設置認證令牌
+            if (window.ApiClient) {
+                window.ApiClient.setToken(adminToken);
+            }
+            
+            // 等待 ApiClient 載入
+            if (!window.ApiClient) {
+                setTimeout(async () => {
+                    if (window.ApiClient) {
+                        window.ApiClient.setToken(adminToken);
+                        await renderOrders();
+                    } else {
+                        console.error('ApiClient 未載入');
+                        renderOrders(); // 使用測試數據
+                    }
+                }, 500);
+            } else {
+                await renderOrders();
+            }
+            
+            // 初始化門市選擇器（如果存在）
+            const storeTypeRadios = document.querySelectorAll('input[name="storeType"]');
+            storeTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (typeof renderStoreList === 'function') {
+                        renderStoreList();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

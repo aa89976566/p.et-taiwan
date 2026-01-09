@@ -369,6 +369,187 @@ router.put('/:id/status', requireAdmin, (req, res) => {
 });
 
 /**
+ * 更新訂單完整資訊（管理員）
+ * 可以更新收件人資訊、地址、金額等所有欄位
+ */
+router.put('/:id', requireAdmin, (req, res) => {
+    const { id } = req.params;
+    const {
+        receiverName, receiverPhone, receiverEmail,
+        shippingAddress, shippingCity, shippingDistrict, shippingZipCode,
+        shippingStoreName, shippingStoreAddress, shippingStoreId,
+        shippingCourier, shippingMethod,
+        subtotal, shippingFee, discount, total,
+        paymentStatus, paymentMethod,
+        status, deliveryStatus,
+        orderDate,
+        notes
+    } = req.body;
+    
+    const now = Date.now();
+    const updates = [];
+    const values = [];
+
+    // 收件人資訊
+    if (receiverName !== undefined) {
+        updates.push('receiverName = ?');
+        values.push(receiverName);
+    }
+    if (receiverPhone !== undefined) {
+        updates.push('receiverPhone = ?');
+        values.push(receiverPhone);
+    }
+    if (receiverEmail !== undefined) {
+        updates.push('receiverEmail = ?');
+        values.push(receiverEmail);
+    }
+
+    // 配送地址（宅配）
+    if (shippingAddress !== undefined) {
+        updates.push('shippingAddress = ?');
+        values.push(shippingAddress);
+    }
+    if (shippingCity !== undefined) {
+        updates.push('shippingCity = ?');
+        values.push(shippingCity);
+    }
+    if (shippingDistrict !== undefined) {
+        updates.push('shippingDistrict = ?');
+        values.push(shippingDistrict);
+    }
+    if (shippingZipCode !== undefined) {
+        updates.push('shippingZipCode = ?');
+        values.push(shippingZipCode);
+    }
+
+    // 超商資訊
+    if (shippingStoreName !== undefined) {
+        updates.push('shippingStoreName = ?');
+        values.push(shippingStoreName);
+    }
+    if (shippingStoreAddress !== undefined) {
+        updates.push('shippingStoreAddress = ?');
+        values.push(shippingStoreAddress);
+    }
+    if (shippingStoreId !== undefined) {
+        updates.push('shippingStoreId = ?');
+        values.push(shippingStoreId);
+    }
+
+    // 物流資訊
+    if (shippingCourier !== undefined) {
+        updates.push('shippingCourier = ?');
+        values.push(shippingCourier);
+    }
+    if (shippingMethod !== undefined) {
+        updates.push('shippingMethod = ?');
+        values.push(shippingMethod);
+    }
+
+    // 金額資訊
+    if (subtotal !== undefined) {
+        updates.push('subtotal = ?');
+        values.push(parseFloat(subtotal));
+    }
+    if (shippingFee !== undefined) {
+        updates.push('shippingFee = ?');
+        values.push(parseFloat(shippingFee));
+    }
+    if (discount !== undefined) {
+        updates.push('discount = ?');
+        values.push(parseFloat(discount));
+    }
+    if (total !== undefined) {
+        updates.push('total = ?');
+        values.push(parseFloat(total));
+    }
+
+    // 付款資訊
+    if (paymentStatus !== undefined) {
+        updates.push('paymentStatus = ?');
+        values.push(paymentStatus);
+        if (paymentStatus === 'paid') {
+            updates.push('paymentPaidAt = ?');
+            values.push(now);
+        }
+    }
+    if (paymentMethod !== undefined) {
+        updates.push('paymentMethod = ?');
+        values.push(paymentMethod);
+    }
+
+    // 訂單狀態
+    if (status !== undefined) {
+        updates.push('status = ?');
+        values.push(status);
+    }
+    if (deliveryStatus !== undefined) {
+        updates.push('deliveryStatus = ?');
+        values.push(deliveryStatus);
+    }
+
+    // 訂單日期
+    if (orderDate !== undefined) {
+        updates.push('orderDate = ?');
+        values.push(parseInt(orderDate));
+    }
+
+    // 備註
+    if (notes !== undefined) {
+        updates.push('notes = ?');
+        values.push(notes);
+    }
+
+    if (updates.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: '沒有要更新的欄位'
+        });
+    }
+
+    updates.push('updatedAt = ?');
+    values.push(now);
+    values.push(id);
+
+    db.run(
+        `UPDATE orders SET ${updates.join(', ')} WHERE id = ?`,
+        values,
+        function(err) {
+            if (err) {
+                console.error('更新訂單失敗:', err);
+                return res.status(500).json({
+                    success: false,
+                    message: '更新失敗',
+                    error: err.message
+                });
+            }
+
+            // 獲取更新後的訂單
+            db.get('SELECT * FROM orders WHERE id = ?', [id], (err, order) => {
+                if (err) {
+                    return res.json({
+                        success: true,
+                        message: '訂單更新成功'
+                    });
+                }
+
+                // 獲取訂單項目
+                db.all('SELECT * FROM order_items WHERE orderId = ?', [id], (err, items) => {
+                    res.json({
+                        success: true,
+                        message: '訂單更新成功',
+                        data: {
+                            ...order,
+                            items: items || []
+                        }
+                    });
+                });
+            });
+        }
+    );
+});
+
+/**
  * 取消訂單
  */
 router.post('/:id/cancel', authenticateToken, (req, res) => {
