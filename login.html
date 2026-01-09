@@ -126,12 +126,12 @@
             const user = users.find(u => u.email === email);
             
             if (!user) {
-                alert('❌ Email 不存在，請先註冊！');
+                alert('Email 不存在，請先註冊！');
                 return false;
             }
             
             if (user.password !== password) {
-                alert('❌ 密碼錯誤，請重新輸入！');
+                alert('密碼錯誤，請重新輸入！');
                 return false;
             }
             

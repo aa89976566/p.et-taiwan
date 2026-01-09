@@ -548,24 +548,24 @@
             
             // 基本驗證
             if (!name || !phone) {
-                alert('⚠️ 請填寫收件人姓名和手機號碼');
+                alert('請填寫收件人姓名和手機號碼');
                 return;
             }
             
             // 驗證手機格式
             const phoneRegex = /^09\d{8}$/;
             if (!phoneRegex.test(phone.replace(/-/g, ''))) {
-                alert('⚠️ 請輸入正確的手機號碼格式 (例：0912-345-678)');
+                alert('請輸入正確的手機號碼格式 (例：0912-345-678)');
                 return;
             }
             
             if (!shippingMethod) {
-                alert('⚠️ 請選擇配送方式');
+                alert('請選擇配送方式');
                 return;
             }
             
             if (!paymentMethod) {
-                alert('⚠️ 請選擇付款方式');
+                alert('請選擇付款方式');
                 return;
             }
             
@@ -584,12 +584,12 @@
                 const address = document.getElementById('deliveryAddress').value.trim();
                 
                 if (!address) {
-                    alert('⚠️ 請填寫配送地址');
+                    alert('請填寫配送地址');
                     return;
                 }
                 
                 if (address.length < 10) {
-                    alert('⚠️ 請輸入完整的配送地址 (包含縣市、區域、街道、門牌號)');
+                    alert('請輸入完整的配送地址 (包含縣市、區域、街道、門牌號)');
                     return;
                 }
                 
@@ -610,7 +610,7 @@
                     : selectedStores['711'];
                 
                 if (!store) {
-                    alert('⚠️ 請選擇 7-11 取貨門市');
+                    alert('請選擇 7-11 取貨門市');
                     return;
                 }
                 
@@ -625,7 +625,7 @@
                     : selectedStores['family'];
                 
                 if (!store) {
-                    alert('⚠️ 請選擇全家取貨門市');
+                    alert('請選擇全家取貨門市');
                     return;
                 }
                 
@@ -636,7 +636,7 @@
             
             // 使用 CheckoutSystem 提交訂單
             if (!window.CheckoutSystem) {
-                alert('⚠️ 系統尚未完全載入，請稍後再試');
+                alert('系統尚未完全載入，請稍後再試');
                 return;
             }
             
@@ -650,7 +650,7 @@
                 const savedOrder = await window.CheckoutSystem.submitCheckoutOrder(formData);
             
             if (!savedOrder) {
-                alert('⚠️ 訂單建立失敗，請重試');
+                alert('訂單建立失敗，請重試');
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
                 return;

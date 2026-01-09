@@ -495,7 +495,7 @@
                         const baseDiscount = subtotal >= 1000 ? 100 : 0;
                         couponDiscount = discountAmount;
                         
-                        messageEl.textContent = `✅ 優惠券「${appliedCoupon.name}」已套用！`;
+                        messageEl.textContent = `優惠券「${appliedCoupon.name}」已套用！`;
                         messageEl.className = 'text-xs mt-2 text-green-600';
                         updateCartSummary();
                     } else {
@@ -506,7 +506,7 @@
                 }
             } catch (error) {
                 console.error('優惠碼驗證失敗:', error);
-                messageEl.textContent = `❌ ${error.message || '優惠碼無效或已過期'}`;
+                messageEl.textContent = `${error.message || '優惠碼無效或已過期'}`;
                 messageEl.className = 'text-xs mt-2 text-red-500';
                 appliedCoupon = null;
                 couponDiscount = 0;
