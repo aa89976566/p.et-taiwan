@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>匠寵 - 動畫 Landing Page</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- 這個容器用來提供足夠滾動距離（故事時間軸） -->
+  <main id="scrollTrack" aria-label="Scroll story track">
+    <section class="panel panel--story">
+      <div class="hint">往下滑 ⤵︎（故事開始）</div>
+    </section>
+
+    <section class="panel panel--story"></section>
+    <section class="panel panel--story"></section>
+    <section class="panel panel--story"></section>
+
+    <!-- 第二區塊（球掉進來） -->
+    <section id="section2" class="panel panel--section2">
+      <div class="section2-inner">
+        <h2>為你的毛孩精心準備</h2>
+        <p>匠寵提供手作零食、益智玩具與營養訂閱，讓毛孩過得更健康快樂。</p>
+        <div class="ctaRow">
+          <a class="cta" href="../index.html">開始探索</a>
+          <a class="cta cta--ghost" href="../subscription-packages.html">訂閱方案</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 固定在畫面上的「舞台」：所有角色與道具都在這裡動畫 -->
+  <div id="stage" aria-hidden="true">
+    <!-- 窗外 -->
+    <div class="window">
+      <div id="sun" class="sun"></div>
+      <div id="moon" class="moon"></div>
+    </div>
+
+    <!-- 客廳 -->
+    <div class="room">
+      <div class="wall"></div>
+      <div class="floor"></div>
+
+      <!-- 沙發 -->
+      <div id="sofa" class="sofa"></div>
+
+      <!-- 門 -->
+      <div id="doorFrame" class="doorFrame">
+        <div id="door" class="door"></div>
+        <div id="doorLight" class="doorLight"></div>
+      </div>
+
+      <!-- 主人（簡化剪影） -->
+      <div id="owner" class="owner">
+        <div class="ownerHead"></div>
+        <div class="ownerBody"></div>
+        <div id="bag" class="bag"></div>
+      </div>
+
+      <!-- 貓（簡化 SVG / 形狀） -->
+      <div id="cat" class="pet cat">
+        <div class="petHead"></div>
+        <div class="petBody"></div>
+        <div id="catZzz" class="zzz">…</div>
+        <div id="catYawn" class="yawn">🥱</div>
+      </div>
+
+      <!-- 狗 -->
+      <div id="dog" class="pet dog">
+        <div class="petHead"></div>
+        <div class="petBody"></div>
+        <div id="dogZzz" class="zzz">Zzz</div>
+        <div id="dogYawn" class="yawn">🥱</div>
+        <div id="slapMark" class="slapMark">啪!</div>
+      </div>
+
+      <!-- 球 -->
+      <div id="ball" class="ball"></div>
+
+      <!-- 夜幕遮罩 -->
+      <div id="night" class="night"></div>
+    </div>
+  </div>
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* BASE */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Noto Sans TC", sans-serif;
+  background: #fafafa;
+  color: #111;
+  line-height: 1.6;
+}
+
+.member {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+/* YEAR HERO */
+.year {
+  margin-bottom: 80px;
+}
+
+.year h1 {
+  font-size: 72px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: #111;
+}
+
+.week {
+  font-size: 18px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.soft {
+  margin-top: 24px;
+  font-size: 20px;
+  color: #333;
+}
+
+/* SECTION */
+section {
+  margin-bottom: 64px;
+}
+
+h2 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #888;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* PERIOD ITEMS */
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: #666;
+}
+
+.value {
+  font-weight: 500;
+  color: #111;
+}
+
+/* SUBSCRIPTION */
+.subscription p {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.subscription a {
+  font-size: 14px;
+  color: #999;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.subscription a:hover {
+  color: #111;
+}
+
+/* COMPANION */
+.name {
+  font-size: 22px;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.detail {
+  color: #555;
+  margin-top: 4px;
+}
+
+.update {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* HISTORY */
+.history ul {
+  list-style: none;
+}
+
+.history li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.history li:last-child {
+  border-bottom: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  .member {
+    padding: 40px 16px;
+  }
+
+  .year h1 {
+    font-size: 56px;
+  }
+
+  section {
+    margin-bottom: 48px;
+  }
+}
+

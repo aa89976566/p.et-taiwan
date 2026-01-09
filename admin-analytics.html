@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>營收報表 - 匠寵後台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .sidebar-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .sidebar-item:hover:not(.active) {
+            background: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 頂部導航 -->
+    <nav class="bg-white shadow-md fixed w-full top-0 z-50">
+        <div class="px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
+                        匠寵後台
+                    </h1>
+                    <span class="text-gray-400">|</span>
+                    <span class="text-gray-600">營收報表</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="exportReport()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                        <i class="fas fa-download mr-2"></i>匯出報表
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=ef4444&color=fff" alt="Admin" class="w-10 h-10 rounded-full">
+                        <span class="text-gray-700 font-semibold">管理員</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 側邊欄 -->
+    <aside class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg overflow-y-auto">
+        <div class="p-4">
+            <nav>
+                <div class="space-y-1">
+                    <a href="admin-dashboard.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-home text-lg w-6"></i>
+                        <span>儀表板</span>
+                    </a>
+                    <a href="admin-products.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-box text-lg w-6"></i>
+                        <span>產品管理</span>
+                    </a>
+                    <a href="admin-orders.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-shopping-cart text-lg w-6"></i>
+                        <span>訂單管理</span>
+                    </a>
+                    <a href="admin-analytics.html" class="sidebar-item active flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-chart-line text-lg w-6"></i>
+                        <span>營收報表</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- 主要內容區 -->
+    <main class="ml-64 mt-16 p-6">
+        <!-- 頁面標題 -->
+        <div class="mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">營收報表</h2>
+            <p class="text-gray-600 mt-1">完整的營收數據分析與視覺化圖表</p>
+        </div>
+
+        <!-- 時間範圍選擇 -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="setDateRange('today')" class="px-4 py-2 bg-gray-200 hover:bg-red-500 hover:text-white rounded-lg transition">今日</button>
+                    <button onclick="setDateRange('week')" class="px-4 py-2 bg-gray-200 hover:bg-red-500 hover:text-white rounded-lg transition">本週</button>
+                    <button onclick="setDateRange('month')" class="px-4 py-2 bg-red-500 text-white rounded-lg">本月</button>
+                    <button onclick="setDateRange('year')" class="px-4 py-2 bg-gray-200 hover:bg-red-500 hover:text-white rounded-lg transition">本年</button>
+                    <button onclick="setDateRange('custom')" class="px-4 py-2 bg-gray-200 hover:bg-red-500 hover:text-white rounded-lg transition">
+                        <i class="fas fa-calendar-alt mr-1"></i>自訂範圍
+                    </button>
+                </div>
+                <span class="text-gray-600">2024-12-01 ~ 2024-12-21</span>
+            </div>
+        </div>
+
+        <!-- KPI 卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-dollar-sign text-white text-xl"></i>
+                    </div>
+                    <span class="text-green-600 text-sm font-semibold">
+                        <i class="fas fa-arrow-up"></i> 18.7%
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-1">本月營收</p>
+                <p class="text-3xl font-bold text-gray-800">NT$ 685,340</p>
+                <p class="text-xs text-gray-500 mt-2">較上月 NT$ 577,650</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-shopping-bag text-white text-xl"></i>
+                    </div>
+                    <span class="text-blue-600 text-sm font-semibold">
+                        <i class="fas fa-arrow-up"></i> 12.3%
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-1">訂單數量</p>
+                <p class="text-3xl font-bold text-gray-800">342</p>
+                <p class="text-xs text-gray-500 mt-2">較上月 304 筆</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                    <span class="text-purple-600 text-sm font-semibold">
+                        <i class="fas fa-arrow-up"></i> 5.8%
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-1">客單價</p>
+                <p class="text-3xl font-bold text-gray-800">NT$ 2,004</p>
+                <p class="text-xs text-gray-500 mt-2">較上月 NT$ 1,894</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-redo text-white text-xl"></i>
+                    </div>
+                    <span class="text-orange-600 text-sm font-semibold">
+                        <i class="fas fa-arrow-up"></i> 28.5%
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-1">回購率</p>
+                <p class="text-3xl font-bold text-gray-800">34.2%</p>
+                <p class="text-xs text-gray-500 mt-2">較上月 26.6%</p>
+            </div>
+        </div>
+
+        <!-- 圖表區域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- 營收趨勢圖 -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">月度營收趨勢</h3>
+                <canvas id="revenueChart" style="height: 300px;"></canvas>
+            </div>
+
+            <!-- 產品類別銷售 -->
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">產品類別銷售佔比</h3>
+                <canvas id="categoryChart" style="height: 300px;"></canvas>
+            </div>
+        </div>
+
+        <!-- 詳細數據表格 -->
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-gray-800">每日營收明細</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">日期</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">訂單數</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">營收</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">客單價</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">成長率</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200" id="revenueTableBody">
+                        <!-- 動態生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 營收趨勢圖
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                datasets: [{
+                    label: '營收 (NT$)',
+                    data: [420000, 450000, 480000, 510000, 520000, 550000, 580000, 600000, 620000, 650000, 670000, 685340],
+                    borderColor: 'rgb(239, 68, 68)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'NT$ ' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'NT$ ' + (value / 1000) + 'K';
+                            }
+                        }
+                    }
+                },
+                onClick: function(evt, items) {
+                    if (items.length > 0) {
+                        const index = items[0].index;
+                        const month = this.data.labels[index];
+                        const value = this.data.datasets[0].data[index];
+                        alert(`📊 ${month}詳細營收\n\n總營收: NT$ ${value.toLocaleString()}\n\n• 產品銷售: NT$ ${Math.round(value * 0.87).toLocaleString()}\n• 訂閱服務: NT$ ${Math.round(value * 0.08).toLocaleString()}\n• 其他收入: NT$ ${Math.round(value * 0.05).toLocaleString()}`);
+                    }
+                }
+            }
+        });
+
+        // 產品類別銷售圖
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        const categoryChart = new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['台灣夜市零食', '益智玩具', '營養罐訂閱', '其他'],
+                datasets: [{
+                    data: [45, 28, 22, 5],
+                    backgroundColor: [
+                        'rgb(239, 68, 68)',
+                        'rgb(59, 130, 246)',
+                        'rgb(16, 185, 129)',
+                        'rgb(156, 163, 175)'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                },
+                onClick: function(evt, items) {
+                    if (items.length > 0) {
+                        const index = items[0].index;
+                        const category = this.data.labels[index];
+                        const percentage = this.data.datasets[0].data[index];
+                        const sales = Math.round(342 * percentage / 100);
+                        const revenue = Math.round(685340 * percentage / 100);
+                        alert(`📦 ${category}\n\n銷售佔比: ${percentage}%\n本月銷量: ${sales} 件\n本月營收: NT$ ${revenue.toLocaleString()}`);
+                    }
+                }
+            }
+        });
+
+        // 生成每日營收表格
+        function generateRevenueTable() {
+            const tbody = document.getElementById('revenueTableBody');
+            const data = [
+                { date: '2024-12-21', orders: 28, revenue: 48520, avgOrder: 1733, growth: 15.2 },
+                { date: '2024-12-20', orders: 32, revenue: 55680, avgOrder: 1740, growth: 22.3 },
+                { date: '2024-12-19', orders: 25, revenue: 42350, avgOrder: 1694, growth: -8.5 },
+                { date: '2024-12-18', orders: 30, revenue: 51900, avgOrder: 1730, growth: 18.7 },
+                { date: '2024-12-17', orders: 27, revenue: 47250, avgOrder: 1750, growth: 12.4 },
+                { date: '2024-12-16', orders: 29, revenue: 50290, avgOrder: 1734, growth: 15.8 },
+                { date: '2024-12-15', orders: 24, revenue: 41760, avgOrder: 1740, growth: -5.2 }
+            ];
+
+            tbody.innerHTML = data.map(d => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 text-sm text-gray-800">${d.date}</td>
+                    <td class="px-6 py-4 text-sm font-semibold text-gray-800">${d.orders}</td>
+                    <td class="px-6 py-4 text-sm font-semibold text-gray-800">NT$ ${d.revenue.toLocaleString()}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600">NT$ ${d.avgOrder.toLocaleString()}</td>
+                    <td class="px-6 py-4 text-sm">
+                        <span class="${d.growth >= 0 ? 'text-green-600' : 'text-red-600'} font-semibold">
+                            <i class="fas fa-arrow-${d.growth >= 0 ? 'up' : 'down'}"></i> ${Math.abs(d.growth)}%
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function setDateRange(range) {
+            alert(`📅 已切換到${range === 'today' ? '今日' : range === 'week' ? '本週' : range === 'month' ? '本月' : range === 'year' ? '本年' : '自訂範圍'}視圖\n\n圖表資料已更新`);
+            // 實際應用中會重新載入對應時間範圍的資料
+        }
+
+        function exportReport() {
+            alert('📊 匯出營收報表\n\n報表將包含：\n• 營收趨勢圖表\n• 產品類別分析\n• 每日明細資料\n• KPI 指標總覽\n\n格式：Excel (xlsx)');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            generateRevenueTable();
+            console.log('✅ 營收報表系統已載入');
+        });
+    </script>
+</body>
+</html>

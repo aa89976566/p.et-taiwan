@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="匠寵老犬腦力測驗 - 基於維也納大學研究，評估認知健康">
+    <title>老犬腦力測驗 - 匠寵</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - 可愛圓體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- 數據管理系統 -->
+    <script src="js/data-store.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/quiz-system.js"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B6B',
+                        secondary: '#4ECDC4',
+                        accent: '#FFD93D',
+                        orange: '#FF8C42',
+                        dark: '#2C3E50',
+                        light: '#F7F9FC'
+                    },
+                    fontFamily: {
+                        'sans': ['Zen Maru Gothic', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans bg-gradient-to-br from-orange-50 to-yellow-50">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white shadow-md z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-primary text-3xl"></i>
+                    <span class="text-2xl font-bold text-dark">匠寵</span>
+                </a>
+                <a href="index.html" class="text-gray-600 hover:text-primary transition">
+                    <i class="fas fa-times text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="pt-24 pb-16">
+        <div class="container mx-auto px-4 max-w-4xl">
+            
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-gray-600" id="progress-text">步驟 1 / 12</span>
+                    <span class="text-sm text-gray-500" id="progress-percentage">8%</span>
+                </div>
+                <div class="quiz-progress">
+                    <div class="quiz-progress-bar" id="progress-bar" style="width: 8%; background: linear-gradient(90deg, #FF8C42, #FFD93D);"></div>
+                </div>
+            </div>
+            
+            <!-- Quiz Container -->
+            <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12" id="quiz-container">
+                
+                <!-- Welcome Screen -->
+                <div id="welcome-screen" class="text-center">
+                    <div class="relative w-32 h-32 mx-auto mb-6">
+                        <div class="absolute inset-0 rounded-full animate-pulse opacity-20" style="background: linear-gradient(135deg, #FF8C42, #FFD93D);"></div>
+                        <div class="relative w-32 h-32 rounded-full flex items-center justify-center shadow-xl" style="background: linear-gradient(135deg, #FF8C42, #FFD93D);">
+                            <i class="fas fa-brain text-white text-5xl"></i>
+                        </div>
+                    </div>
+                    <div class="inline-block text-white px-4 py-2 rounded-full text-sm font-bold mb-3" style="background: linear-gradient(90deg, #FF8C42, #FFD93D);">
+                        <i class="fas fa-flask mr-1"></i>科學研究背書
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-3">🧩 熟齡寵物腦力測驗</h1>
+                    <p class="text-xl text-gray-600 mb-2"><strong>4 分鐘</strong> 科學評估，找到最適合的益智玩具</p>
+                    <p class="text-lg font-semibold mb-6" style="color: #FF8C42;">
+                        <i class="fas fa-gift mr-1"></i>完成後送 <span class="text-primary">15% 折扣碼</span>
+                    </p>
+                    
+                    <!-- Scientific Backing -->
+                    <div class="bg-orange-50 border-l-4 border-orange-400 rounded-xl p-6 mb-6 text-left max-w-2xl mx-auto">
+                        <div class="flex items-start">
+                            <i class="fas fa-university text-orange-400 text-3xl mr-4 mt-1"></i>
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">科學研究背書</h3>
+                                <p class="text-gray-700 mb-2">本測驗基於<strong>維也納大學 Clever Dog Lab</strong> 的研究設計</p>
+                                <p class="text-sm text-gray-600">研究證實：定期的認知刺激可以延緩熟齡毛孩的認知退化，益智玩具能有效維持大腦活力</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Warning for Senior Pets -->
+                    <div class="bg-red-50 border-l-4 border-red-400 rounded-xl p-6 mb-6 text-left max-w-2xl mx-auto">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-red-400 text-2xl mr-4 mt-1"></i>
+                            <div>
+                                <h3 class="font-bold mb-2">重要提醒</h3>
+                                <p class="text-gray-700">超過 <strong class="text-red-600">50%</strong> 的熟齡毛孩（狗 7 歲以上、貓 10 歲以上）面臨認知功能下降的風險</p>
+                                <p class="text-sm text-gray-600 mt-2">早期發現與介入能有效改善生活品質</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-light rounded-2xl p-6 mb-8 text-left max-w-2xl mx-auto">
+                        <h3 class="font-bold text-lg mb-4 flex items-center">
+                            <i class="fas fa-clipboard-list mr-2" style="color: #FF8C42;"></i>
+                            測驗包含
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mr-3 mt-1" style="color: #FF8C42;"></i>
+                                <span>基本資訊（年齡、品種、健康狀況）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mr-3 mt-1" style="color: #FF8C42;"></i>
+                                <span>認知功能評估（記憶力、學習能力、專注力）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mr-3 mt-1" style="color: #FF8C42;"></i>
+                                <span>行為觀察（迷路、焦慮、睡眠）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mr-3 mt-1" style="color: #FF8C42;"></i>
+                                <span>活動能力評估</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle mr-3 mt-1" style="color: #FF8C42;"></i>
+                                <span>個人化益智玩具推薦</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex items-center justify-center gap-4 mb-8">
+                        <div class="flex items-center">
+                            <i class="fas fa-clock mr-2" style="color: #FF8C42;"></i>
+                            <span class="text-sm text-gray-600">約 4 分鐘</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-flask mr-2" style="color: #FF8C42;"></i>
+                            <span class="text-sm text-gray-600">科學研究</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-paw mr-2" style="color: #FF8C42;"></i>
+                            <span class="text-sm text-gray-600">熟齡毛孩適用</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="startQuiz()" class="text-white px-12 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition transform hover:scale-105 relative overflow-hidden group" style="background: linear-gradient(135deg, #FF8C42, #FFD93D);">
+                        <span class="relative z-10">🚀 立即開始 <i class="fas fa-arrow-right ml-2"></i></span>
+                        <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition"></div>
+                    </button>
+                </div>
+                
+                <!-- Question Screens -->
+                <div id="question-screen" class="hidden">
+                    <!-- Question will be dynamically inserted here -->
+                </div>
+                
+                <!-- Loading Screen -->
+                <div id="loading-screen" class="hidden text-center py-12">
+                    <div class="spinner mx-auto mb-6" style="border-top-color: #FF8C42;"></div>
+                    <h3 class="text-2xl font-bold mb-2">正在分析您毛孩的認知狀況...</h3>
+                    <p class="text-gray-600">請稍候，我們正在根據科學研究為您推薦最適合的益智玩具</p>
+                </div>
+                
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-8" id="nav-buttons" style="display: none;">
+                <button onclick="previousQuestion()" id="prev-btn" class="bg-gray-200 text-dark px-8 py-3 rounded-full font-semibold hover:bg-gray-300 transition">
+                    <i class="fas fa-arrow-left mr-2"></i>上一題
+                </button>
+                <button onclick="nextQuestion()" id="next-btn" class="text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition" style="background: linear-gradient(135deg, #FF8C42, #FFD93D);">
+                    下一題 <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+            
+        </div>
+    </main>
+    
+    <!-- Quiz Data & Logic -->
+    <script>
+        // Quiz Questions Data - Based on Vienna University Research
+        const quizData = [
+            {
+                id: 1,
+                category: 'basic',
+                question: '你的毛孩是？',
+                type: 'choice',
+                icon: 'fa-paw',
+                options: [
+                    { value: 'dog', label: '狗狗 🐕', icon: 'fa-dog' },
+                    { value: 'cat', label: '貓咪 🐱', icon: 'fa-cat' }
+                ]
+            },
+            {
+                id: 2,
+                category: 'basic',
+                question: '你的毛孩叫什麼名字？',
+                type: 'text',
+                placeholder: '請輸入寵物名字',
+                icon: 'fa-heart',
+                required: true
+            },
+            {
+                id: 3,
+                category: 'basic',
+                question: '你的毛孩目前幾歲？',
+                type: 'number',
+                icon: 'fa-birthday-cake',
+                placeholder: '請輸入年齡',
+                unit: '歲',
+                min: 1,
+                hint: '本測驗適用於熟齡毛孩（狗 7 歲以上、貓 10 歲以上）'
+            },
+            {
+                id: 4,
+                category: 'basic',
+                question: '你的毛孩的體型？',
+                type: 'choice',
+                icon: 'fa-paw',
+                options: [
+                    { value: 'small', label: '小型', desc: '體重 < 10kg' },
+                    { value: 'medium', label: '中型', desc: '體重 10-25kg' },
+                    { value: 'large', label: '大型', desc: '體重 > 25kg' }
+                ]
+            },
+            {
+                id: 5,
+                category: 'cognitive',
+                question: '你的毛孩最近是否出現以下情況？',
+                subtitle: '（認知功能評估）',
+                type: 'multi-choice',
+                icon: 'fa-brain',
+                options: [
+                    { value: 'none', label: '沒有以下情況' },
+                    { value: 'disoriented', label: '在熟悉的地方迷路或困惑' },
+                    { value: 'forget_people', label: '忘記熟悉的人或寵物' },
+                    { value: 'forget_commands', label: '忘記已學會的指令' },
+                    { value: 'stare', label: '經常發呆或凝視空間' },
+                    { value: 'stuck', label: '走路時撞到物品或卡在角落' }
+                ]
+            },
+            {
+                id: 6,
+                category: 'cognitive',
+                question: '你的毛孩的學習與記憶能力？',
+                type: 'choice',
+                icon: 'fa-graduation-cap',
+                options: [
+                    { value: 'good', label: '很好', desc: '能快速學習新指令，記得舊指令' },
+                    { value: 'normal', label: '正常', desc: '需要一些時間學習，偶爾忘記' },
+                    { value: 'declining', label: '退化中', desc: '難以學習新事物，經常忘記' }
+                ]
+            },
+            {
+                id: 7,
+                category: 'behavior',
+                question: '你的毛孩的睡眠模式？',
+                type: 'choice',
+                icon: 'fa-bed',
+                options: [
+                    { value: 'normal', label: '正常', desc: '白天活動，晚上睡覺' },
+                    { value: 'reversed', label: '日夜顛倒', desc: '晚上不睡覺，白天昏睡' },
+                    { value: 'restless', label: '睡眠不安', desc: '經常醒來，睡眠品質差' }
+                ]
+            },
+            {
+                id: 8,
+                category: 'behavior',
+                question: '你的毛孩最近的情緒狀態？',
+                type: 'multi-choice',
+                icon: 'fa-heart',
+                options: [
+                    { value: 'normal', label: '正常快樂' },
+                    { value: 'anxious', label: '容易焦慮或緊張' },
+                    { value: 'aggressive', label: '比以前更容易生氣或攻擊' },
+                    { value: 'apathy', label: '對事物失去興趣' },
+                    { value: 'clingy', label: '變得特別黏人或需要陪伴' }
+                ]
+            },
+            {
+                id: 9,
+                category: 'behavior',
+                question: '你的毛孩的互動意願？',
+                type: 'choice',
+                icon: 'fa-users',
+                options: [
+                    { value: 'active', label: '主動互動', desc: '喜歡與人和其他寵物互動' },
+                    { value: 'moderate', label: '適度互動', desc: '偶爾會主動，但不如以前' },
+                    { value: 'withdrawn', label: '迴避互動', desc: '經常躲避或不理人' }
+                ]
+            },
+            {
+                id: 10,
+                category: 'physical',
+                question: '你的毛孩的活動能力？',
+                type: 'choice',
+                icon: 'fa-running',
+                options: [
+                    { value: 'good', label: '良好', desc: '行動自如，沒有明顯問題' },
+                    { value: 'moderate', label: '中等', desc: '行動稍慢，偶爾不穩' },
+                    { value: 'limited', label: '受限', desc: '有關節問題或行動困難' }
+                ]
+            },
+            {
+                id: 11,
+                category: 'physical',
+                question: '你的毛孩的視力和聽力？',
+                type: 'multi-choice',
+                icon: 'fa-eye',
+                options: [
+                    { value: 'normal', label: '視力和聽力都正常' },
+                    { value: 'vision_decline', label: '視力退化' },
+                    { value: 'hearing_decline', label: '聽力退化' },
+                    { value: 'both_decline', label: '視力和聽力都退化' }
+                ]
+            },
+            {
+                id: 12,
+                category: 'preference',
+                question: '你的毛孩最喜歡的活動類型？',
+                type: 'multi-choice',
+                icon: 'fa-puzzle-piece',
+                options: [
+                    { value: 'sniffing', label: '嗅聞探索' },
+                    { value: 'fetch', label: '追逐撿拾' },
+                    { value: 'puzzle', label: '解謎遊戲' },
+                    { value: 'chewing', label: '咀嚼玩具' },
+                    { value: 'quiet', label: '安靜陪伴' }
+                ]
+            },
+            {
+                id: 13,
+                category: 'preference',
+                question: '你希望益智玩具能幫助改善什麼？',
+                type: 'multi-choice',
+                icon: 'fa-target',
+                options: [
+                    { value: 'memory', label: '記憶力' },
+                    { value: 'focus', label: '專注力' },
+                    { value: 'anxiety', label: '焦慮情緒' },
+                    { value: 'boredom', label: '無聊感' },
+                    { value: 'interaction', label: '互動意願' }
+                ]
+            }
+        ];
+        
+        // Quiz State
+        let currentQuestion = 0;
+        let answers = {};
+        let quizStarted = false;
+        
+        // Start Quiz
+        function startQuiz() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('question-screen').style.display = 'block';
+            document.getElementById('nav-buttons').style.display = 'flex';
+            quizStarted = true;
+            showQuestion(0);
+        }
+        
+        // Show Question
+        function showQuestion(index) {
+            const question = quizData[index];
+            const questionScreen = document.getElementById('question-screen');
+            
+            let optionsHTML = '';
+            
+            if (question.type === 'text' || question.type === 'number') {
+                optionsHTML = `
+                    <input 
+                        type="${question.type}" 
+                        id="answer-input"
+                        class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl text-lg focus:outline-none transition"
+                        style="focus:border-color: #FF8C42;"
+                        placeholder="${question.placeholder}"
+                        ${question.min ? `min="${question.min}"` : ''}
+                        ${question.max ? `max="${question.max}"` : ''}
+                        value="${answers[question.id] || ''}"
+                        onkeypress="if(event.key === 'Enter') nextQuestion()"
+                    >
+                    ${question.hint ? `<p class="text-sm text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i>${question.hint}</p>` : ''}
+                    ${question.unit ? `<span class="text-gray-500 mt-2 inline-block">${question.unit}</span>` : ''}
+                `;
+            } else if (question.type === 'choice') {
+                optionsHTML = question.options.map(option => `
+                    <div class="answer-option ${answers[question.id] === option.value ? 'selected' : ''}" 
+                         onclick="selectOption('${option.value}')"
+                         style="${answers[question.id] === option.value ? 'border-color: #FF8C42; background-color: #fff5f0;' : ''}">
+                        <div class="flex items-center">
+                            ${option.icon ? `<i class="fas ${option.icon} text-2xl mr-4" style="color: #FF8C42;"></i>` : ''}
+                            <div class="flex-1">
+                                <div class="font-semibold text-lg">${option.label}</div>
+                                ${option.desc ? `<div class="text-sm text-gray-600 mt-1">${option.desc}</div>` : ''}
+                            </div>
+                            <i class="fas fa-check-circle text-2xl ${answers[question.id] === option.value ? '' : 'opacity-0'}" style="color: #FF8C42;"></i>
+                        </div>
+                    </div>
+                `).join('');
+            } else if (question.type === 'multi-choice') {
+                optionsHTML = question.options.map(option => `
+                    <div class="answer-option ${(answers[question.id] || []).includes(option.value) ? 'selected' : ''}" 
+                         onclick="toggleMultiOption('${option.value}')"
+                         style="${(answers[question.id] || []).includes(option.value) ? 'border-color: #FF8C42; background-color: #fff5f0;' : ''}">
+                        <div class="flex items-center">
+                            <div class="flex-1">
+                                <div class="font-semibold">${option.label}</div>
+                            </div>
+                            <input type="checkbox" 
+                                   class="custom-checkbox" 
+                                   ${(answers[question.id] || []).includes(option.value) ? 'checked' : ''}
+                                   onchange="event.stopPropagation()">
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            questionScreen.innerHTML = `
+                <div class="mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center mr-4" style="background: linear-gradient(135deg, #FF8C42, #FFD93D);">
+                            <i class="fas ${question.icon} text-white text-xl"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-500">問題 ${index + 1} / ${quizData.length}</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold mb-2">${question.question}</h2>
+                    ${question.subtitle ? `<p class="text-gray-600 mb-2">${question.subtitle}</p>` : ''}
+                    ${question.required === false ? '<p class="text-sm text-gray-500">（選填）</p>' : ''}
+                </div>
+                <div class="space-y-3">
+                    ${optionsHTML}
+                </div>
+            `;
+            
+            // Update progress
+            updateProgress(index);
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').style.display = index === 0 ? 'none' : 'block';
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.innerHTML = index === quizData.length - 1 ? '查看結果 <i class="fas fa-arrow-right ml-2"></i>' : '下一題 <i class="fas fa-arrow-right ml-2"></i>';
+            
+            // Auto-focus input
+            if (question.type === 'text' || question.type === 'number') {
+                setTimeout(() => document.getElementById('answer-input')?.focus(), 100);
+            }
+        }
+        
+        // Update Progress
+        function updateProgress(index) {
+            const progress = ((index + 1) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = `步驟 ${index + 1} / ${quizData.length}`;
+            document.getElementById('progress-percentage').textContent = Math.round(progress) + '%';
+        }
+        
+        // Select Option (Single Choice)
+        function selectOption(value) {
+            const question = quizData[currentQuestion];
+            answers[question.id] = value;
+            showQuestion(currentQuestion);
+            setTimeout(() => nextQuestion(), 300);
+        }
+        
+        // Toggle Multi Option (Multiple Choice)
+        function toggleMultiOption(value) {
+            const question = quizData[currentQuestion];
+            if (!answers[question.id]) {
+                answers[question.id] = [];
+            }
+            
+            const index = answers[question.id].indexOf(value);
+            if (index > -1) {
+                answers[question.id].splice(index, 1);
+            } else {
+                if (value === 'none' || value === 'normal') {
+                    answers[question.id] = [value];
+                } else {
+                    const noneIndex = answers[question.id].indexOf('none');
+                    if (noneIndex > -1) answers[question.id].splice(noneIndex, 1);
+                    const normalIndex = answers[question.id].indexOf('normal');
+                    if (normalIndex > -1) answers[question.id].splice(normalIndex, 1);
+                    answers[question.id].push(value);
+                }
+            }
+            
+            showQuestion(currentQuestion);
+        }
+        
+        // 驗證答案
+        function validateAnswer(question, answer) {
+            // 驗證年紀（問題 3 - 具體年齡）
+            if (question.id === 3) {
+                const age = parseFloat(answer);
+                if (isNaN(age) || age <= 0) {
+                    return { valid: false, message: '請輸入有效的年齡' };
+                }
+                if (age > 30) {
+                    return { valid: false, message: '年紀不能超過 30 歲，請確認輸入是否正確' };
+                }
+                if (age < 1) {
+                    return { valid: false, message: '年齡過小，請確認輸入是否正確' };
+                }
+                return { valid: true };
+            }
+            
+            return { valid: true };
+        }
+        
+        // Next Question
+        function nextQuestion() {
+            const question = quizData[currentQuestion];
+            let answerValue = null;
+            
+            if (question.type === 'text' || question.type === 'number') {
+                const input = document.getElementById('answer-input');
+                if (input && input.value.trim()) {
+                    answerValue = input.value.trim();
+                    answers[question.id] = answerValue;
+                } else if (question.required !== false) {
+                    alert('請填寫答案');
+                    return;
+                } else {
+                    // 選填題，允許空白
+                    answers[question.id] = '';
+                }
+            } else if (!answers[question.id] && question.required !== false) {
+                alert('請選擇答案');
+                return;
+            } else {
+                answerValue = answers[question.id];
+            }
+            
+            // 執行驗證
+            if (answerValue !== null && answerValue !== '') {
+                const validation = validateAnswer(question, answerValue);
+                if (!validation.valid) {
+                    alert(validation.message);
+                    return;
+                }
+            }
+            
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        // Previous Question
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+        
+        // Finish Quiz
+        function finishQuiz() {
+            document.getElementById('question-screen').style.display = 'none';
+            document.getElementById('nav-buttons').style.display = 'none';
+            document.getElementById('loading-screen').style.display = 'block';
+            
+            localStorage.setItem('toyQuizAnswers', JSON.stringify(answers));
+            
+            // 保存測驗結果到數據系統
+            setTimeout(() => {
+                if (window.saveQuizResult) {
+                    const quizData = {
+                        quizType: 'toy',
+                        petInfo: {
+                            age: answers.age || 'unknown'
+                        },
+                        answers: answers,
+                        result: {
+                            category: 'toy_quiz',
+                            completedAt: new Date().toISOString()
+                        }
+                    };
+                    window.saveQuizResult(quizData);
+                    console.log('✅ 玩具測驗結果已保存');
+                }
+                
+                // Redirect to results
+                window.location.href = 'quiz-result.html?type=toy';
+            }, 3000);
+        }
+        
+        // Prevent accidental page leave
+        window.addEventListener('beforeunload', function(e) {
+            if (quizStarted && currentQuestion < quizData.length - 1) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+    
+</body>
+</html>

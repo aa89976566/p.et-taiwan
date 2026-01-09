@@ -1,0 +1,2808 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂閱套餐 - 匠寵 JiangChong</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/store-selector.css?v=20250102">
+    <!-- 全局配置 -->
+    <script src="js/config.js"></script>
+    <!-- API 客戶端 -->
+    <script src="js/api-client.js"></script>
+    <!-- 用戶認證 -->
+    <script src="js/user-auth.js"></script>
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B6B',
+                        secondary: '#4ECDC4',
+                        accent: '#FFD93D',
+                        dark: '#2C3E50',
+                        light: '#F7F9FC'
+                    },
+                    fontFamily: {
+                        'sans': ['Nunito', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .option-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .option-card.selected {
+            border-color: #FF6B6B !important;
+            background-color: #FFF5F5 !important;
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+        }
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        .step-dot.active {
+            background-color: #FF6B6B;
+            width: 30px;
+            border-radius: 5px;
+        }
+        .border-primary {
+            border-color: #FF6B6B !important;
+        }
+        .bg-primary {
+            background-color: #FF6B6B;
+        }
+        .bg-opacity-5 {
+            background-color: rgba(255, 107, 107, 0.05);
+        }
+        .payment-option:hover {
+            border-color: #FF6B6B;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white shadow-md z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-primary text-3xl"></i>
+                    <span class="text-2xl font-bold text-dark">匠寵</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="products.html" class="text-dark hover:text-primary transition">產品系列</a>
+                    <a href="index.html#crowdfunding" class="text-dark hover:text-primary transition">集資項目</a>
+                    <a href="index.html#quiz" class="text-dark hover:text-primary transition">找適合方案</a>
+                    <a href="index.html#jar-exchange" class="text-dark hover:text-primary transition">換罐計畫</a>
+                    <a href="subscription-packages.html" class="text-dark hover:text-primary transition" style="color: #FF6B6B; font-weight: 600;">訂閱方案</a>
+                    <a href="index.html#about" class="text-dark hover:text-primary transition">關於我們</a>
+                    
+                    <!-- 會員登入/註冊 -->
+                    <div class="flex items-center space-x-3">
+                        <!-- 未登录状态 -->
+                        <button id="loginBtn" onclick="openLoginModal()" class="text-dark hover:text-primary transition flex items-center space-x-1">
+                            <i class="fas fa-user"></i>
+                            <span>登入</span>
+                        </button>
+                        <button id="registerBtn" onclick="openLoginModal(); showRegisterForm();" class="hidden text-dark hover:text-primary transition">
+                            註冊
+                        </button>
+                        
+                        <!-- 已登录状态 (默认隐藏) -->
+                        <div id="userMenu" class="hidden relative">
+                            <div class="flex items-center space-x-2">
+                                <button onclick="goToMemberCenter()" class="flex items-center space-x-2 text-dark hover:text-primary transition">
+                                <i class="fas fa-user-circle text-2xl"></i>
+                                <span id="userName">會員</span>
+                                </button>
+                                <button onclick="toggleUserDropdown(event)" class="text-dark hover:text-primary transition">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            </div>
+                            <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                                <a href="member-center.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-user mr-2"></i>會員中心
+                                </a>
+                                <a href="member-center.html#orders" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-shopping-bag mr-2"></i>我的訂單
+                                </a>
+                                <a href="member-center.html#favorites" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-heart mr-2"></i>我的收藏
+                                    <span id="favorite-count" class="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full" style="display: none;">0</span>
+                                </a>
+                                <hr class="my-2">
+                                <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>登出
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <a href="cart.html" id="cart-button" class="relative bg-primary text-white px-6 py-2 rounded-full hover:bg-red-600 transition inline-flex items-center">
+                            <i class="fas fa-shopping-cart mr-2"></i>購物車
+                            <span id="cart-count" class="absolute -top-2 -right-2 bg-accent text-dark text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center" style="display: none;">0</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-dark text-2xl" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div class="hidden md:hidden mt-4 pb-4" id="mobile-menu">
+                <a href="products.html" class="block py-2 text-dark hover:text-primary transition">產品系列</a>
+                <a href="index.html#crowdfunding" class="block py-2 text-dark hover:text-primary transition">集資項目</a>
+                <a href="index.html#quiz" class="block py-2 text-dark hover:text-primary transition">找適合方案</a>
+                <a href="index.html#jar-exchange" class="block py-2 text-dark hover:text-primary transition">換罐計畫</a>
+                <a href="subscription-packages.html" class="block py-2 text-dark hover:text-primary transition" style="color: #FF6B6B; font-weight: 600;">訂閱方案</a>
+                <a href="index.html#about" class="block py-2 text-dark hover:text-primary transition">關於我們</a>
+                
+                <button onclick="openLoginModal()" class="w-full text-left py-2 text-dark hover:text-primary transition mt-2">
+                    <i class="fas fa-user mr-2"></i>
+                    <span id="login-text-mobile">會員登入</span>
+                </button>
+                
+                <a href="cart.html" class="relative w-full bg-primary text-white px-6 py-2 rounded-full hover:bg-red-600 transition mt-2 inline-flex items-center justify-center">
+                    <i class="fas fa-shopping-cart mr-2"></i>購物車
+                    <span id="cart-count-mobile" class="absolute -top-2 -right-2 bg-accent text-dark text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center" style="display: none;">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        
+        <!-- 步驟指示器 -->
+        <div class="step-indicator">
+            <div class="step-dot active" id="dot-1"></div>
+            <div class="step-dot" id="dot-2"></div>
+            <div class="step-dot" id="dot-3"></div>
+            <div class="step-dot" id="dot-4"></div>
+            <div class="step-dot" id="dot-5"></div>
+        </div>
+
+        <!-- Step 1: 選擇方案 -->
+        <div id="step-1" class="step-content active">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center">
+                    <span class="text-3xl mr-3">🐕</span>
+                    <h2 class="text-4xl font-black text-gray-900">訂閱方案</h2>
+                </div>
+                <div class="flex items-center text-orange-600">
+                    <span class="text-2xl mr-2">🚚</span>
+                    <span class="text-lg font-semibold">定期配送・新鮮直達</span>
+                </div>
+            </div>
+            
+            <!-- 付款方式選擇 -->
+            <div class="max-w-2xl mx-auto mb-8">
+                <div class="bg-white border-2 border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-bold mb-4 text-center">選擇付款方式</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="payment-option border-2 border-gray-300 rounded-lg p-4 cursor-pointer hover:border-primary transition-all" id="payment-monthly">
+                            <input type="radio" name="payment-type" value="monthly" checked onchange="updatePaymentType('monthly')" class="hidden">
+                            <div class="text-center">
+                                <div class="text-xl font-bold mb-2">月付</div>
+                                <div class="text-sm text-gray-600">每月自動扣款</div>
+                            </div>
+                        </label>
+                        <label class="payment-option border-2 border-gray-300 rounded-lg p-4 cursor-pointer hover:border-primary transition-all" id="payment-halfyear">
+                            <input type="radio" name="payment-type" value="halfyear" onchange="updatePaymentType('halfyear')" class="hidden">
+                            <div class="text-center">
+                                <div class="text-xl font-bold mb-2 text-orange-600">半年付清</div>
+                                <div class="text-sm text-gray-600">🔥 享優惠價格</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12">
+                <!-- 小食組 -->
+                <div class="option-card border-2 border-gray-200 bg-white rounded-lg p-8 hover:shadow-lg transition-all" data-plan="small" data-price-monthly="399" data-price-halfyear="2100" onclick="window.selectPlan && window.selectPlan('small', '小食組')">
+                    <div class="text-center mb-6">
+                        <div class="text-sm text-gray-500 mb-2">輕鬆入門</div>
+                        <h3 class="text-2xl font-black text-gray-900 mb-4">小食組</h3>
+                        <div class="text-5xl font-black mb-1" style="color: #FF6B6B;" id="price-small">NT$ 399</div>
+                        <div class="text-sm text-gray-500" id="price-period-small">/月</div>
+                    </div>
+                    <div class="space-y-4 mb-6">
+                        <!-- 內容項目 -->
+                        <div class="space-y-2">
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>30g 凍乾粉</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>80g 蛋白肉乾</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>綜合蔬果凍乾（南瓜 30g + 櫛瓜 15g）</span>
+                            </div>
+                        </div>
+                        <!-- 配送頻率 -->
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                            <div class="flex items-center text-sm font-semibold text-gray-700">
+                                <span class="mr-2">🎁</span>
+                                <span>每月配送 1 次</span>
+                            </div>
+                        </div>
+                        <!-- 半年付清優惠 -->
+                        <div class="bg-green-50 p-3 rounded-lg border border-green-200 border-dashed">
+                            <div class="flex items-center text-xs font-bold text-orange-600 mb-1">
+                                <span class="mr-1">🔥</span>
+                                <span>半年付清優惠</span>
+                            </div>
+                            <div class="text-sm text-gray-700">
+                                <div>平均 <span class="font-bold">NT$ 350</span> /月</div>
+                                <div class="text-xs text-gray-600 mt-1">總價 NT$ 2,100 現省 NT$ 294</div>
+                            </div>
+                        </div>
+                        <!-- 推薦 -->
+                        <div class="flex items-center text-xs text-gray-600">
+                            <span class="mr-2">🐕</span>
+                            <span>推薦 5kg 以下小型犬</span>
+                        </div>
+                    </div>
+                    <button class="w-full bg-gray-800 text-white py-3 rounded-lg font-bold hover:bg-gray-900 transition-colors">
+                        選擇方案
+                    </button>
+                </div>
+
+                <!-- 標準組 (嚐鮮首選) -->
+                <div class="option-card border-2 border-gray-200 bg-white rounded-lg p-8 relative hover:shadow-lg transition-all" data-plan="standard" data-price-monthly="599" data-price-halfyear="3160" onclick="window.selectPlan && window.selectPlan('standard', '標準組')">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-6 py-1.5 text-sm font-bold rounded-full">
+                        ★ 嚐鮮首選
+                    </div>
+                    <div class="text-center mb-6 pt-2">
+                        <h3 class="text-2xl font-black text-gray-900 mb-4">標準組</h3>
+                        <div class="text-5xl font-black mb-1" style="color: #FF6B6B;" id="price-standard">NT$ 599</div>
+                        <div class="text-sm text-gray-500" id="price-period-standard">/月</div>
+                    </div>
+                    <div class="space-y-4 mb-6">
+                        <!-- 內容項目 -->
+                        <div class="space-y-2">
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>每次 50g 肉乾</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>每次 30g 凍乾粉</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>綜合蔬果凍乾（南瓜 30g + 櫛瓜 15g）</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">🎁</span>
+                                <span>每月 1 個驚喜玩具</span>
+                            </div>
+                        </div>
+                        <!-- 配送頻率 -->
+                        <div class="bg-orange-50 p-3 rounded-lg border border-orange-200">
+                            <div class="flex items-center text-sm font-semibold text-gray-700">
+                                <span class="mr-2">🎁</span>
+                                <span>每月配送 2 次 (1日・15日)</span>
+                            </div>
+                        </div>
+                        <!-- 半年付清優惠 -->
+                        <div class="bg-green-50 p-3 rounded-lg border border-green-200 border-dashed">
+                            <div class="flex items-center text-xs font-bold text-orange-600 mb-1">
+                                <span class="mr-1">🔥</span>
+                                <span>半年付清優惠</span>
+                            </div>
+                            <div class="text-sm text-gray-700">
+                                <div>平均 <span class="font-bold">NT$ 527</span> /月</div>
+                                <div class="text-xs text-gray-600 mt-1">總價 NT$ 3,160 現省 NT$ 434</div>
+                            </div>
+                        </div>
+                        <!-- 推薦 -->
+                        <div class="flex items-center text-xs text-gray-600">
+                            <span class="mr-2">🐕</span>
+                            <span>推薦 5-15kg 中型犬</span>
+                        </div>
+                    </div>
+                    <button class="w-full text-white py-3 rounded-lg font-bold hover:opacity-90 transition-colors" style="background-color: #10B981;">
+                        立即訂閱
+                    </button>
+                </div>
+
+                <!-- 豪華組 -->
+                <div class="option-card border-2 border-gray-200 bg-white rounded-lg p-8 hover:shadow-lg transition-all" data-plan="premium" data-price-monthly="899" data-price-halfyear="4750" onclick="window.selectPlan && window.selectPlan('premium', '豪華組')">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-black text-gray-900 mb-4">豪華組</h3>
+                        <div class="text-5xl font-black mb-1" style="color: #FF6B6B;" id="price-premium">NT$ 899</div>
+                        <div class="text-sm text-gray-500" id="price-period-premium">/月</div>
+                    </div>
+                    <div class="space-y-4 mb-6">
+                        <!-- 內容項目 -->
+                        <div class="space-y-2">
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>每次 70g 肉乾</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>每次 50g 凍乾粉</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">●</span>
+                                <span>綜合蔬果凍乾（南瓜 30g + 櫛瓜 15g）</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">🎁</span>
+                                <span>每月 1 個益智玩具</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <span class="text-green-600 mr-2">➕</span>
+                                <span>每次額外 +15g 特選凍乾</span>
+                            </div>
+                        </div>
+                        <!-- 配送頻率 -->
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                            <div class="flex items-center text-sm font-semibold text-gray-700">
+                                <span class="mr-2">🎁</span>
+                                <span>每月配送 2 次 (1日・15日)</span>
+                            </div>
+                        </div>
+                        <!-- 半年付清優惠 -->
+                        <div class="bg-green-50 p-3 rounded-lg border border-green-200 border-dashed">
+                            <div class="flex items-center text-xs font-bold text-orange-600 mb-1">
+                                <span class="mr-1">🔥</span>
+                                <span>半年付清優惠</span>
+                            </div>
+                            <div class="text-sm text-gray-700">
+                                <div>平均 <span class="font-bold">NT$ 792</span> /月</div>
+                                <div class="text-xs text-gray-600 mt-1">總價 NT$ 4,750 現省 NT$ 644</div>
+                            </div>
+                        </div>
+                        <!-- 推薦 -->
+                        <div class="flex items-center text-xs text-gray-600">
+                            <span class="mr-2">🐕</span>
+                            <span>推薦 15kg 以上 / 多能家庭</span>
+                        </div>
+                    </div>
+                    <button class="w-full bg-gray-800 text-white py-3 rounded-lg font-bold hover:bg-gray-900 transition-colors">
+                        選擇方案
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: 選擇蛋白質 -->
+        <div id="step-2" class="step-content">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="goToStep(1)" class="text-gray-600 hover:text-gray-900 font-medium">← 上一步</button>
+                <div class="text-center">
+                    <h2 class="text-3xl font-black">選擇蛋白質</h2>
+                    <div id="protein-instruction" class="text-sm text-gray-600 mt-2"></div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="protein-next-btn" onclick="goToProteinNext()" class="bg-gray-200 text-gray-700 px-6 py-2 rounded font-bold hover:bg-gray-300" style="display: none;">
+                        繼續
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 第一次配送選擇 -->
+            <div id="first-delivery-section" class="mb-8">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                    <h3 class="text-lg font-bold text-blue-900 mb-2">📦 第一次配送選擇（每月1號）</h3>
+                    <p class="text-sm text-blue-700">請選擇第一次配送的蛋白質種類</p>
+                </div>
+                <div id="protein-first-options" class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <!-- 動態載入蛋白質選項 -->
+                </div>
+            </div>
+            
+            <!-- 第二次配送選擇（僅標準組和豪華組顯示） -->
+            <div id="second-delivery-section" class="mb-8" style="display: none;">
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
+                    <h3 class="text-lg font-bold text-green-900 mb-2">📦 第二次配送選擇（每月15號）</h3>
+                    <p class="text-sm text-green-700">請選擇第二次配送的蛋白質種類（可與第一次相同或不同）</p>
+                </div>
+                <div id="protein-second-options" class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <!-- 動態載入蛋白質選項 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: 選擇蔬果凍乾 -->
+        <div id="step-3" class="step-content">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="window.goToStep(2)" class="text-gray-600 hover:text-gray-900 font-medium">← 上一步</button>
+                <h2 class="text-3xl font-black">選擇蔬果凍乾</h2>
+                <div class="w-20"></div>
+            </div>
+            <div id="veggie-options" class="grid md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+                <!-- 動態載入蔬果凍乾選項 - 顯示對應克數 -->
+            </div>
+        </div>
+
+        <!-- Step 4: 選擇凍乾粉 -->
+        <div id="step-4" class="step-content">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="window.goToStep(3)" class="text-gray-600 hover:text-gray-900 font-medium">← 上一步</button>
+                <h2 class="text-3xl font-black">選擇凍乾粉</h2>
+                <div class="w-20"></div>
+            </div>
+            
+            <div id="powder-options" class="grid md:grid-cols-3 gap-4 max-w-6xl mx-auto">
+                <!-- 動態載入凍乾粉選項 - 由後台管理 -->
+            </div>
+        </div>
+
+        <!-- Step 5: 確認訂閱 & 填寫資料 -->
+        <div id="step-5" class="step-content">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="window.goToStep(4)" class="text-gray-600 hover:text-gray-900 font-medium">← 上一步</button>
+                <h2 class="text-3xl font-black">確認訂閱 & 填寫資料</h2>
+                <div class="w-20"></div>
+            </div>
+            
+            <div class="max-w-2xl mx-auto">
+                
+                <!-- 訂閱摘要 -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-black">您的訂閱內容</h3>
+                        <span class="text-sm text-gray-500">可點擊「修改」編輯</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <span class="text-gray-600 font-medium">訂閱方案</span>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold" id="summary-plan">-</span>
+                                <button onclick="window.goToStep(1)" class="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium px-2 py-1 rounded hover:bg-blue-50 transition">修改</button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <span class="text-gray-600 font-medium">蛋白質</span>
+                            <div class="flex items-center gap-3">
+                                <span id="summary-protein" class="text-right max-w-xs">-</span>
+                                <button onclick="window.goToStep(2)" class="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium px-2 py-1 rounded hover:bg-blue-50 transition">修改</button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <span class="text-gray-600 font-medium">蔬果凍乾</span>
+                            <div class="flex items-center gap-3">
+                                <span id="summary-veggie" class="text-right max-w-xs">-</span>
+                                <button onclick="window.goToStep(3)" class="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium px-2 py-1 rounded hover:bg-blue-50 transition">修改</button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <span class="text-gray-600 font-medium">凍乾粉</span>
+                            <div class="flex items-center gap-3">
+                                <span id="summary-powder" class="text-right max-w-xs">-</span>
+                                <button onclick="window.goToStep(4)" class="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium px-2 py-1 rounded hover:bg-blue-50 transition">修改</button>
+                            </div>
+                        </div>
+                        <div class="space-y-2 pt-3 border-t">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                                <span class="text-gray-600 font-medium">付款方式</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-bold" id="summary-payment-type">-</span>
+                                    <button onclick="window.goToStep(1)" class="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium px-2 py-1 rounded hover:bg-blue-50 transition">修改</button>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">訂閱金額</span>
+                                <span class="font-bold" id="summary-subtotal">NT$ 0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">運費</span>
+                                <span class="font-bold" id="summary-shipping">NT$ 0</span>
+                            </div>
+                            <div class="flex justify-between pt-2 border-t">
+                                <span class="text-xl font-black">總計</span>
+                                <span class="text-2xl font-black" style="color: #FF6B6B;" id="summary-price">NT$ 0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 已有帳號？（僅在未登入時顯示） -->
+                <div id="login-prompt" class="text-center mb-6 p-4 bg-blue-50 rounded-lg">
+                    <p class="text-gray-700">
+                        已經是會員？
+                        <button onclick="goToLogin()" class="text-blue-600 font-bold hover:underline">
+                            點此登入
+                        </button>
+                        ，快速完成訂閱
+                    </p>
+                </div>
+
+                <form id="subscription-form" onsubmit="return submitSubscription(event)">
+                    
+                    <!-- 會員資訊 -->
+                    <div class="bg-white border-2 border-gray-200 rounded-lg p-6 mb-6" id="member-info-section">
+                        <h4 class="text-lg font-black mb-4">會員資訊</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Email <span class="text-red-500">*</span></label>
+                                <input type="email" name="email" id="subscription-email" required 
+                                       class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                       placeholder="your@email.com">
+                                <p id="email-note" class="text-xs text-gray-500 mt-1 hidden">已登入，此欄位已自動填入</p>
+                            </div>
+                            <div id="password-field-wrapper">
+                                <label class="block text-sm font-medium mb-2">密碼 <span class="text-red-500">*</span></label>
+                                <input type="password" name="password" id="subscription-password" required minlength="8"
+                                       class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                       placeholder="至少8個字元">
+                            </div>
+                            <div id="confirm-password-field-wrapper">
+                                <label class="block text-sm font-medium mb-2">確認密碼 <span class="text-red-500">*</span></label>
+                                <input type="password" name="confirm_password" id="subscription-confirm-password" required 
+                                       class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                       placeholder="請再次輸入密碼">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 寵物資訊（選填） -->
+                    <div class="bg-white border-2 border-gray-200 rounded-lg p-6 mb-6">
+                        <h4 class="text-lg font-black mb-4">
+                            寵物資訊 
+                            <span class="text-sm font-normal text-gray-500">（選填，之後可在會員中心補充）</span>
+                        </h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">寵物名稱</label>
+                                <input type="text" name="pet_name"
+                                       class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                       placeholder="例如：旺財">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">寵物類型</label>
+                                <select name="pet_type" class="w-full border-2 border-gray-200 rounded px-4 py-3">
+                                    <option value="">請選擇</option>
+                                    <option value="dog">狗</option>
+                                    <option value="cat">貓</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 配送資訊 -->
+                    <div class="bg-white border-2 border-gray-200 rounded-lg p-6 mb-6">
+                        <h4 class="text-lg font-black mb-4">配送資訊</h4>
+                        <div class="space-y-4">
+                            
+                            <!-- 配送方式選擇 -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-3">選擇配送方式 <span class="text-red-500">*</span></label>
+                                
+                                <!-- 宅配選項 -->
+                                <label class="shipping-option selected">
+                                    <input type="radio" name="shipping-method" value="home" checked onchange="toggleShippingMethod(this.value)">
+                                    <div class="shipping-option-content">
+                                        <div class="shipping-option-header">
+                                            <span class="shipping-option-title">🏠 宅配到府</span>
+                                            <span class="shipping-fee">+$65</span>
+                                        </div>
+                                        <p class="shipping-option-desc">配送至您指定的地址，3-5個工作天送達</p>
+                                    </div>
+                                </label>
+
+                                <!-- 7-11 取貨選項 -->
+                                <label class="shipping-option">
+                                    <input type="radio" name="shipping-method" value="711" onchange="toggleShippingMethod(this.value)">
+                                    <div class="shipping-option-content">
+                                        <div class="shipping-option-header">
+                                            <span class="shipping-option-title">🏪 7-11 超商取貨</span>
+                                            <span class="shipping-fee free">免運費</span>
+                                        </div>
+                                        <p class="shipping-option-desc">選擇最近的 7-11 門市取貨，3-5個工作天送達門市</p>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- 基本聯絡資訊（兩種方式都需要） -->
+                            <div>
+                                <label class="block text-sm font-medium mb-2">收件人姓名 <span class="text-red-500">*</span></label>
+                                <input type="text" name="recipient_name" id="recipient_name" required 
+                                       class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                       placeholder="王小明">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">聯絡電話 <span class="text-red-500">*</span></label>
+                                <input type="tel" name="phone" id="phone" required 
+                                       class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                       placeholder="0912-345-678">
+                            </div>
+
+                            <!-- 宅配地址表單（預設顯示） -->
+                            <div id="home-delivery-fields" style="display: block;">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">郵遞區號 <span class="text-red-500">*</span></label>
+                                        <input type="text" name="postal_code" id="postal_code" required
+                                               class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                               placeholder="100">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">城市 <span class="text-red-500">*</span></label>
+                                        <select name="city" id="city" required class="w-full border-2 border-gray-200 rounded px-4 py-3">
+                                            <option value="">請選擇</option>
+                                            <option value="taipei">台北市</option>
+                                            <option value="newtaipei">新北市</option>
+                                            <option value="taoyuan">桃園市</option>
+                                            <option value="taichung">台中市</option>
+                                            <option value="tainan">台南市</option>
+                                            <option value="kaohsiung">高雄市</option>
+                                            <option value="keelung">基隆市</option>
+                                            <option value="hsinchu_city">新竹市</option>
+                                            <option value="chiayi_city">嘉義市</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">區域 <span class="text-red-500">*</span></label>
+                                    <input type="text" name="district" id="district" required
+                                           class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                           placeholder="例如：中正區">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">詳細地址 <span class="text-red-500">*</span></label>
+                                    <input type="text" name="address" id="address" required
+                                           class="w-full border-2 border-gray-200 rounded px-4 py-3"
+                                           placeholder="例如：中正路100號5樓">
+                                </div>
+                            </div>
+
+                            <!-- 7-11 超商選擇（預設隱藏） -->
+                            <div id="store-pickup-fields" style="display: none;">
+                                
+                                <!-- 已選擇的門市顯示 -->
+                                <div id="selected-store-display">
+                                    <div style="text-align: center; padding: 20px; color: #999; background: #F9F9F9; border-radius: 8px;">
+                                        <p>請選擇取貨門市</p>
+                                    </div>
+                                </div>
+
+                                <!-- 門市選擇器容器 -->
+                                <div id="store-selector-container">
+                                    
+                                    <!-- 搜尋與篩選 -->
+                                    <div class="store-filter-section">
+                                        <h5 style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">搜尋 7-11 門市</h5>
+                                        
+                                        <div class="filter-row">
+                                            <div class="search-input-wrapper" style="flex: 2;">
+                                                <input type="text" id="store-search" placeholder="搜尋門市名稱或地址...">
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-row">
+                                            <select id="store-city">
+                                                <option value="all">全部縣市</option>
+                                            </select>
+                                            <select id="store-district">
+                                                <option value="all">全部鄉鎮區</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- 門市列表 -->
+                                    <div id="store-list" class="loading-stores">
+                                        載入門市資料中
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- 同意條款 -->
+                    <div class="mb-6">
+                        <label class="flex items-start">
+                            <input type="checkbox" name="agree_terms" required class="mt-1 mr-3">
+                            <span class="text-sm text-gray-600">
+                                我已閱讀並同意
+                                <a href="terms.html" target="_blank" class="text-blue-600 hover:underline font-medium">服務條款</a>
+                                與
+                                <a href="privacy.html" target="_blank" class="text-blue-600 hover:underline font-medium">隱私政策</a>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- 提交按鈕 -->
+                    <button type="submit" 
+                            class="w-full text-white py-4 rounded-lg text-lg font-black hover:opacity-90 transition-colors"
+                            style="background-color: #FF6B6B;">
+                        繼續付款
+                    </button>
+
+                    <div class="text-center mt-4 text-sm text-gray-500">
+                        🔒 您的資料將被安全加密保護
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ========================================
+        // 全局變數和函數（必須在頁面載入時就可用）
+        // ========================================
+        
+        // 立即定義 selectPlan 的備用版本，避免 onclick 錯誤
+        if (typeof window.selectPlan === 'undefined') {
+            window.selectPlan = function(planId, planName) {
+                console.warn('⚠️ selectPlan 在完整定義前被調用，將在稍後重新執行');
+                // 等待腳本載入完成後再執行
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        setTimeout(() => {
+                            if (typeof window.selectPlan === 'function') {
+                                window.selectPlan(planId, planName);
+                            }
+                        }, 100);
+                    });
+                } else {
+                    setTimeout(() => {
+                        if (typeof window.selectPlan === 'function') {
+                            window.selectPlan(planId, planName);
+                        }
+                    }, 100);
+                }
+            };
+        }
+        
+        // 付款方式：月付或半年付
+        let paymentType = 'monthly'; // 'monthly' 或 'halfyear'
+        
+        // 更新付款方式
+        window.updatePaymentType = function(type) {
+            paymentType = type;
+            console.log('💰 付款方式已更新:', type);
+            
+            // 更新付款選項樣式
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('border-primary', 'bg-primary', 'bg-opacity-5');
+                option.classList.add('border-gray-300');
+            });
+            
+            const selectedOption = document.getElementById(`payment-${type}`);
+            if (selectedOption) {
+                selectedOption.classList.remove('border-gray-300');
+                selectedOption.classList.add('border-primary', 'bg-primary', 'bg-opacity-5');
+            }
+            
+            // 更新所有方案價格顯示
+            updatePlanPrices();
+        };
+        
+        // 更新方案價格顯示
+        function updatePlanPrices() {
+            const plans = ['small', 'standard', 'premium'];
+            const priceMap = {
+                small: { monthly: 399, halfyear: 2100 },
+                standard: { monthly: 599, halfyear: 3160 },
+                premium: { monthly: 899, halfyear: 4750 }
+            };
+            
+            plans.forEach(planId => {
+                const priceElement = document.getElementById(`price-${planId}`);
+                const periodElement = document.getElementById(`price-period-${planId}`);
+                
+                if (priceElement && periodElement) {
+                    const price = priceMap[planId][paymentType];
+                    if (paymentType === 'monthly') {
+                        priceElement.textContent = `NT$ ${price}`;
+                        periodElement.textContent = '/月';
+                    } else {
+                        priceElement.textContent = `NT$ ${price}`;
+                        periodElement.textContent = '/半年（平均 NT$ ' + Math.round(price / 6) + ' /月）';
+                    }
+                }
+            });
+        }
+        
+        // 立即定義 selectPlan 函數，確保 onclick 可以訪問
+        window.selectPlan = function(planId, planName, priceParam) {
+            console.log('🎯 selectPlan 被調用:', planId, planName, '付款方式:', paymentType, '傳入價格:', priceParam);
+            
+            if (!planId || !planName) {
+                console.error('❌ selectPlan 參數不完整:', { planId, planName });
+                alert('選擇方案時發生錯誤，請刷新頁面後重試');
+                return;
+            }
+            
+            // 確保 subscriptionData 已初始化
+            if (typeof subscriptionData === 'undefined') {
+                console.error('❌ subscriptionData 未初始化');
+                alert('頁面尚未載入完成，請稍後再試');
+                return;
+            }
+            
+            // 確保 paymentType 已初始化
+            if (typeof paymentType === 'undefined') {
+                paymentType = 'monthly'; // 預設為月付
+            }
+            
+            // 根據付款方式計算價格
+            const priceMap = {
+                small: { monthly: 399, halfyear: 2100 },
+                standard: { monthly: 599, halfyear: 3160 },
+                premium: { monthly: 899, halfyear: 4750 }
+            };
+            
+            // 根據付款方式取得正確的價格
+            const price = priceMap[planId] && priceMap[planId][paymentType] 
+                ? priceMap[planId][paymentType] 
+                : (priceParam || priceMap[planId]?.monthly || 0);
+            
+            subscriptionData.plan = planId;
+            subscriptionData.planName = planName;
+            subscriptionData.price = price;
+            subscriptionData.paymentType = paymentType; // 記錄付款方式
+            
+            // 重置蛋白質選擇（切換方案時清空）
+            subscriptionData.firstDeliveryProtein = null;
+            subscriptionData.firstDeliveryProteinName = null;
+            subscriptionData.secondDeliveryProtein = null;
+            subscriptionData.secondDeliveryProteinName = null;
+            
+            // 移除其他選中狀態
+            document.querySelectorAll('[data-plan]').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // 添加選中狀態
+            const selectedPlan = document.querySelector(`[data-plan="${planId}"]`);
+            if (selectedPlan) {
+                selectedPlan.classList.add('selected');
+                console.log('✅ 方案已選中:', planId);
+            } else {
+                console.error('❌ 找不到方案元素:', planId);
+            }
+            
+            // 重新載入選項以顯示正確的重量
+            if (typeof loadOptions === 'function') {
+                loadOptions();
+            } else {
+                console.warn('⚠️ loadOptions 函數未定義，將在 DOMContentLoaded 後載入');
+            }
+            
+            // 前往下一步
+            if (typeof window.goToStep === 'function') {
+                setTimeout(() => {
+                    console.log('🔄 前往 Step 2');
+                    window.goToStep(2);
+                }, 300);
+            } else {
+                console.warn('⚠️ goToStep 函數未定義，將在 DOMContentLoaded 後定義');
+                // 如果函數還未定義，等待一段時間後再試
+                setTimeout(() => {
+                    if (typeof window.goToStep === 'function') {
+                        window.goToStep(2);
+                    } else {
+                        console.error('❌ goToStep 函數仍未定義');
+                        alert('頁面尚未完全載入，請稍後再試');
+                    }
+                }, 1000);
+            }
+        };
+        
+        console.log('✅ selectPlan 函數已在全局作用域定義:', typeof window.selectPlan);
+        
+        // 訂閱數據存儲
+        let subscriptionData = {
+            plan: null,
+            planName: null,
+            price: 0,
+            firstDeliveryProtein: null,  // 第一次配送的蛋白質
+            firstDeliveryProteinName: null,
+            secondDeliveryProtein: null,  // 第二次配送的蛋白質（僅標準組和豪華組）
+            secondDeliveryProteinName: null,
+            veggie: null,
+            veggieName: null,
+            veggieWeight: null,
+            powder: null,
+            powderName: null,
+            powderWeight: null
+        };
+
+        let currentStep = 1;
+
+        // 配送方式切換
+        function toggleShippingMethod(method) {
+            const homeFields = document.getElementById('home-delivery-fields');
+            const storeFields = document.getElementById('store-pickup-fields');
+            const shippingOptions = document.querySelectorAll('.shipping-option');
+            
+            // 更新選中狀態
+            shippingOptions.forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+                if (radio.value === method) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+            
+            // 切換顯示的表單區域
+            if (method === 'home') {
+                homeFields.style.display = 'block';
+                storeFields.style.display = 'none';
+                
+                // 宅配：地址必填，清除門市驗證
+                setFieldRequired('postal_code', true);
+                setFieldRequired('city', true);
+                setFieldRequired('district', true);
+                setFieldRequired('address', true);
+                
+            } else if (method === '711') {
+                homeFields.style.display = 'none';
+                storeFields.style.display = 'block';
+                
+                // 超商取貨：地址非必填，初始化門市選擇器
+                setFieldRequired('postal_code', false);
+                setFieldRequired('city', false);
+                setFieldRequired('district', false);
+                setFieldRequired('address', false);
+                
+                // 初始化超商選擇器（自動載入資料並初始化）
+                if (!window.storeSelector) {
+                    window.storeSelector = new StoreSelector();
+                }
+            }
+            
+            // 更新總價顯示（含運費）
+            updatePriceDisplay();
+        }
+
+        // 設定欄位必填狀態
+        function setFieldRequired(fieldId, required) {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                if (required) {
+                    field.setAttribute('required', 'required');
+                } else {
+                    field.removeAttribute('required');
+                }
+            }
+        }
+
+        // 更新價格顯示（含運費）
+        function updatePriceDisplay() {
+            // 如果還沒有選擇方案，不更新價格
+            if (!subscriptionData.plan || !subscriptionData.price) {
+                return;
+            }
+            
+            const shippingMethod = document.querySelector('input[name="shipping-method"]:checked')?.value || 'home';
+            const shippingFee = shippingMethod === 'home' ? 65 : 0;
+            const subtotal = subscriptionData.price || 0;
+            const total = subtotal + shippingFee;
+            
+            console.log('💰 更新價格顯示:', {
+                plan: subscriptionData.planName,
+                subtotal: subtotal,
+                shippingFee: shippingFee,
+                total: total
+            });
+            
+            // 更新訂閱金額（不含運費）
+            const subtotalElement = document.getElementById('summary-subtotal');
+            if (subtotalElement) {
+                subtotalElement.textContent = `NT$ ${subtotal}`;
+            }
+            
+            // 更新運費
+            const shippingElement = document.getElementById('summary-shipping');
+            if (shippingElement) {
+                if (shippingFee > 0) {
+                    shippingElement.textContent = `NT$ ${shippingFee}`;
+                    shippingElement.classList.remove('text-green-600');
+                } else {
+                    shippingElement.textContent = '免運費';
+                    shippingElement.classList.add('text-green-600');
+                }
+            }
+            
+            // 更新總價顯示（格式與方案選擇頁面一致）
+            const priceElement = document.getElementById('summary-price');
+            if (priceElement) {
+                priceElement.textContent = `NT$ ${total}`;
+            }
+        }
+
+        // 從後台API或localStorage載入選項
+        async function loadOptions() {
+            // 方法1: 從localStorage讀取（與後台管理同步）
+            let proteinOptions = JSON.parse(localStorage.getItem('protein-options') || '[]');
+            let veggieOptions = JSON.parse(localStorage.getItem('veggie-options') || '[]');
+            let powderOptions = JSON.parse(localStorage.getItem('powder-options') || '[]');
+            
+            // 方法2: 從後台API讀取（實際部署時使用）
+            // try {
+            //     const response = await fetch('/api/subscription-options');
+            //     const data = await response.json();
+            //     proteinOptions = data.protein;
+            //     veggieOptions = data.veggie;
+            //     powderOptions = data.powder;
+            // } catch (error) {
+            //     console.error('載入選項失敗:', error);
+            // }
+            
+            // 如果沒有數據，使用預設值（根據實際12種產品分類，不包含重量，重量根據套組動態計算）
+            if (proteinOptions.length === 0) {
+                proteinOptions = [
+                    { id: 'duck-throat', name: '鴨喉', description: '關節保健磨牙潔齒', benefit: '關節保健·磨牙潔齒' },
+                    { id: 'duck-lung', name: '鴨肺', description: '低脂高蛋白易消化', benefit: '低脂高蛋白·易消化' },
+                    { id: 'chicken-jerky', name: '雞肉乾', description: '增肌訓練獎勵', benefit: '增肌·訓練獎勵' },
+                    { id: 'duck-apple', name: '鴨肉蘋果肉乾', description: '溫和蛋白助消化', benefit: '溫和蛋白·助消化' },
+                    { id: 'beef-sweet-potato', name: '牛肉地瓜乾', description: '補充能量增強體力', benefit: '補充能量·增強體力' },
+                    { id: 'small-fish', name: '小魚乾', description: '補鈣骨骼保健', benefit: '補鈣·骨骼保健' }
+                ];
+            }
+
+            if (veggieOptions.length === 0) {
+                // 蔬果凍乾固定為：綜合蔬果凍乾（南瓜 30g + 櫛瓜 15g）
+                veggieOptions = [
+                    { id: 'mixed', name: '綜合蔬果凍乾', description: '南瓜 30g + 櫛瓜 15g', benefit: '腸道調理·改善便秘·改善食慾' }
+                ];
+            }
+
+            if (powderOptions.length === 0) {
+                powderOptions = [
+                    { id: 'beef-tendon', name: '牛腱肉凍乾粉', benefit: '增肌·術後恢復' },
+                    { id: 'chicken-liver-powder', name: '雞肉雞肝凍乾粉', benefit: '明目補血·開胃' },
+                    { id: 'chicken-red-yeast', name: '雞肉紅麴凍乾粉', benefit: '心血管保健·抗氧化' }
+                ];
+            }
+
+            // 根據套組載入蛋白質選項（分第一次和第二次配送）
+            if (proteinOptions.length > 0) {
+                renderProteinOptions(proteinOptions);
+            }
+            renderOptions('veggie', veggieOptions);
+            renderOptions('powder', powderOptions);
+        }
+
+        // 渲染蛋白質選項（分第一次和第二次配送）
+        function renderProteinOptions(options) {
+            const plan = subscriptionData.plan;
+            const isMultiDelivery = plan === 'standard' || plan === 'premium';
+            
+            // 更新說明文字
+            const instruction = document.getElementById('protein-instruction');
+            if (instruction) {
+                if (!plan) {
+                    instruction.textContent = '請先選擇套組';
+                } else if (plan === 'small') {
+                    instruction.textContent = '小食組每月配送1次，請選擇蛋白質種類';
+                } else {
+                    instruction.textContent = `${plan === 'premium' ? '豪華組' : '標準組'}每月配送2次（1號 & 15號），請為兩次配送分別選擇蛋白質`;
+                }
+            }
+            
+            // 顯示/隱藏第二次配送區塊
+            const secondSection = document.getElementById('second-delivery-section');
+            if (secondSection) {
+                secondSection.style.display = isMultiDelivery ? 'block' : 'none';
+            }
+            
+            // 渲染第一次配送選項
+            renderProteinOptionsForDelivery('first', options, plan);
+            
+            // 如果是兩次配送，渲染第二次配送選項
+            if (isMultiDelivery) {
+                renderProteinOptionsForDelivery('second', options, plan);
+            }
+        }
+
+        // 為特定配送渲染蛋白質選項
+        function renderProteinOptionsForDelivery(deliveryType, options, plan) {
+            const container = document.getElementById(`protein-${deliveryType}-options`);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            options.forEach(option => {
+                const card = document.createElement('div');
+                card.className = 'option-card border-2 border-gray-200 bg-white p-6 hover:border-gray-400 transition-all cursor-pointer';
+                card.setAttribute(`data-protein-${deliveryType}`, option.id);
+                
+                // 根據套組計算重量
+                let weight = '';
+                if (plan) {
+                    if (plan === 'small') {
+                        weight = '80g';
+                    } else if (plan === 'standard') {
+                        weight = '50g';
+                    } else if (plan === 'premium') {
+                        weight = '70g'; // 豪華組每次配送70g
+                    }
+                }
+                
+                // 檢查是否已選擇
+                const isSelected = deliveryType === 'first' 
+                    ? subscriptionData.firstDeliveryProtein === option.id
+                    : subscriptionData.secondDeliveryProtein === option.id;
+                
+                if (isSelected) {
+                    card.classList.add('selected');
+                }
+                
+                card.innerHTML = `
+                    <div class="text-center">
+                        <h3 class="text-lg font-black mb-2 text-gray-900">${option.name}</h3>
+                        ${weight ? `<div class="text-sm font-bold mb-2" style="color: #FF6B6B;">${weight}</div>` : ''}
+                        ${option.description ? `<p class="text-sm text-gray-600 mb-2">${option.description}</p>` : ''}
+                        <p class="text-xs text-gray-500">${option.benefit}</p>
+                    </div>
+                `;
+                
+                card.onclick = () => selectProteinForDelivery(deliveryType, option.id, option.name);
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 渲染選項卡片
+        function renderOptions(type, options) {
+            const container = document.getElementById(`${type}-options`);
+            container.innerHTML = '';
+            const plan = subscriptionData.plan; // 獲取已選擇的套組
+
+            options.forEach(option => {
+                const card = document.createElement('div');
+                card.className = 'option-card border-2 border-gray-200 bg-white p-6 hover:border-gray-400 transition-all cursor-pointer';
+                card.setAttribute(`data-${type}`, option.id);
+                
+                // 根據套組計算重量
+                let weight = '';
+                if (plan) {
+                    if (type === 'veggie') {
+                        // 蔬果凍乾固定為：綜合蔬果凍乾（南瓜 30g + 櫛瓜 15g）= 45g
+                        weight = '45g（南瓜 30g + 櫛瓜 15g）';
+                    } else if (type === 'protein') {
+                        // 蛋白質選項已經在 renderProteinOptionsForDelivery 中處理，這裡不需要
+                        // 但為了避免錯誤，保留空值
+                        weight = '';
+                    } else if (type === 'powder') {
+                        const weightMap = {
+                            powder: { small: '30g', standard: '30g', premium: '50g' }
+                        };
+                        weight = weightMap[type]?.[plan] || '';
+                    }
+                }
+                
+                card.innerHTML = `
+                    <div class="text-center">
+                        <h3 class="text-lg font-black mb-2 text-gray-900">${option.name}</h3>
+                        ${weight ? `<div class="text-sm font-bold mb-2" style="color: #FF6B6B;">${weight}</div>` : plan ? '' : '<div class="text-xs text-gray-400 mb-2">請先選擇套組</div>'}
+                        ${option.description ? `<p class="text-sm text-gray-600 mb-2">${option.description}</p>` : ''}
+                        <p class="text-xs text-gray-500">${option.benefit}</p>
+                    </div>
+                `;
+                
+                if (type === 'veggie') {
+                    if (subscriptionData.veggie === option.id) {
+                        card.classList.add('selected');
+                    }
+                    card.onclick = () => window.selectVeggie(option.id, option.name);
+                } else if (type === 'powder') {
+                    if (subscriptionData.powder === option.id) {
+                        card.classList.add('selected');
+                    }
+                    card.onclick = () => window.selectPowder(option.id, option.name);
+                }
+                
+                container.appendChild(card);
+            });
+            
+        }
+
+        // 為特定配送選擇蛋白質
+        function selectProteinForDelivery(deliveryType, proteinId, proteinName) {
+            const plan = subscriptionData.plan;
+            let weight = '';
+            
+            if (plan === 'small') {
+                weight = '80g';
+            } else if (plan === 'standard') {
+                weight = '50g';
+            } else if (plan === 'premium') {
+                weight = '70g'; // 豪華組每次配送70g
+            }
+            
+            if (deliveryType === 'first') {
+                // 如果選擇了相同的，則取消選擇
+                if (subscriptionData.firstDeliveryProtein === proteinId) {
+                    subscriptionData.firstDeliveryProtein = null;
+                    subscriptionData.firstDeliveryProteinName = null;
+                    document.querySelector(`[data-protein-first="${proteinId}"]`).classList.remove('selected');
+                } else {
+                    subscriptionData.firstDeliveryProtein = proteinId;
+                    subscriptionData.firstDeliveryProteinName = `${proteinName} ${weight}`;
+                    // 移除其他選中狀態
+                    document.querySelectorAll('[data-protein-first]').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    document.querySelector(`[data-protein-first="${proteinId}"]`).classList.add('selected');
+                }
+            } else {
+                // 第二次配送
+                if (subscriptionData.secondDeliveryProtein === proteinId) {
+                    subscriptionData.secondDeliveryProtein = null;
+                    subscriptionData.secondDeliveryProteinName = null;
+                    document.querySelector(`[data-protein-second="${proteinId}"]`).classList.remove('selected');
+                } else {
+                    subscriptionData.secondDeliveryProtein = proteinId;
+                    subscriptionData.secondDeliveryProteinName = `${proteinName} ${weight}`;
+                    // 移除其他選中狀態
+                    document.querySelectorAll('[data-protein-second]').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    document.querySelector(`[data-protein-second="${proteinId}"]`).classList.add('selected');
+                }
+            }
+            
+            // 檢查是否可以繼續
+            checkProteinSelectionComplete();
+            
+            // 如果是小食組且選擇了第一次配送，自動進入蔬果凍乾選擇頁面
+            if (plan === 'small' && deliveryType === 'first' && subscriptionData.firstDeliveryProtein) {
+                setTimeout(() => window.goToStep(3), 300);
+            }
+        }
+
+        // 檢查蛋白質選擇是否完成
+        function checkProteinSelectionComplete() {
+            const plan = subscriptionData.plan;
+            const nextBtn = document.getElementById('protein-next-btn');
+            
+            if (plan === 'small') {
+                // 小食組：只需要第一次配送選擇（會自動進入下一步）
+                if (nextBtn) {
+                    nextBtn.style.display = 'none';
+                }
+            } else {
+                // 標準組和豪華組：需要兩次配送都選擇，完成後自動進入蔬果凍乾選擇頁面
+                if (subscriptionData.firstDeliveryProtein && subscriptionData.secondDeliveryProtein) {
+                    // 兩次選擇都完成後，自動跳轉到蔬果凍乾選擇頁面
+                    setTimeout(() => {
+                        window.goToStep(3);
+                    }, 500);
+                }
+                if (nextBtn) {
+                    nextBtn.style.display = 'none'; // 不再需要手動按鈕
+                }
+                
+                // 顯示選擇狀態
+                const instruction = document.getElementById('protein-instruction');
+                if (instruction) {
+                    const firstSelected = subscriptionData.firstDeliveryProtein ? '✓' : '○';
+                    const secondSelected = subscriptionData.secondDeliveryProtein ? '✓' : '○';
+                    instruction.innerHTML = `${plan === 'premium' ? '豪華組' : '標準組'}每月配送2次（1號 & 15號）<br>
+                        <span class="text-blue-600">第一次配送（1號）：${firstSelected}</span> | 
+                        <span class="text-green-600">第二次配送（15號）：${secondSelected}</span>`;
+                }
+            }
+        }
+
+        // 步驟導航（暴露到全局作用域）
+        window.goToStep = function(step) {
+            console.log('🔄 goToStep 被調用:', step);
+            
+            // 隱藏所有步驟
+            document.querySelectorAll('.step-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // 顯示目標步驟
+            const targetStep = document.getElementById(`step-${step}`);
+            if (!targetStep) {
+                console.error(`❌ 找不到步驟元素: step-${step}`);
+                alert(`找不到步驟 ${step}，請刷新頁面後重試`);
+                return;
+            }
+            
+            targetStep.classList.add('active');
+            currentStep = step;
+            console.log(`✅ 已切換到 Step ${step}`);
+            
+            // 更新步驟指示器
+            updateStepIndicator(step);
+            
+            // 如果進入 Step 5（確認訂閱），更新摘要顯示
+            if (step === 5) {
+                // 確保有預設的配送方式（宅配）
+                const shippingRadio = document.querySelector('input[name="shipping-method"][value="home"]');
+                if (shippingRadio && !document.querySelector('input[name="shipping-method"]:checked')) {
+                    shippingRadio.checked = true;
+                    toggleShippingMethod('home');
+                }
+                updateOrderSummary(); // 這會自動調用 updatePriceDisplay
+                // 自動填入已登入用戶的資訊
+                autoFillUserInfo();
+            }
+            
+            // 滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function updateStepIndicator(step) {
+            for (let i = 1; i <= 5; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === step) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            }
+        }
+
+        // 選擇方案（暴露到全局作用域供 HTML onclick 使用）
+        // 注意：這個定義會覆蓋上面的定義，所以需要與上面保持一致
+        window.selectPlan = function(planId, planName, priceParam) {
+            console.log('🎯 selectPlan 被調用（舊版本）:', planId, planName, '付款方式:', paymentType);
+            
+            if (!planId || !planName) {
+                console.error('❌ selectPlan 參數不完整:', { planId, planName });
+                return;
+            }
+            
+            // 確保 subscriptionData 已初始化
+            if (typeof subscriptionData === 'undefined') {
+                console.error('❌ subscriptionData 未初始化');
+                return;
+            }
+            
+            // 確保 paymentType 已初始化
+            if (typeof paymentType === 'undefined') {
+                paymentType = 'monthly';
+            }
+            
+            // 根據付款方式計算價格
+            const priceMap = {
+                small: { monthly: 399, halfyear: 2100 },
+                standard: { monthly: 599, halfyear: 3160 },
+                premium: { monthly: 899, halfyear: 4750 }
+            };
+            
+            const price = priceMap[planId] && priceMap[planId][paymentType] 
+                ? priceMap[planId][paymentType] 
+                : (priceParam || priceMap[planId]?.monthly || 0);
+            
+            subscriptionData.plan = planId;
+            subscriptionData.planName = planName;
+            subscriptionData.price = price;
+            subscriptionData.paymentType = paymentType;
+            
+            // 重置蛋白質選擇（切換方案時清空）
+            subscriptionData.firstDeliveryProtein = null;
+            subscriptionData.firstDeliveryProteinName = null;
+            subscriptionData.secondDeliveryProtein = null;
+            subscriptionData.secondDeliveryProteinName = null;
+            
+            // 移除其他選中狀態
+            document.querySelectorAll('[data-plan]').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // 添加選中狀態
+            const selectedPlan = document.querySelector(`[data-plan="${planId}"]`);
+            if (selectedPlan) {
+                selectedPlan.classList.add('selected');
+                console.log('✅ 方案已選中:', planId);
+            } else {
+                console.error('❌ 找不到方案元素:', planId);
+            }
+            
+            // 重新載入選項以顯示正確的重量
+            if (typeof loadOptions === 'function') {
+                loadOptions();
+            } else {
+                console.warn('⚠️ loadOptions 函數未定義');
+            }
+            
+            // 前往下一步
+            if (typeof window.goToStep === 'function') {
+                setTimeout(() => {
+                    console.log('🔄 前往 Step 2');
+                    window.goToStep(2);
+                }, 300);
+            } else {
+                console.error('❌ goToStep 函數未定義');
+            }
+        };
+        
+        // 確保函數在全局作用域中可用
+        console.log('✅ selectPlan 函數已定義:', typeof window.selectPlan);
+
+        // 選擇蛋白質後繼續下一步
+        // 蛋白質選擇完成後繼續（暴露到全局作用域）
+        window.goToProteinNext = function() {
+            const plan = subscriptionData.plan;
+            
+            // 驗證選擇是否完整
+            if (plan === 'small') {
+                if (!subscriptionData.firstDeliveryProtein) {
+                    alert('請選擇第一次配送的蛋白質');
+                    return false;
+                }
+            } else if (plan === 'standard' || plan === 'premium') {
+                // 標準組和豪華組：必須完成兩次配送的選擇
+                if (!subscriptionData.firstDeliveryProtein) {
+                    alert('請先選擇第一次配送（每月1號）的蛋白質');
+                    return false;
+                }
+                if (!subscriptionData.secondDeliveryProtein) {
+                    alert('請選擇第二次配送（每月15號）的蛋白質才能繼續');
+                    return false;
+                }
+            }
+            
+            window.goToStep(3);
+            return true;
+        };
+
+
+        // 選擇蔬果凍乾（顯示對應克數）
+        window.selectVeggie = function(veggieId, veggieName) {
+            const plan = subscriptionData.plan;
+            
+            // 驗證蛋白質選擇是否完成
+            if ((plan === 'standard' || plan === 'premium')) {
+                if (!subscriptionData.firstDeliveryProtein || !subscriptionData.secondDeliveryProtein) {
+                    alert('請先完成第一次和第二次配送的蛋白質選擇');
+                    return false;
+                }
+            } else if (plan === 'small') {
+                if (!subscriptionData.firstDeliveryProtein) {
+                    alert('請先選擇蛋白質');
+                    return false;
+                }
+            }
+            
+            // 根據方案計算重量（所有方案都是固定值：南瓜 30g + 櫛瓜 15g = 45g）
+            let weight = '45g（南瓜 30g + 櫛瓜 15g）';
+            
+            subscriptionData.veggie = veggieId || 'mixed';
+            subscriptionData.veggieName = veggieName || '綜合蔬果凍乾';
+            subscriptionData.veggieWeight = weight;
+            
+            console.log('✅ 已選擇蔬果凍乾:', {
+                veggie: subscriptionData.veggieName,
+                weight: subscriptionData.veggieWeight
+            });
+            
+            // 移除其他選中狀態
+            document.querySelectorAll('[data-veggie]').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // 添加選中狀態
+            const selectedVeggie = document.querySelector(`[data-veggie="${veggieId || 'mixed'}"]`);
+            if (selectedVeggie) {
+                selectedVeggie.classList.add('selected');
+            }
+            
+            // 前往下一步（凍乾粉）
+            setTimeout(() => window.goToStep(4), 300);
+            return true;
+        };
+
+        // 選擇凍乾粉
+        // 選擇凍乾粉（暴露到全局作用域）
+        window.selectPowder = function(powderId, powderName) {
+            console.log('🎯 selectPowder 被調用:', powderId, powderName);
+            
+            if (!powderId || !powderName) {
+                console.error('❌ selectPowder 參數不完整:', { powderId, powderName });
+                return false;
+            }
+            
+            const plan = subscriptionData.plan;
+            
+            // 驗證蛋白質和蔬果選擇是否完成（標準組和豪華組）
+            if ((plan === 'standard' || plan === 'premium')) {
+                if (!subscriptionData.firstDeliveryProtein || !subscriptionData.secondDeliveryProtein) {
+                    alert('請先完成第一次和第二次配送的蛋白質選擇');
+                    return false;
+                }
+            } else if (plan === 'small') {
+                if (!subscriptionData.firstDeliveryProtein) {
+                    alert('請先選擇蛋白質');
+                    return false;
+                }
+            }
+            
+            // 確保蔬果凍乾已設置
+            if (!subscriptionData.veggie) {
+                subscriptionData.veggie = 'mixed';
+                subscriptionData.veggieName = '綜合蔬果凍乾（南瓜 30g + 櫛瓜 15g）';
+                subscriptionData.veggieWeight = '45g';
+            }
+            
+            // 獲取重量
+            let weight = '';
+            if (plan) {
+                const weightMap = {
+                    small: '30g',
+                    standard: '30g',
+                    premium: '50g'
+                };
+                weight = weightMap[plan] || '';
+            }
+            
+            subscriptionData.powder = powderId;
+            subscriptionData.powderName = powderName;
+            subscriptionData.powderWeight = weight;
+            
+            console.log('✅ 已選擇凍乾粉:', {
+                powder: subscriptionData.powderName,
+                weight: subscriptionData.powderWeight
+            });
+            
+            // 移除其他選中狀態
+            document.querySelectorAll('[data-powder]').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // 添加選中狀態
+            const selectedPowder = document.querySelector(`[data-powder="${powderId}"]`);
+            if (selectedPowder) {
+                selectedPowder.classList.add('selected');
+                console.log('✅ 凍乾粉已選中:', powderId);
+            } else {
+                console.error('❌ 找不到凍乾粉元素:', powderId);
+                // 即使找不到元素，也繼續執行跳轉
+            }
+            
+            // 確保 goToStep 函數可用
+            if (typeof window.goToStep !== 'function') {
+                console.error('❌ goToStep 函數未定義');
+                alert('頁面尚未完全載入，請稍後再試');
+                return false;
+            }
+            
+            // 前往下一步（確認訂閱頁面 - Step 5）
+            console.log('🔄 準備前往 Step 5（確認訂閱）');
+            setTimeout(() => {
+                try {
+                    console.log('🔄 執行 goToStep(5)');
+                    window.goToStep(5);
+                    console.log('✅ 已跳轉到 Step 5');
+                } catch (error) {
+                    console.error('❌ 跳轉失敗:', error);
+                    alert('跳轉失敗，請刷新頁面後重試');
+                }
+            }, 300);
+            return true;
+        };
+
+        // 更新訂閱摘要（改名為 updateOrderSummary 避免衝突）
+        function updateOrderSummary() {
+            // 更新方案名稱
+            const planSummary = document.getElementById('summary-plan');
+            if (planSummary) {
+                planSummary.textContent = subscriptionData.planName || '-';
+            }
+            
+            // 更新付款方式
+            const paymentTypeSummary = document.getElementById('summary-payment-type');
+            if (paymentTypeSummary) {
+                if (subscriptionData.paymentType === 'halfyear') {
+                    paymentTypeSummary.textContent = '半年付清（享優惠）';
+                } else {
+                    paymentTypeSummary.textContent = '月付';
+                }
+            }
+            
+            // 更新蛋白質顯示（分第一次和第二次配送）
+            const proteinSummary = document.getElementById('summary-protein');
+            if (proteinSummary) {
+                const plan = subscriptionData.plan;
+                
+                if (plan === 'small') {
+                    // 小食組：只顯示第一次配送
+                    proteinSummary.textContent = subscriptionData.firstDeliveryProteinName || '-';
+                } else if (plan === 'standard' || plan === 'premium') {
+                    // 標準組和豪華組：顯示兩次配送
+                    const first = subscriptionData.firstDeliveryProteinName || '-';
+                    const second = subscriptionData.secondDeliveryProteinName || '-';
+                    proteinSummary.textContent = `第一次（1號）：${first} / 第二次（15號）：${second}`;
+                } else {
+                    proteinSummary.textContent = '-';
+                }
+            }
+            
+            // 更新蔬果凍乾（包含重量）
+            const veggieSummary = document.getElementById('summary-veggie');
+            if (veggieSummary) {
+                if (subscriptionData.veggieName) {
+                    const veggieText = subscriptionData.veggieWeight 
+                        ? `${subscriptionData.veggieName} ${subscriptionData.veggieWeight}`
+                        : subscriptionData.veggieName;
+                    veggieSummary.textContent = veggieText;
+                } else {
+                    veggieSummary.textContent = '-';
+                }
+            }
+            
+            // 更新凍乾粉（包含重量）
+            const powderSummary = document.getElementById('summary-powder');
+            if (powderSummary) {
+                if (subscriptionData.powderName) {
+                    const powderText = subscriptionData.powderWeight 
+                        ? `${subscriptionData.powderName} ${subscriptionData.powderWeight}`
+                        : subscriptionData.powderName;
+                    powderSummary.textContent = powderText;
+                } else {
+                    powderSummary.textContent = '-';
+                }
+            }
+            
+            // 價格會由 updatePriceDisplay() 更新（含運費）
+            updatePriceDisplay();
+        }
+
+        // 前往登入頁面（暴露到全局作用域）
+        window.goToLogin = function() {
+            // 儲存目前的訂閱選擇到 sessionStorage
+            sessionStorage.setItem('pendingSubscription', JSON.stringify(subscriptionData));
+            
+            // 導向登入頁面
+            window.location.href = 'login.html';
+        };
+        
+        // 檢查是否已登入（支援多種登入狀態格式）
+        function checkLoginStatus() {
+            // 優先檢查 UserAuth
+            if (window.UserAuth && window.UserAuth.isLoggedIn()) {
+                const user = window.UserAuth.getCurrentUser();
+                if (user) {
+                    // 同步到 currentUser，確保其他功能正常
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    return user;
+                }
+            }
+            
+            // 檢查多種 storage key
+            let currentUser = localStorage.getItem('currentUser') || 
+                             sessionStorage.getItem('currentUser') ||
+                             localStorage.getItem('jiangchong_user') ||
+                             localStorage.getItem('memberUser');
+            
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                
+                // 已登入，自動填入 Email 並鎖定
+                const emailInput = document.querySelector('input[name="email"]');
+                const passwordInput = document.querySelector('input[name="password"]');
+                const confirmPasswordInput = document.querySelector('input[name="confirm_password"]');
+                
+                if (emailInput) {
+                    emailInput.value = user.email;
+                    emailInput.readOnly = true;
+                    emailInput.classList.add('bg-gray-100');
+                }
+                
+                // 隱藏密碼欄位（因為已經登入）
+                if (passwordInput && confirmPasswordInput) {
+                    // 移除 required 屬性，避免表單驗證錯誤
+                    passwordInput.removeAttribute('required');
+                    confirmPasswordInput.removeAttribute('required');
+                    // 隱藏整個密碼區塊
+                    const passwordSection = passwordInput.closest('.bg-white');
+                    if (passwordSection) {
+                        passwordSection.style.display = 'none';
+                    }
+                }
+                
+                // 顯示登入狀態
+                const loginPrompt = document.getElementById('login-prompt');
+                if (loginPrompt) {
+                    loginPrompt.innerHTML = `
+                        <p class="text-gray-700">
+                            您已登入為 <span class="font-bold">${user.email || user.name || '會員'}</span>
+                            <button onclick="logout()" class="text-red-600 font-bold hover:underline ml-2">
+                                登出
+                            </button>
+                        </p>
+                        <p class="text-sm text-gray-600 mt-2">
+                            💡 系統已自動填入您的資訊，可直接確認訂閱
+                        </p>
+                    `;
+                }
+                
+                return user;
+            }
+            
+            return null;
+        }
+        
+        // 自動填入已登入用戶的資訊
+        function autoFillUserInfo() {
+            const currentUser = checkLoginStatus();
+            
+            if (!currentUser) {
+                // 未登入，顯示登入提示
+                const loginPrompt = document.getElementById('login-prompt');
+                if (loginPrompt) {
+                    loginPrompt.style.display = 'block';
+                    loginPrompt.innerHTML = `
+                        <p class="text-gray-700">
+                            已經是會員？
+                            <button onclick="goToLogin()" class="text-blue-600 font-bold hover:underline">
+                                點此登入
+                            </button>
+                            ，快速完成訂閱
+                        </p>
+                    `;
+                }
+                return;
+            }
+            
+            console.log('✅ 開始自動填入用戶資訊:', currentUser);
+            
+            // 隱藏登入提示，顯示已登入狀態
+            const loginPrompt = document.getElementById('login-prompt');
+            if (loginPrompt) {
+                loginPrompt.style.display = 'block';
+                loginPrompt.innerHTML = `
+                    <p class="text-gray-700">
+                        您已登入為 <span class="font-bold">${currentUser.email || currentUser.name || '會員'}</span>
+                        <button onclick="logout()" class="text-red-600 font-bold hover:underline ml-2">
+                            登出
+                        </button>
+                    </p>
+                    <p class="text-sm text-gray-600 mt-2">
+                        💡 系統已自動填入您的資訊，可直接確認訂閱
+                    </p>
+                `;
+            }
+            
+            // 0. 處理會員資訊區塊（已登入用戶不需要輸入密碼）
+            const passwordInput = document.getElementById('subscription-password');
+            const confirmPasswordInput = document.getElementById('subscription-confirm-password');
+            const passwordFieldWrapper = document.getElementById('password-field-wrapper');
+            const confirmPasswordFieldWrapper = document.getElementById('confirm-password-field-wrapper');
+            const emailInput = document.getElementById('subscription-email');
+            const emailNote = document.getElementById('email-note');
+            
+            // 隱藏密碼欄位（已登入用戶不需要輸入密碼）
+            if (passwordInput && confirmPasswordInput) {
+                // 移除 required 屬性，避免表單驗證錯誤
+                passwordInput.removeAttribute('required');
+                passwordInput.removeAttribute('minlength');
+                confirmPasswordInput.removeAttribute('required');
+                
+                // 隱藏密碼欄位所在的 div
+                if (passwordFieldWrapper) {
+                    passwordFieldWrapper.style.display = 'none';
+                }
+                if (confirmPasswordFieldWrapper) {
+                    confirmPasswordFieldWrapper.style.display = 'none';
+                }
+                
+                console.log('✅ 已隱藏密碼欄位（用戶已登入）');
+            }
+            
+            // 更新 Email 欄位
+            if (emailInput) {
+                emailInput.value = currentUser.email || '';
+                emailInput.readOnly = true;
+                emailInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                
+                // 顯示提示訊息
+                if (emailNote) {
+                    emailNote.classList.remove('hidden');
+                }
+                
+                console.log('✅ Email 欄位已設置為只讀:', currentUser.email);
+            }
+            
+            // 1. 自動填入收件人姓名（優先使用 name，否則使用 email 前綴）
+            const recipientNameInput = document.getElementById('recipient_name');
+            if (recipientNameInput && currentUser.name) {
+                recipientNameInput.value = currentUser.name;
+                console.log('✅ 已填入收件人姓名:', currentUser.name);
+            }
+            
+            // 2. 自動填入聯絡電話
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput && currentUser.phone) {
+                phoneInput.value = currentUser.phone;
+                console.log('✅ 已填入聯絡電話:', currentUser.phone);
+            }
+            
+            // 3. 自動填入地址資訊（從會員中心的地址管理）
+            const addresses = JSON.parse(localStorage.getItem('jiangchong_addresses') || '[]');
+            
+            // 優先使用預設地址，否則使用第一個地址
+            let defaultAddress = addresses.find(addr => addr.isDefault) || addresses[0];
+            
+            if (defaultAddress) {
+                console.log('✅ 找到儲存的地址:', defaultAddress);
+                
+                // 填入郵遞區號（如果有）
+                const postalCodeInput = document.getElementById('postal_code');
+                if (postalCodeInput && defaultAddress.postalCode) {
+                    postalCodeInput.value = defaultAddress.postalCode;
+                }
+                
+                // 填入城市
+                const citySelect = document.getElementById('city');
+                if (citySelect && defaultAddress.city) {
+                    // 將中文城市名稱轉換為對應的 value
+                    const cityMap = {
+                        '台北市': 'taipei',
+                        '新北市': 'newtaipei',
+                        '桃園市': 'taoyuan',
+                        '台中市': 'taichung',
+                        '台南市': 'tainan',
+                        '高雄市': 'kaohsiung',
+                        '基隆市': 'keelung',
+                        '新竹市': 'hsinchu_city',
+                        '嘉義市': 'chiayi_city'
+                    };
+                    
+                    const cityValue = cityMap[defaultAddress.city] || defaultAddress.city.toLowerCase().replace('市', '').replace('縣', '');
+                    citySelect.value = cityValue;
+                    
+                    // 如果找不到對應的選項，嘗試直接設置
+                    if (!citySelect.value && defaultAddress.city) {
+                        // 創建臨時選項
+                        const option = document.createElement('option');
+                        option.value = defaultAddress.city;
+                        option.textContent = defaultAddress.city;
+                        citySelect.appendChild(option);
+                        citySelect.value = defaultAddress.city;
+                    }
+                }
+                
+                // 填入區域
+                const districtInput = document.getElementById('district');
+                if (districtInput && defaultAddress.district) {
+                    districtInput.value = defaultAddress.district;
+                }
+                
+                // 填入詳細地址
+                const addressInput = document.getElementById('address');
+                if (addressInput && defaultAddress.address) {
+                    addressInput.value = defaultAddress.address;
+                }
+                
+                console.log('✅ 地址資訊已自動填入');
+            } else {
+                // 如果沒有儲存的地址，但用戶有之前的訂單，可以從訂單中取得
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                const userOrders = orders.filter(order => 
+                    order.userId === currentUser.id || 
+                    order.userId === currentUser.userId ||
+                    order.user?.email === currentUser.email
+                ).sort((a, b) => (b.createdAt || b.orderDate || 0) - (a.createdAt || a.orderDate || 0));
+                
+                if (userOrders.length > 0) {
+                    const latestOrder = userOrders[0];
+                    const shipping = latestOrder.shipping || latestOrder.delivery || {};
+                    const receiver = latestOrder.receiver || latestOrder.user || {};
+                    
+                    console.log('✅ 從最近訂單取得地址資訊:', latestOrder);
+                    
+                    // 填入收件人姓名（如果表單中還沒有）
+                    if (recipientNameInput && !recipientNameInput.value && receiver.name) {
+                        recipientNameInput.value = receiver.name;
+                    }
+                    
+                    // 填入聯絡電話（如果表單中還沒有）
+                    if (phoneInput && !phoneInput.value && (receiver.phone || shipping.phone)) {
+                        phoneInput.value = receiver.phone || shipping.phone;
+                    }
+                    
+                    // 填入地址資訊
+                    if (shipping.zipCode || shipping.postalCode) {
+                        const postalCodeInput = document.getElementById('postal_code');
+                        if (postalCodeInput) {
+                            postalCodeInput.value = shipping.zipCode || shipping.postalCode;
+                        }
+                    }
+                    
+                    if (shipping.city) {
+                        const citySelect = document.getElementById('city');
+                        if (citySelect) {
+                            const cityMap = {
+                                '台北市': 'taipei',
+                                '新北市': 'newtaipei',
+                                '桃園市': 'taoyuan',
+                                '台中市': 'taichung',
+                                '台南市': 'tainan',
+                                '高雄市': 'kaohsiung',
+                                '基隆市': 'keelung',
+                                '新竹市': 'hsinchu_city',
+                                '嘉義市': 'chiayi_city'
+                            };
+                            citySelect.value = cityMap[shipping.city] || shipping.city.toLowerCase().replace('市', '').replace('縣', '');
+                        }
+                    }
+                    
+                    if (shipping.district) {
+                        const districtInput = document.getElementById('district');
+                        if (districtInput) {
+                            districtInput.value = shipping.district;
+                        }
+                    }
+                    
+                    if (shipping.address) {
+                        const addressInput = document.getElementById('address');
+                        if (addressInput) {
+                            addressInput.value = shipping.address;
+                        }
+                    }
+                    
+                    console.log('✅ 從訂單取得的地址資訊已填入');
+                }
+            }
+            
+            // 4. 自動填入寵物資訊（如果用戶有儲存）
+            const userPets = currentUser.pets || [];
+            if (userPets.length > 0) {
+                const pet = userPets[0]; // 使用第一個寵物
+                const petNameInput = document.querySelector('input[name="pet_name"]');
+                const petTypeSelect = document.querySelector('select[name="pet_type"]');
+                
+                if (petNameInput && pet.name) {
+                    petNameInput.value = pet.name;
+                }
+                
+                if (petTypeSelect && pet.type) {
+                    petTypeSelect.value = pet.type;
+                }
+            }
+            
+            console.log('✅ 自動填入完成');
+        }
+        
+        // 登出（暴露到全局作用域）
+        window.logout = function() {
+            if (confirm('確定要登出嗎？')) {
+                // 清除所有登入狀態
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('currentUser');
+                localStorage.removeItem('jiangchong_user');
+                localStorage.removeItem('memberUser');
+                
+                // 如果 UserAuth 存在，也清除
+                if (window.UserAuth) {
+                    window.UserAuth.logout();
+                }
+                
+                window.location.reload();
+            }
+        };
+
+        // 表單提交處理
+        function submitSubscription(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('subscription-form');
+            const formData = new FormData(form);
+            
+            // 取得配送方式
+            const shippingMethod = formData.get('shipping-method');
+            
+            // 檢查是否已登入
+            const currentUser = checkLoginStatus();
+            
+            let userData;
+            
+            if (currentUser) {
+                // 已登入用戶
+                userData = {
+                    userId: currentUser.userId,
+                    email: currentUser.email,
+                    isExistingUser: true
+                };
+            } else {
+                // 新用戶，需要驗證密碼
+                const passwordInput = document.getElementById('subscription-password');
+                const confirmPasswordInput = document.getElementById('subscription-confirm-password');
+                
+                // 檢查密碼欄位是否可見（如果已隱藏，表示用戶已登入，不應該執行這裡的邏輯）
+                const passwordFieldVisible = passwordInput && passwordInput.offsetParent !== null;
+                
+                if (passwordFieldVisible) {
+                    const password = formData.get('password');
+                    const confirmPassword = formData.get('confirm_password');
+                    
+                    // 檢查密碼欄位是否存在且已填寫
+                    if (!password || !confirmPassword) {
+                        alert('請填寫密碼和確認密碼');
+                        return false;
+                    }
+                    
+                    if (password.length < 8) {
+                        alert('密碼長度至少需要 8 個字元');
+                        return false;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        alert('密碼與確認密碼不符，請重新輸入');
+                        return false;
+                    }
+                    
+                    userData = {
+                        email: formData.get('email'),
+                        password: password,
+                        isExistingUser: false
+                    };
+                } else {
+                    // 密碼欄位已隱藏，但 checkLoginStatus 返回 null
+                    // 這不應該發生，但為了安全，我們還是要求用戶登入
+                    alert('請先登入會員帳號，或填寫密碼進行註冊');
+                    return false;
+                }
+            }
+            
+            // 驗證必填欄位
+            const recipientName = formData.get('recipient_name');
+            const phone = formData.get('phone');
+            
+            if (!recipientName || !phone) {
+                alert('請填寫收件人姓名和聯絡電話');
+                return false;
+            }
+            
+            // 配送資訊
+            let deliveryInfo = {
+                method: shippingMethod,
+                recipientName: recipientName,
+                phone: phone
+            };
+
+            // 根據配送方式取得相應資訊
+            if (shippingMethod === 'home') {
+                // 宅配：需要地址
+                const postalCode = formData.get('postal_code');
+                const city = formData.get('city');
+                const district = formData.get('district');
+                const address = formData.get('address');
+                
+                if (!postalCode || !city || !district || !address) {
+                    alert('請填寫完整的配送地址');
+                    return false;
+                }
+                
+                deliveryInfo = {
+                    ...deliveryInfo,
+                    postalCode: postalCode,
+                    city: city,
+                    district: district,
+                    address: address,
+                    shippingFee: 65
+                };
+            } else if (shippingMethod === '711') {
+                // 7-11 超商取貨：需要門市資訊
+                if (!window.storeSelector) {
+                    console.warn('⚠️ storeSelector 未初始化，嘗試初始化...');
+                    if (typeof StoreSelector !== 'undefined') {
+                        window.storeSelector = new StoreSelector();
+                    }
+                }
+                
+                if (!window.storeSelector || !window.storeSelector.getSelectedStore()) {
+                    alert('請選擇取貨門市');
+                    return false;
+                }
+                
+                const selectedStore = window.storeSelector.getSelectedStore();
+                console.log('🏪 已選擇門市:', selectedStore);
+                deliveryInfo = {
+                    ...deliveryInfo,
+                    storeCode: selectedStore.code,
+                    storeName: selectedStore.name,
+                    storeAddress: selectedStore.address,
+                    storeCity: selectedStore.city,
+                    storeDistrict: selectedStore.district,
+                    storePhone: selectedStore.phone,
+                    shippingFee: 0
+                };
+            }
+            
+            // 計算總價（含運費）
+            const totalPrice = subscriptionData.price + deliveryInfo.shippingFee;
+            
+            // 整合所有數據
+            const fullSubscriptionData = {
+                // 訂閱內容
+                subscription: {
+                    plan: subscriptionData.plan,
+                    planName: subscriptionData.planName,
+                    price: subscriptionData.price,
+                    firstDeliveryProtein: subscriptionData.firstDeliveryProtein,
+                    firstDeliveryProteinName: subscriptionData.firstDeliveryProteinName,
+                    secondDeliveryProtein: subscriptionData.secondDeliveryProtein,
+                    secondDeliveryProteinName: subscriptionData.secondDeliveryProteinName,
+                    protein: subscriptionData.firstDeliveryProteinName || '-', // 向下兼容
+                    proteinName: subscriptionData.plan === 'small' 
+                        ? subscriptionData.firstDeliveryProteinName || '-'
+                        : `第一次（1號）：${subscriptionData.firstDeliveryProteinName || '-'} / 第二次（15號）：${subscriptionData.secondDeliveryProteinName || '-'}`, // 顯示用
+                    veggie: subscriptionData.veggie,
+                    veggieName: subscriptionData.veggieName 
+                        ? `${subscriptionData.veggieName} ${subscriptionData.veggieWeight || ''}` 
+                        : '',
+                    powder: subscriptionData.powder,
+                    powderName: subscriptionData.powderName 
+                        ? `${subscriptionData.powderName} ${subscriptionData.powderWeight || ''}` 
+                        : ''
+                },
+                
+                // 會員資訊
+                user: userData,
+                
+                // 寵物資訊（選填）
+                pet: {
+                    name: formData.get('pet_name') || null,
+                    type: formData.get('pet_type') || null
+                },
+                
+                // 配送資訊（包含配送方式與運費）
+                delivery: deliveryInfo,
+                
+                // 價格資訊
+                pricing: {
+                    subtotal: subscriptionData.price,
+                    shippingFee: deliveryInfo.shippingFee,
+                    total: totalPrice
+                },
+                
+                // 同意條款
+                agreedToTerms: formData.get('agree_terms') === 'on',
+                
+                // 建立時間
+                createdAt: new Date().toISOString()
+            };
+            
+            // 驗證同意條款
+            if (!fullSubscriptionData.agreedToTerms) {
+                alert('請勾選同意服務條款與隱私政策');
+                return false;
+            }
+            
+            // TODO: 發送到後台API
+            console.log('✅ 完整訂閱數據驗證通過:', fullSubscriptionData);
+            
+            // 如果是新用戶，自動建立帳號
+            let userId = null;
+            if (!currentUser && !userData.isExistingUser) {
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                
+                // 檢查 Email 是否已存在
+                const existingUser = users.find(u => u.email === userData.email);
+                if (existingUser) {
+                    // 保存 Email 到 sessionStorage，以便登入頁面自動填入
+                    sessionStorage.setItem('pendingSubscription', JSON.stringify(subscriptionData));
+                    alert('此 Email 已註冊，請直接登入\n\n將跳轉至登入頁面...');
+                    window.location.href = `login.html?email=${encodeURIComponent(userData.email)}`;
+                    return false;
+                }
+                
+                // 建立新用戶
+                userId = 'USER' + Date.now();
+                const newUser = {
+                    id: userId,
+                    email: userData.email,
+                    password: userData.password,
+                    name: fullSubscriptionData.delivery.recipientName,
+                    phone: fullSubscriptionData.delivery.phone,
+                    createdAt: new Date().toISOString(),
+                    status: 'active'
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // 自動登入（同步到多個 storage key）
+                const loginData = {
+                    id: newUser.id,
+                    userId: newUser.id,
+                    email: newUser.email,
+                    name: newUser.name,
+                    phone: newUser.phone || '',
+                    loginTime: new Date().toISOString()
+                };
+                
+                // 同步到多個 storage key
+                sessionStorage.setItem('currentUser', JSON.stringify(loginData));
+                localStorage.setItem('currentUser', JSON.stringify(loginData));
+                localStorage.setItem('jiangchong_user', JSON.stringify(loginData));
+                localStorage.setItem('memberUser', JSON.stringify(loginData));
+                
+                // 如果 UserAuth 存在，也同步
+                if (window.UserAuth) {
+                    window.UserAuth.setUser(loginData);
+                }
+                
+                userData.userId = userId;
+                userData.id = userId;
+            } else if (currentUser) {
+                userId = currentUser.userId || currentUser.id;
+                userData.userId = userId;
+                userData.id = userId;
+            }
+            
+            // 生成訂閱 ID
+            const subscriptionId = 'SUB' + String(Date.now()).slice(-10);
+            
+            // 計算下次配送日期（根據方案）
+            const nextDeliveryDate = calculateNextDeliveryDate(subscriptionData.plan);
+            
+            // 建立訂閱記錄（格式與後台期望一致）
+            const subscriptionRecord = {
+                id: subscriptionId,
+                orderId: subscriptionId, // 添加 orderId 欄位，方便會員中心識別
+                user: {
+                    id: userId || userData.userId || userData.id || currentUser?.id || currentUser?.userId || 'USER' + Date.now(),
+                    userId: userId || userData.userId || userData.id || currentUser?.id || currentUser?.userId || 'USER' + Date.now(), // 添加 userId 欄位
+                    name: fullSubscriptionData.delivery.recipientName,
+                    email: userData.email || currentUser?.email || '',
+                    phone: fullSubscriptionData.delivery.phone || currentUser?.phone || ''
+                },
+                plan: subscriptionData.plan,
+                planName: subscriptionData.planName,
+                protein: subscriptionData.plan === 'small'
+                    ? subscriptionData.firstDeliveryProteinName || '-'
+                    : `第一次：${subscriptionData.firstDeliveryProteinName || '-'} / 第二次：${subscriptionData.secondDeliveryProteinName || '-'}`,
+                veggie: subscriptionData.veggieName 
+                    ? `${subscriptionData.veggieName} ${subscriptionData.veggieWeight || ''}` 
+                    : '-',
+                powder: subscriptionData.powderName 
+                    ? `${subscriptionData.powderName} ${subscriptionData.powderWeight || ''}` 
+                    : '-',
+                status: 'pending', // 初始狀態為待付款
+                statusName: '待付款',
+                startDate: new Date().toISOString().split('T')[0],
+                nextDeliveryDate: nextDeliveryDate,
+                createdAt: new Date().toISOString(),
+                delivery: fullSubscriptionData.delivery,
+                pricing: fullSubscriptionData.pricing,
+                subscription: fullSubscriptionData.subscription,
+                pet: fullSubscriptionData.pet
+            };
+            
+            // 儲存訂閱資料到 localStorage（後台可以讀取）
+            const existingSubscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+            existingSubscriptions.push(subscriptionRecord);
+            localStorage.setItem('subscriptions', JSON.stringify(existingSubscriptions));
+            
+            console.log('✅ 訂閱資料已儲存:', subscriptionRecord);
+            console.log('📊 總訂閱數:', existingSubscriptions.length);
+            
+            // 保存訂閱資料到 sessionStorage，供支付頁面使用
+            sessionStorage.setItem('pendingSubscriptionData', JSON.stringify(fullSubscriptionData));
+            sessionStorage.setItem('subscriptionOrderId', subscriptionRecord.id);
+            
+            // 清除待處理的訂閱
+            sessionStorage.removeItem('pendingSubscription');
+            
+            // 導向付款頁面
+            window.location.href = `subscription-payment.html?orderId=${subscriptionRecord.id}`;
+            
+            return false;
+        }
+
+        // 計算下次配送日期
+        function calculateNextDeliveryDate(plan) {
+            const today = new Date();
+            let nextDate = new Date();
+            
+            if (plan === 'small') {
+                // 小食組：每月1次，下個月1號
+                nextDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+            } else {
+                // 標準組、豪華組：每兩週一次（1日 & 15日）
+                const day = today.getDate();
+                if (day < 15) {
+                    // 如果今天是1-14號，下次配送是15號
+                    nextDate = new Date(today.getFullYear(), today.getMonth(), 15);
+                } else {
+                    // 如果今天是15-31號，下次配送是下個月1號
+                    nextDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+                }
+            }
+            
+            return nextDate.toISOString().split('T')[0];
+        }
+
+        // 確認訂閱（舊函數，已被 submitSubscription 取代）
+        function confirmSubscription() {
+            // 這個函數已不使用，保留作為向下兼容
+            console.log('訂閱數據:', subscriptionData);
+        }
+
+        // 頁面載入時初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('訂閱頁面已載入');
+            
+            // 初始化付款方式選擇樣式
+            const monthlyOption = document.getElementById('payment-monthly');
+            if (monthlyOption) {
+                monthlyOption.classList.add('border-primary', 'bg-opacity-5');
+            }
+            
+            // 更新方案價格顯示
+            if (typeof updatePlanPrices === 'function') {
+                updatePlanPrices();
+            }
+            
+            if (typeof loadOptions === 'function') {
+                loadOptions();
+            } else {
+                console.error('❌ loadOptions 未定義');
+            }
+            
+            // 檢查登入狀態
+            const loggedInUser = checkLoginStatus();
+            
+            // 如果已登入，隱藏登入提示
+            if (loggedInUser) {
+                const loginPrompt = document.getElementById('login-prompt');
+                if (loginPrompt) {
+                    loginPrompt.style.display = 'none';
+                }
+            }
+            
+            // 檢查是否有待處理的訂閱
+            const pendingSubscription = sessionStorage.getItem('pendingSubscription');
+            if (pendingSubscription) {
+                const data = JSON.parse(pendingSubscription);
+                
+                // 恢復訂閱選擇
+                subscriptionData = data;
+                
+                // 如果在 Step 5，更新摘要
+                const urlParams = new URLSearchParams(window.location.search);
+                const step = urlParams.get('step');
+                
+                if (step === '5') {
+                    window.goToStep(5);
+                    updateOrderSummary();
+                    updatePriceDisplay();
+                    // 如果是從登入頁面返回，自動填入用戶資訊
+                    autoFillUserInfo();
+                }
+            }
+        });
+    </script>
+    
+    <!-- 更新導航欄的登入狀態 -->
+    <script>
+        // 更新導航欄的登入狀態
+        function updateNavigationForLogin() {
+            const memberUser = localStorage.getItem('memberUser') || 
+                             localStorage.getItem('jiangchong_user') || 
+                             localStorage.getItem('currentUser') ||
+                             sessionStorage.getItem('currentUser');
+            
+            if (memberUser) {
+                try {
+                    const userData = JSON.parse(memberUser);
+                    // 隱藏登入按鈕，顯示會員選單
+                    const loginBtn = document.getElementById('loginBtn');
+                    const registerBtn = document.getElementById('registerBtn');
+                    const userMenu = document.getElementById('userMenu');
+                    
+                    if (loginBtn) loginBtn.classList.add('hidden');
+                    if (registerBtn) registerBtn.classList.add('hidden');
+                    if (userMenu) {
+                        userMenu.classList.remove('hidden');
+                        const userNameSpan = document.getElementById('userName');
+                        if (userNameSpan) {
+                            userNameSpan.textContent = userData.name || userData.email || '會員';
+                        }
+                    }
+                    
+                    // 更新手機版
+                    const loginTextMobile = document.getElementById('login-text-mobile');
+                    if (loginTextMobile) {
+                        loginTextMobile.textContent = userData.name || userData.email || '會員';
+                    }
+                } catch (e) {
+                    console.warn('解析用戶資料失敗:', e);
+                }
+            }
+        }
+        
+        // ========== 會員登入/註冊功能 ==========
+        
+        // 打開登入 Modal
+        window.openLoginModal = function() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                showLoginForm();
+            }
+        };
+        
+        // 關閉登入 Modal
+        window.closeLoginModal = function() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+        
+        // 顯示登入表單
+        window.showLoginForm = function() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            if (loginForm) loginForm.classList.remove('hidden');
+            if (registerForm) registerForm.classList.add('hidden');
+        };
+        
+        // 顯示註冊表單
+        window.showRegisterForm = function() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            if (loginForm) loginForm.classList.add('hidden');
+            if (registerForm) registerForm.classList.remove('hidden');
+        };
+        
+        // 處理登入
+        window.handleLogin = async function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // 使用 UserAuth 登入
+            if (window.UserAuth) {
+                try {
+                    await window.UserAuth.login(email, password);
+                    closeLoginModal();
+                    updateNavigationForLogin();
+                    alert('✅ 登入成功！');
+                    return;
+                } catch (error) {
+                    alert('❌ 登入失敗：' + error.message);
+                    return;
+                }
+            }
+            
+            // 回退到本地登入
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email);
+            
+            if (!user) {
+                alert('❌ 此 Email 尚未註冊，請先註冊');
+                showRegisterForm();
+                return;
+            }
+            
+            if (user.password !== password) {
+                alert('❌ 密碼錯誤，請重新輸入');
+                return;
+            }
+            
+            // 儲存用戶資料
+            const userData = {
+                id: user.id,
+                userId: user.id,
+                name: user.name || email.split('@')[0],
+                email: email,
+                phone: user.phone || '',
+                loginTime: new Date().toISOString()
+            };
+            
+            localStorage.setItem('memberUser', JSON.stringify(userData));
+            localStorage.setItem('jiangchong_user', JSON.stringify(userData));
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            sessionStorage.setItem('currentUser', JSON.stringify(userData));
+            
+            // 更新 UI
+            updateNavigationForLogin();
+            closeLoginModal();
+            alert(`✅ 登入成功！\n\n歡迎回來，${userData.name}！`);
+        };
+        
+        // 處理註冊
+        window.handleRegister = async function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            // 驗證密碼
+            if (password !== confirmPassword) {
+                alert('❌ 兩次輸入的密碼不一致！');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('❌ 密碼至少需要 8 個字元！');
+                return;
+            }
+            
+            // 檢查 Email 是否已存在
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.find(u => u.email === email)) {
+                alert('❌ 此 Email 已註冊，請直接登入');
+                showLoginForm();
+                return;
+            }
+            
+            // 使用 UserAuth 註冊
+            if (window.UserAuth) {
+                try {
+                    await window.UserAuth.register({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        password: password
+                    });
+                    closeLoginModal();
+                    updateNavigationForLogin();
+                    alert('🎉 註冊成功！');
+                    return;
+                } catch (error) {
+                    alert('❌ 註冊失敗：' + error.message);
+                    return;
+                }
+            }
+            
+            // 回退到本地註冊
+            const newUser = {
+                id: 'USER' + Date.now(),
+                name: name,
+                email: email,
+                phone: phone,
+                password: password,
+                registerTime: new Date().toISOString(),
+                memberLevel: 'normal'
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // 自動登入
+            const userData = {
+                id: newUser.id,
+                userId: newUser.id,
+                name: name,
+                email: email,
+                phone: phone,
+                loginTime: new Date().toISOString()
+            };
+            
+            localStorage.setItem('memberUser', JSON.stringify(userData));
+            localStorage.setItem('jiangchong_user', JSON.stringify(userData));
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            sessionStorage.setItem('currentUser', JSON.stringify(userData));
+            
+            // 更新 UI
+            updateNavigationForLogin();
+            closeLoginModal();
+            alert(`🎉 註冊成功！\n\n歡迎加入匠寵，${name}！`);
+        };
+        
+        // 前往會員中心
+        window.goToMemberCenter = function() {
+            window.location.href = 'member-center.html';
+        };
+        
+        // 切換用戶下拉選單
+        window.toggleUserDropdown = function(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        };
+        
+        // 登出
+        window.logout = function() {
+            if (confirm('確定要登出嗎？')) {
+                localStorage.removeItem('memberUser');
+                localStorage.removeItem('jiangchong_user');
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('currentUser');
+                if (window.UserAuth) {
+                    window.UserAuth.logout();
+                }
+                location.reload();
+            }
+        };
+        
+        // 頁面載入時檢查登入狀態
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigationForLogin();
+            
+            // 手機版選單切換
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // 點擊外部關閉下拉選單
+            document.addEventListener('click', function(event) {
+                const userDropdown = document.getElementById('userDropdown');
+                if (userDropdown && !event.target.closest('#userMenu')) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+    
+    <!-- 7-11 超商選擇器 -->
+    <script src="js/store-selector.js"></script>
+    
+    <!-- 會員登入/註冊 Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
+            <!-- Close Button -->
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="p-8">
+                <div class="text-center mb-6">
+                    <i class="fas fa-paw text-primary text-5xl mb-3"></i>
+                    <h2 class="text-3xl font-bold text-dark">會員登入</h2>
+                    <p class="text-gray-600 mt-2">歡迎回到匠寵！</p>
+                </div>
+                
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="loginEmail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">密碼</label>
+                        <input type="password" id="loginPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="••••••••">
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2 rounded">
+                            <span class="text-gray-600">記住我</span>
+                        </label>
+                        <a href="#" class="text-primary hover:underline">忘記密碼？</a>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition">
+                        登入
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600 text-sm">
+                        還不是會員？
+                        <button onclick="showRegisterForm()" class="text-primary font-semibold hover:underline">立即註冊</button>
+                    </p>
+                </div>
+                
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-4 bg-white text-gray-500">或使用社群帳號登入</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 grid grid-cols-2 gap-3">
+                        <button class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                            <i class="fab fa-facebook text-blue-600 text-xl mr-2"></i>
+                            <span class="text-sm">Facebook</span>
+                        </button>
+                        <button class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                            <i class="fab fa-google text-red-600 text-xl mr-2"></i>
+                            <span class="text-sm">Google</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerForm" class="p-8 hidden">
+                <div class="text-center mb-6">
+                    <i class="fas fa-paw text-primary text-5xl mb-3"></i>
+                    <h2 class="text-3xl font-bold text-dark">會員註冊</h2>
+                    <p class="text-gray-600 mt-2">加入匠寵大家庭！</p>
+                </div>
+                
+                <form onsubmit="handleRegister(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+                        <input type="text" id="registerName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="您的姓名">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="registerEmail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">手機號碼</label>
+                        <input type="tel" id="registerPhone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0912-345-678">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">密碼</label>
+                        <input type="password" id="registerPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="至少 8 個字元">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">確認密碼</label>
+                        <input type="password" id="registerConfirmPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="再次輸入密碼">
+                    </div>
+                    <div class="flex items-start">
+                        <input type="checkbox" id="agreeTerms" required class="mt-1 mr-2 rounded">
+                        <label for="agreeTerms" class="text-sm text-gray-600">
+                            我同意匠寵的 <a href="terms.html" class="text-primary hover:underline">服務條款</a> 和 <a href="privacy.html" class="text-primary hover:underline">隱私政策</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition">
+                        註冊
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600 text-sm">
+                        已經是會員了？
+                        <button onclick="showLoginForm()" class="text-primary font-semibold hover:underline">立即登入</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

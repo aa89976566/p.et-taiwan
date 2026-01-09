@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="匠寵 - 產品詳情頁面">
+    <title>產品詳情 - 匠寵</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Local Cart System -->
+    <script src="js/local-cart.js"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B6B',
+                        secondary: '#4ECDC4',
+                        accent: '#FFD93D',
+                        dark: '#2C3E50',
+                        light: '#F7F9FC'
+                    },
+                    fontFamily: {
+                        'sans': ['Nunito', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * { font-family: 'Nunito', 'Noto Sans TC', sans-serif; }
+        
+        .product-image-main {
+            transition: transform 0.3s ease;
+        }
+        .product-image-main:hover {
+            transform: scale(1.05);
+        }
+        
+        .thumbnail {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .thumbnail:hover {
+            transform: scale(1.1);
+            border-color: #FF6B6B;
+        }
+        .thumbnail.active {
+            border-color: #FF6B6B;
+            border-width: 3px;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- 頂部導航 -->
+    <nav class="fixed top-0 w-full bg-white shadow-md z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-primary text-3xl"></i>
+                    <span class="text-2xl font-bold text-dark">匠寵</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="products.html" class="text-dark hover:text-primary transition">產品系列</a>
+                    <a href="index.html#crowdfunding" class="text-dark hover:text-primary transition">集資項目</a>
+                    <a href="index.html#quiz" class="text-dark hover:text-primary transition">找適合方案</a>
+                    <a href="index.html#jar-exchange" class="text-dark hover:text-primary transition">換罐計畫</a>
+                    <a href="index.html#subscription" class="text-dark hover:text-primary transition">訂閱方案</a>
+                    <a href="index.html#about" class="text-dark hover:text-primary transition">關於我們</a>
+                    
+                    <!-- 購物車 -->
+                    <div class="flex items-center space-x-3">
+                        <button onclick="toggleCart()" class="relative text-dark hover:text-primary transition">
+                            <i class="fas fa-shopping-cart text-xl"></i>
+                            <span id="cart-badge" class="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">
+                                0
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden text-dark">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div class="hidden md:hidden mt-4 pb-4" id="mobile-menu">
+                <a href="products.html" class="block py-2 text-dark hover:text-primary transition">產品系列</a>
+                <a href="index.html#crowdfunding" class="block py-2 text-dark hover:text-primary transition">集資項目</a>
+                <a href="index.html#quiz" class="block py-2 text-dark hover:text-primary transition">找適合方案</a>
+                <a href="index.html#jar-exchange" class="block py-2 text-dark hover:text-primary transition">換罐計畫</a>
+                <a href="index.html#subscription" class="block py-2 text-dark hover:text-primary transition">訂閱方案</a>
+                <a href="index.html#about" class="block py-2 text-dark hover:text-primary transition">關於我們</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 導航欄佔位 -->
+    <div class="h-20"></div>
+
+    <!-- 麵包屑導航 -->
+    <div class="bg-white border-b border-gray-200 py-4">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center space-x-2 text-sm">
+                <a href="index.html" class="text-gray-600 hover:text-primary transition">首頁</a>
+                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="products.html" class="text-gray-600 hover:text-primary transition">產品列表</a>
+                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                <span id="breadcrumb-category" class="text-gray-600">產品分類</span>
+                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                <span id="breadcrumb-product" class="text-primary font-semibold">產品名稱</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 產品詳情內容 -->
+    <div class="container mx-auto px-4 py-8" id="product-detail-container">
+        <!-- 載入中 -->
+        <div id="loading" class="text-center py-20">
+            <i class="fas fa-spinner text-4xl text-primary animate-spin"></i>
+            <p class="mt-4 text-gray-600">載入中...</p>
+        </div>
+        
+        <!-- 產品不存在 -->
+        <div id="not-found" class="hidden text-center py-20">
+            <i class="fas fa-exclamation-triangle text-6xl text-gray-300 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-600 mb-2">找不到產品</h2>
+            <p class="text-gray-500 mb-6">請檢查產品 ID 是否正確</p>
+            <a href="products.html" class="inline-block bg-primary text-white px-6 py-3 rounded-lg hover:bg-red-600 transition">
+                <i class="fas fa-arrow-left mr-2"></i>返回產品列表
+            </a>
+        </div>
+        
+        <!-- 產品內容（動態生成） -->
+        <div id="product-content" class="hidden">
+            <!-- 產品主區 -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-8">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 左側：產品圖片 -->
+                    <div>
+                        <div class="mb-4">
+                            <img id="product-main-image" src="" alt="" class="w-full rounded-lg product-image-main">
+                        </div>
+                        <div id="product-thumbnails" class="grid grid-cols-5 gap-2">
+                            <!-- 縮圖將動態生成 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 右側：產品資訊 -->
+                    <div>
+                        <div class="mb-4">
+                            <div id="product-tags" class="flex flex-wrap gap-2 mb-3">
+                                <!-- 標籤將動態生成 -->
+                            </div>
+                            <h1 id="product-title" class="text-3xl md:text-4xl font-bold text-dark mb-2"></h1>
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="flex items-center">
+                                    <div id="product-rating" class="flex text-yellow-400 mr-2"></div>
+                                    <span id="product-rating-text" class="text-gray-600"></span>
+                                </div>
+                                <span class="text-gray-400">|</span>
+                                <span id="product-sales" class="text-gray-600"></span>
+                                <span class="text-gray-400">|</span>
+                                <span id="product-reviews" class="text-gray-600"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-b border-gray-200 py-6 mb-6">
+                            <div class="flex items-baseline space-x-3 mb-2">
+                                <span id="product-price" class="text-4xl font-bold text-primary"></span>
+                                <span id="product-original-price" class="text-2xl text-gray-400 line-through"></span>
+                            </div>
+                            <p id="product-description" class="text-gray-700 leading-relaxed"></p>
+                        </div>
+                        
+                        <!-- 規格選擇（如果有） -->
+                        <div id="product-specs" class="mb-6 hidden">
+                            <label class="block text-gray-700 font-semibold mb-3">選擇規格：</label>
+                            <div id="specs-options" class="flex flex-wrap gap-3">
+                                <!-- 規格選項將動態生成 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 數量選擇 -->
+                        <div class="mb-6">
+                            <label class="block text-gray-700 font-semibold mb-3">數量：</label>
+                            <div class="flex items-center border-2 border-gray-300 rounded-lg w-fit">
+                                <button onclick="decreaseQuantity()" class="px-4 py-2 hover:bg-gray-100 transition">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="product-quantity" value="1" min="1" 
+                                       class="w-20 text-center border-x-2 border-gray-300 py-2 focus:outline-none">
+                                <button onclick="increaseQuantity()" class="px-4 py-2 hover:bg-gray-100 transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 操作按鈕 -->
+                        <div class="flex space-x-4">
+                            <button onclick="addToCart()" class="flex-1 bg-gradient-to-r from-primary to-secondary text-white px-6 py-4 rounded-lg font-bold hover:shadow-lg transition">
+                                <i class="fas fa-shopping-cart mr-2"></i>加入購物車
+                            </button>
+                            <button onclick="buyNow()" class="flex-1 bg-orange-500 text-white px-6 py-4 rounded-lg font-bold hover:bg-orange-600 transition">
+                                <i class="fas fa-bolt mr-2"></i>立即購買
+                            </button>
+                        </div>
+                        
+                        <!-- 服務說明 -->
+                        <div class="mt-6 space-y-3 pt-6 border-t border-gray-200">
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                <span>庫存充足</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-truck text-blue-500 mr-2"></i>
+                                <span>免運費（滿 NT$1,000）</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-shield-alt text-purple-500 mr-2"></i>
+                                <span>七天鑑賞期</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 產品詳細資訊 -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-dark mb-6">產品詳細資訊</h2>
+                <div id="product-details" class="prose max-w-none">
+                    <!-- 詳細資訊將動態生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 產品數據（對象格式，以 ID 為 key）
+        const PRODUCTS = {
+            'chicken-crisp': {
+                id: 'chicken-crisp',
+                name: '手作雞肉脆片',
+                category: 'snacks',
+                categoryName: '手作零食',
+                price: 180,
+                originalPrice: 250,
+                images: [
+                    'https://picsum.photos/800/800?random=11',
+                    'https://picsum.photos/800/800?random=21',
+                    'https://picsum.photos/800/800?random=31',
+                    'https://picsum.photos/800/800?random=41',
+                    'https://picsum.photos/800/800?random=51'
+                ],
+                description: '精選台灣雞胸肉，低溫烘烤保留營養，富含蛋白質，適合訓練獎勵。採用新鮮雞胸肉，經過精心處理，保留食材的天然風味和營養價值。',
+                rating: 4.8,
+                sales: 856,
+                reviews: 128,
+                tags: ['熱銷', '推薦'],
+                stock: 999,
+                specs: ['100g', '200g', '500g']
+            },
+            'sweet-potato': {
+                id: 'sweet-potato',
+                name: '地瓜餅乾',
+                category: 'snacks',
+                categoryName: '手作零食',
+                price: 150,
+                originalPrice: 200,
+                images: [
+                    'https://picsum.photos/800/800?random=12',
+                    'https://picsum.photos/800/800?random=22',
+                    'https://picsum.photos/800/800?random=32',
+                    'https://picsum.photos/800/800?random=42',
+                    'https://picsum.photos/800/800?random=52'
+                ],
+                description: '天然地瓜手工製作，無添加糖分，富含膳食纖維，健康美味。選用台灣優質地瓜，經過低溫烘烤，保留地瓜的天然甜味和營養。',
+                rating: 4.6,
+                sales: 623,
+                reviews: 95,
+                tags: ['新品'],
+                stock: 999,
+                specs: ['100g', '200g']
+            },
+            'beef-jerky': {
+                id: 'beef-jerky',
+                name: '牛肉乾',
+                category: 'snacks',
+                categoryName: '手作零食',
+                price: 280,
+                originalPrice: 350,
+                images: [
+                    'https://picsum.photos/800/800?random=13',
+                    'https://picsum.photos/800/800?random=23',
+                    'https://picsum.photos/800/800?random=33',
+                    'https://picsum.photos/800/800?random=43',
+                    'https://picsum.photos/800/800?random=53'
+                ],
+                description: '紐西蘭草飼牛肉，慢火烘烤，口感Q彈，富含優質蛋白質。採用頂級紐西蘭草飼牛肉，經過特殊工藝處理，保留牛肉的鮮美和營養。',
+                rating: 4.9,
+                sales: 1234,
+                reviews: 201,
+                tags: ['熱銷', '限時優惠'],
+                stock: 999,
+                specs: ['100g', '200g', '500g']
+            },
+            'puzzle-toy': {
+                id: 'puzzle-toy',
+                name: '益智拼圖玩具',
+                category: 'toys',
+                categoryName: '益智玩具',
+                price: 450,
+                originalPrice: 600,
+                images: [
+                    'https://picsum.photos/800/800?random=14',
+                    'https://picsum.photos/800/800?random=24',
+                    'https://picsum.photos/800/800?random=34',
+                    'https://picsum.photos/800/800?random=44',
+                    'https://picsum.photos/800/800?random=54'
+                ],
+                description: '基於維也納大學研究，訓練狗狗智力，延緩老化，增進親子互動。設計精巧，難度適中，適合各年齡層的狗狗使用。',
+                rating: 4.7,
+                sales: 432,
+                reviews: 67,
+                tags: ['推薦'],
+                stock: 999,
+                specs: ['初級', '中級', '高級']
+            },
+            'snuffle-mat': {
+                id: 'snuffle-mat',
+                name: '嗅聞墊',
+                category: 'toys',
+                categoryName: '益智玩具',
+                price: 380,
+                originalPrice: 500,
+                images: [
+                    'https://picsum.photos/800/800?random=15',
+                    'https://picsum.photos/800/800?random=25',
+                    'https://picsum.photos/800/800?random=35',
+                    'https://picsum.photos/800/800?random=45',
+                    'https://picsum.photos/800/800?random=55'
+                ],
+                description: '刺激狗狗嗅覺，消耗精力，減緩焦慮，適合各年齡層。採用環保材質製作，安全無毒，易於清洗。',
+                rating: 4.5,
+                sales: 345,
+                reviews: 52,
+                tags: ['新品'],
+                stock: 999,
+                specs: ['小', '中', '大']
+            },
+            'memory-game': {
+                id: 'memory-game',
+                name: '記憶按鈕組',
+                category: 'toys',
+                categoryName: '益智玩具',
+                price: 580,
+                originalPrice: 750,
+                images: [
+                    'https://picsum.photos/800/800?random=16',
+                    'https://picsum.photos/800/800?random=26',
+                    'https://picsum.photos/800/800?random=36',
+                    'https://picsum.photos/800/800?random=46',
+                    'https://picsum.photos/800/800?random=56'
+                ],
+                description: '訓練狗狗記憶力與反應，互動性強，增進人犬關係。適合訓練和遊戲，讓狗狗在玩樂中學習。',
+                rating: 4.8,
+                sales: 567,
+                reviews: 89,
+                tags: ['熱銷', '推薦'],
+                stock: 999,
+                specs: ['基礎版', '進階版']
+            },
+            'subscription-basic': {
+                id: 'subscription-basic',
+                name: '基礎訂閱方案',
+                category: 'subscription',
+                categoryName: '訂閱方案',
+                price: 699,
+                originalPrice: 0,
+                images: [
+                    'https://picsum.photos/800/800?random=17',
+                    'https://picsum.photos/800/800?random=27',
+                    'https://picsum.photos/800/800?random=37',
+                    'https://picsum.photos/800/800?random=47',
+                    'https://picsum.photos/800/800?random=57'
+                ],
+                description: '每月配送 2 罐新鮮營養罐頭，滿足毛孩基本營養需求。包含多種口味，營養均衡，適合日常餵食。',
+                rating: 4.6,
+                sales: 234,
+                reviews: 38,
+                tags: [],
+                stock: 999,
+                specs: []
+            },
+            'subscription-premium': {
+                id: 'subscription-premium',
+                name: '尊享訂閱方案',
+                category: 'subscription',
+                categoryName: '訂閱方案',
+                price: 1299,
+                originalPrice: 0,
+                images: [
+                    'https://picsum.photos/800/800?random=18',
+                    'https://picsum.photos/800/800?random=28',
+                    'https://picsum.photos/800/800?random=38',
+                    'https://picsum.photos/800/800?random=48',
+                    'https://picsum.photos/800/800?random=58'
+                ],
+                description: '每月配送 4 罐 + 零食 + 玩具，全方位照顧毛孩健康。包含營養罐頭、手作零食和益智玩具，一次滿足所有需求。',
+                rating: 4.9,
+                sales: 456,
+                reviews: 72,
+                tags: ['推薦', '熱銷'],
+                stock: 999,
+                specs: []
+            }
+        };
+
+        let currentProduct = null;
+        let selectedImageIndex = 0;
+        let selectedSpec = null;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📦 產品詳情頁初始化...');
+            
+            // 從 URL 讀取產品 ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            
+            if (!productId) {
+                showNotFound();
+                return;
+            }
+            
+            // 載入產品數據
+            loadProduct(productId);
+            
+            // 更新購物車徽章
+            updateCartBadge();
+            
+            // 監聽購物車更新事件
+            window.addEventListener('cartUpdated', function() {
+                updateCartBadge();
+            });
+        });
+
+        // 載入產品
+        function loadProduct(productId) {
+            currentProduct = PRODUCTS[productId];
+            
+            if (!currentProduct) {
+                console.error('找不到產品:', productId);
+                showNotFound();
+                return;
+            }
+            
+            console.log('✅ 載入產品:', currentProduct);
+            
+            // 隱藏載入中，顯示產品內容
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('product-content').classList.remove('hidden');
+            
+            // 渲染產品資訊
+            renderProduct();
+        }
+
+        // 渲染產品資訊
+        function renderProduct() {
+            if (!currentProduct) return;
+            
+            // 更新麵包屑
+            document.getElementById('breadcrumb-category').textContent = currentProduct.categoryName || '產品分類';
+            document.getElementById('breadcrumb-product').textContent = currentProduct.name;
+            
+            // 更新標題
+            document.getElementById('product-title').textContent = currentProduct.name;
+            
+            // 更新標籤
+            const tagsContainer = document.getElementById('product-tags');
+            tagsContainer.innerHTML = currentProduct.tags.map(tag => 
+                `<span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">${tag}</span>`
+            ).join('');
+            
+            // 更新評分
+            const rating = Math.floor(currentProduct.rating);
+            const ratingContainer = document.getElementById('product-rating');
+            ratingContainer.innerHTML = Array(5).fill(0).map((_, i) => 
+                i < rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>'
+            ).join('');
+            document.getElementById('product-rating-text').textContent = `${currentProduct.rating} 分`;
+            
+            // 更新銷售和評價
+            document.getElementById('product-sales').textContent = `已售 ${currentProduct.sales}`;
+            document.getElementById('product-reviews').textContent = `${currentProduct.reviews || 0} 則評價`;
+            
+            // 更新價格
+            document.getElementById('product-price').textContent = `NT$ ${currentProduct.price}`;
+            if (currentProduct.originalPrice > 0) {
+                document.getElementById('product-original-price').textContent = `NT$ ${currentProduct.originalPrice}`;
+                document.getElementById('product-original-price').classList.remove('hidden');
+            } else {
+                document.getElementById('product-original-price').classList.add('hidden');
+            }
+            
+            // 更新描述
+            document.getElementById('product-description').textContent = currentProduct.description;
+            
+            // 更新圖片
+            if (currentProduct.images && currentProduct.images.length > 0) {
+                document.getElementById('product-main-image').src = currentProduct.images[0];
+                document.getElementById('product-main-image').alt = currentProduct.name;
+                
+                // 渲染縮圖
+                const thumbnailsContainer = document.getElementById('product-thumbnails');
+                thumbnailsContainer.innerHTML = currentProduct.images.map((img, index) => 
+                    `<img src="${img}" alt="${currentProduct.name}" 
+                          class="thumbnail w-full h-20 object-cover rounded-lg border-2 ${index === 0 ? 'active' : 'border-gray-200'}"
+                          onclick="selectImage(${index})">`
+                ).join('');
+            } else if (currentProduct.image) {
+                // 如果只有單張圖片
+                document.getElementById('product-main-image').src = currentProduct.image;
+                document.getElementById('product-main-image').alt = currentProduct.name;
+                document.getElementById('product-thumbnails').innerHTML = '';
+            }
+            
+            // 更新規格（如果有）
+            if (currentProduct.specs && currentProduct.specs.length > 0) {
+                document.getElementById('product-specs').classList.remove('hidden');
+                const specsContainer = document.getElementById('specs-options');
+                specsContainer.innerHTML = currentProduct.specs.map((spec, index) => 
+                    `<button onclick="selectSpec('${spec}')" 
+                            class="spec-option px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-primary transition ${index === 0 ? 'border-primary bg-primary bg-opacity-10' : ''}">
+                        ${spec}
+                    </button>`
+                ).join('');
+                selectedSpec = currentProduct.specs[0];
+            } else {
+                document.getElementById('product-specs').classList.add('hidden');
+            }
+            
+            // 更新詳細資訊
+            const detailsContainer = document.getElementById('product-details');
+            detailsContainer.innerHTML = `
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">產品特色</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><i class="fas fa-check text-primary mr-2"></i>${currentProduct.description}</li>
+                            <li><i class="fas fa-check text-primary mr-2"></i>高品質原料，安全無添加</li>
+                            <li><i class="fas fa-check text-primary mr-2"></i>適合各年齡層的毛孩</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">產品資訊</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><strong>分類：</strong>${currentProduct.categoryName}</li>
+                            <li><strong>評分：</strong>${currentProduct.rating} / 5.0</li>
+                            <li><strong>已售：</strong>${currentProduct.sales} 件</li>
+                            <li><strong>庫存：</strong>${currentProduct.stock === 999 ? '充足' : currentProduct.stock}</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 選擇圖片
+        function selectImage(index) {
+            selectedImageIndex = index;
+            if (currentProduct && currentProduct.images) {
+                document.getElementById('product-main-image').src = currentProduct.images[index];
+                
+                // 更新縮圖狀態
+                document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+                    if (i === index) {
+                        thumb.classList.add('active');
+                        thumb.classList.remove('border-gray-200');
+                    } else {
+                        thumb.classList.remove('active');
+                        thumb.classList.add('border-gray-200');
+                    }
+                });
+            }
+        }
+
+        // 選擇規格
+        function selectSpec(spec) {
+            selectedSpec = spec;
+            document.querySelectorAll('.spec-option').forEach(btn => {
+                if (btn.textContent.trim() === spec) {
+                    btn.classList.add('border-primary', 'bg-primary', 'bg-opacity-10');
+                    btn.classList.remove('border-gray-300');
+                } else {
+                    btn.classList.remove('border-primary', 'bg-primary', 'bg-opacity-10');
+                    btn.classList.add('border-gray-300');
+                }
+            });
+        }
+
+        // 數量增減
+        function increaseQuantity() {
+            const input = document.getElementById('product-quantity');
+            input.value = parseInt(input.value) + 1;
+        }
+
+        function decreaseQuantity() {
+            const input = document.getElementById('product-quantity');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+        // 加入購物車
+        function addToCart() {
+            if (!currentProduct) {
+                console.error('沒有選擇的產品');
+                return;
+            }
+            
+            const quantity = parseInt(document.getElementById('product-quantity').value) || 1;
+            
+            console.log('🛒 加入購物車:', currentProduct, '數量:', quantity);
+            
+            // 優先使用全局 addToCart 函數
+            if (window.addToCart && typeof window.addToCart === 'function') {
+                try {
+                    window.addToCart(
+                        currentProduct.id,
+                        currentProduct.name,
+                        currentProduct.price,
+                        currentProduct.images ? currentProduct.images[0] : currentProduct.image || '',
+                        quantity
+                    );
+                    updateCartBadge();
+                    showNotification(`已加入購物車：${currentProduct.name} x ${quantity}`, 'success');
+                } catch (error) {
+                    console.error('加入購物車失敗:', error);
+                    showNotification('加入購物車失敗，請重試', 'error');
+                }
+            }
+            // 備用方案：直接使用 localCart
+            else if (window.localCart && typeof window.localCart.addItem === 'function') {
+                try {
+                    window.localCart.addItem(
+                        currentProduct.id,
+                        currentProduct.name,
+                        currentProduct.price,
+                        currentProduct.images ? currentProduct.images[0] : currentProduct.image || '',
+                        quantity
+                    );
+                    updateCartBadge();
+                    showNotification(`已加入購物車：${currentProduct.name} x ${quantity}`, 'success');
+                } catch (error) {
+                    console.error('加入購物車失敗:', error);
+                    showNotification('加入購物車失敗，請重試', 'error');
+                }
+            } else {
+                console.error('購物車系統未載入');
+                showNotification('購物車系統未載入，請重新整理頁面', 'error');
+            }
+        }
+
+        // 立即購買
+        function buyNow() {
+            if (!currentProduct) {
+                console.error('沒有選擇的產品');
+                return;
+            }
+            
+            const quantity = parseInt(document.getElementById('product-quantity').value) || 1;
+            
+            // 先加入購物車
+            addToCart();
+            
+            // 跳轉到結帳頁面
+            setTimeout(() => {
+                window.location.href = 'checkout.html';
+            }, 500);
+        }
+
+        // 切換購物車
+        function toggleCart() {
+            if (window.localCart && typeof window.localCart.toggleCart === 'function') {
+                window.localCart.toggleCart();
+            } else {
+                window.location.href = 'cart.html';
+            }
+        }
+        
+        // 手機版選單切換
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        // 更新購物車徽章
+        function updateCartBadge() {
+            let count = 0;
+            
+            if (window.localCart && typeof window.localCart.getItemCount === 'function') {
+                count = window.localCart.getItemCount() || 0;
+            } else {
+                try {
+                    const cartData = localStorage.getItem('jiangchong_cart');
+                    if (cartData) {
+                        const cart = JSON.parse(cartData);
+                        count = cart.reduce((total, item) => {
+                            return total + (parseInt(item.quantity) || 1);
+                        }, 0);
+                    }
+                } catch (error) {
+                    console.error('讀取購物車失敗:', error);
+                }
+            }
+            
+            const badge = document.getElementById('cart-badge');
+            if (badge) {
+                badge.textContent = count;
+                
+                if (count > 0) {
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+        }
+
+        // 顯示通知
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // 顯示找不到產品
+        function showNotFound() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('not-found').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+

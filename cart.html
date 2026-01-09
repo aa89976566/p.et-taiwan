@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購物車 - 匠寵</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- 全局配置 -->
+    <script src="js/config.js"></script>
+    
+    <!-- 數據管理系統 -->
+    <script src="js/data-store.js"></script>
+    <script src="js/mock-data.js"></script>
+    
+    <!-- 購物車系統 -->
+    <script src="js/local-cart.js"></script>
+    
+    <!-- 產品系統 -->
+    <script src="js/front-products.js"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B6B',
+                        secondary: '#4ECDC4',
+                        accent: '#FFD93D',
+                        dark: '#2C3E50',
+                        light: '#F7F9FC'
+                    },
+                    fontFamily: {
+                        'sans': ['Nunito', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Noto Sans TC', 'Nunito', sans-serif; }
+        .cart-item {
+            transition: all 0.3s ease;
+        }
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-white">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white shadow-md z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-primary text-3xl"></i>
+                    <span class="text-2xl font-bold text-dark">匠寵</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-dark hover:text-primary transition">
+                        <i class="fas fa-home mr-2"></i>返回首頁
+                    </a>
+                    <a href="javascript:void(0)" onclick="proceedToCheckout()" id="checkout-btn" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-red-600 transition hidden">
+                        <i class="fas fa-shopping-bag mr-2"></i>前往結帳
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16">
+        <div class="container mx-auto px-4 max-w-6xl">
+            
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-dark mb-2">
+                    <i class="fas fa-shopping-cart text-primary mr-3"></i>購物車
+                </h1>
+                <p class="text-gray-600">查看並管理您的購物車商品</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 左側：購物車商品列表 -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-md p-6">
+                        <div id="cartItemsContainer" class="space-y-4">
+                            <!-- 購物車項目將動態載入 -->
+                            <div class="text-center py-12">
+                                <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600">載入中...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：訂單摘要 -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl shadow-md p-6 sticky top-24">
+                        <h2 class="text-xl font-bold text-dark mb-6">
+                            <i class="fas fa-receipt text-primary mr-2"></i>訂單摘要
+                        </h2>
+                        
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between text-gray-600">
+                                <span>商品小計</span>
+                                <span id="cartSubtotal" class="font-semibold">NT$ 0</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>運費</span>
+                                <span id="cartShipping" class="font-semibold">NT$ 0</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>折扣</span>
+                                <span id="cartDiscount" class="font-semibold text-green-600">-NT$ 0</span>
+                            </div>
+                            <hr class="my-4">
+                            <div class="flex justify-between text-xl font-bold text-dark">
+                                <span>總計</span>
+                                <span id="cartTotal" class="text-primary">NT$ 0</span>
+                            </div>
+                        </div>
+
+                        <button onclick="proceedToCheckout()" id="checkout-button" class="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:bg-red-600 hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-shopping-bag mr-2"></i>前往結帳
+                        </button>
+
+                        <div class="mt-4 text-center">
+                            <a href="index.html#products" class="text-primary hover:underline text-sm">
+                                <i class="fas fa-arrow-left mr-1"></i>繼續購物
+                            </a>
+                        </div>
+
+                        <!-- 優惠券區域 -->
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <h3 class="text-sm font-semibold text-gray-700 mb-3">優惠券</h3>
+                            <div class="flex gap-2">
+                                <input type="text" id="couponCode" placeholder="輸入優惠碼" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                                <button onclick="applyCoupon()" class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-teal-500 transition text-sm">
+                                    套用
+                                </button>
+                            </div>
+                            <p id="couponMessage" class="text-xs mt-2 text-gray-500"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let cart = [];
+        let appliedCoupon = null;
+        let couponDiscount = 0;
+
+        // 頁面載入
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCart();
+        });
+
+        // 載入購物車
+        function loadCart() {
+            // 從 localStorage 載入購物車
+            cart = JSON.parse(localStorage.getItem('jiangchong_cart') || '[]');
+            
+            // 過濾掉零元商品和無效商品
+            cart = cart.filter(item => {
+                const price = parseFloat(item.price) || 0;
+                const productId = item.productId;
+                // 過濾掉價格為 0 或沒有 productId 的商品
+                return price > 0 && productId !== undefined && productId !== null && productId !== '';
+            });
+            
+            // 儲存過濾後的購物車
+            if (cart.length !== JSON.parse(localStorage.getItem('jiangchong_cart') || '[]').length) {
+                localStorage.setItem('jiangchong_cart', JSON.stringify(cart));
+            }
+            
+            if (cart.length === 0) {
+                renderEmptyCart();
+                return;
+            }
+
+            // 獲取商品詳情
+            let products = [];
+            if (window.DataStore) {
+                products = window.DataStore.getAll('products');
+            }
+
+            renderCartItems(cart, products);
+            updateCartSummary();
+        }
+
+        // 渲染空購物車
+        function renderEmptyCart() {
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = `
+                <div class="text-center py-16">
+                    <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-700 mb-2">購物車是空的</h3>
+                    <p class="text-gray-500 mb-6">快去挑選喜歡的商品吧！</p>
+                    <a href="index.html#products" class="inline-block bg-primary text-white px-8 py-3 rounded-xl font-semibold hover:bg-red-600 transition">
+                        <i class="fas fa-shopping-bag mr-2"></i>前往選購
+                    </a>
+                </div>
+            `;
+            
+            // 隱藏結帳按鈕
+            document.getElementById('checkout-button').disabled = true;
+            document.getElementById('checkout-btn').classList.add('hidden');
+        }
+
+        // 渲染購物車項目
+        function renderCartItems(cartItems, products) {
+            const container = document.getElementById('cartItemsContainer');
+            
+            if (!container) {
+                console.error('找不到 cartItemsContainer 元素');
+                return;
+            }
+            
+            // 過濾掉零元商品和無效商品
+            const validItems = cartItems.filter(item => {
+                const price = parseFloat(item.price) || 0;
+                const productId = item.productId;
+                return price > 0 && productId !== undefined && productId !== null && productId !== '';
+            });
+            
+            if (validItems.length === 0) {
+                renderEmptyCart();
+                return;
+            }
+            
+            container.innerHTML = validItems.map(item => {
+                const product = products.find(p => p.id === item.productId) || {};
+                const imageUrl = item.imageUrl || item.productImageUrl || product.imageUrl || 'https://via.placeholder.com/150';
+                const name = item.name || item.productName || product.name || '商品';
+                const price = parseFloat(item.price) || parseFloat(product.price) || 0;
+                const quantity = parseInt(item.quantity) || 1;
+                const subtotal = price * quantity;
+
+                return `
+                    <div class="cart-item bg-white border border-gray-200 rounded-xl p-6">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <!-- 商品圖片 -->
+                            <div class="flex-shrink-0">
+                                <img src="${imageUrl}" alt="${name}" class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg">
+                            </div>
+                            
+                            <!-- 商品資訊 -->
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-dark mb-2">${name}</h3>
+                                <p class="text-primary font-bold text-lg mb-4">NT$ ${price.toLocaleString()}</p>
+                                
+                                <!-- 數量控制 -->
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-2 border border-gray-300 rounded-lg">
+                                        <button onclick="updateQuantity('${String(item.productId)}', ${Math.max(1, quantity - 1)})" 
+                                                class="px-4 py-2 hover:bg-gray-100 transition">
+                                            <i class="fas fa-minus text-sm"></i>
+                                        </button>
+                                        <span class="px-4 py-2 font-semibold min-w-[3rem] text-center">${quantity}</span>
+                                        <button onclick="updateQuantity('${String(item.productId)}', ${quantity + 1})" 
+                                                class="px-4 py-2 hover:bg-gray-100 transition">
+                                            <i class="fas fa-plus text-sm"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="text-right flex-1">
+                                        <p class="text-gray-600 text-sm">小計</p>
+                                        <p class="text-xl font-bold text-primary">NT$ ${subtotal.toLocaleString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 移除按鈕 -->
+                            <div class="flex-shrink-0">
+                                <button onclick="removeItem('${item.productId}')" 
+                                        class="text-red-500 hover:text-red-700 transition p-2">
+                                    <i class="fas fa-trash text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 更新數量
+        function updateQuantity(productId, newQuantity) {
+            // 確保 productId 有效（包括 0 和 '0'）
+            if (productId === undefined || productId === null || productId === '') {
+                console.error('updateQuantity: productId 為空');
+                return;
+            }
+            
+            // 確保 newQuantity 是數字
+            newQuantity = parseInt(newQuantity) || 1;
+            if (newQuantity < 1) {
+                newQuantity = 1;
+            }
+            
+            if (newQuantity <= 0) {
+                removeItem(productId);
+                return;
+            }
+
+            // 使用多種方式查找商品（包括價格為 0 的）
+            const item = cart.find(item => {
+                return item.productId === productId || 
+                       String(item.productId) === String(productId) ||
+                       (item.productId != null && item.productId.toString() === String(productId));
+            });
+            
+            if (item) {
+                // 確保數量是正整數（避免字符串拼接）
+                const finalQuantity = Math.max(1, parseInt(newQuantity) || 1);
+                // 確保存儲為數字類型
+                item.quantity = Number(finalQuantity);
+                
+                console.log(`✅ 更新商品數量: ${item.name || item.productName || productId} -> ${finalQuantity}`);
+                
+                try {
+                    localStorage.setItem('jiangchong_cart', JSON.stringify(cart));
+                } catch (error) {
+                    console.error('儲存購物車失敗:', error);
+                    alert('更新失敗，請重試');
+                    return;
+                }
+                
+                // 重新載入購物車以更新顯示
+                loadCart();
+                
+                // 更新導航欄購物車數量
+                if (window.FrontProducts && window.FrontProducts.updateCartCount) {
+                    window.FrontProducts.updateCartCount();
+                } else if (window.localCart && window.localCart.updateCartUI) {
+                    window.localCart.updateCartUI();
+                }
+            } else {
+                console.warn('找不到要更新的商品:', productId);
+                console.log('當前購物車:', cart);
+            }
+        }
+
+        // 移除商品
+        function removeItem(productId) {
+            // 允許 productId 為 0 或 '0'（價格為 0 的商品）
+            if (productId === undefined || productId === null || productId === '') {
+                console.error('removeItem: productId 為空');
+                return;
+            }
+            
+            // 找到要移除的商品
+            const itemToRemove = cart.find(item => {
+                // 使用多種方式比較，確保能找到商品
+                return item.productId === productId || 
+                       String(item.productId) === String(productId) ||
+                       (item.productId && item.productId.toString() === productId.toString());
+            });
+            
+            if (!itemToRemove) {
+                console.warn('找不到要移除的商品:', productId);
+                console.log('當前購物車:', cart);
+                return;
+            }
+            
+            if (confirm(`確定要移除「${itemToRemove.name || itemToRemove.productName || '此商品'}」嗎？`)) {
+                // 使用嚴格過濾，確保正確移除
+                const originalLength = cart.length;
+                cart = cart.filter(item => {
+                    // 使用多種方式比較，確保正確過濾
+                    const isMatch = item.productId === productId || 
+                                   String(item.productId) === String(productId) ||
+                                   (item.productId && item.productId.toString() === productId.toString());
+                    return !isMatch;
+                });
+                
+                // 驗證是否成功移除
+                if (cart.length === originalLength) {
+                    console.error('移除失敗：商品仍在購物車中');
+                    alert('移除失敗，請重試');
+                    return;
+                }
+                
+                // 儲存到 localStorage
+                try {
+                    localStorage.setItem('jiangchong_cart', JSON.stringify(cart));
+                    console.log('✅ 商品已移除，剩餘商品數:', cart.length);
+                } catch (error) {
+                    console.error('儲存購物車失敗:', error);
+                    alert('儲存失敗，請重試');
+                    return;
+                }
+                
+                // 重新載入購物車
+                loadCart();
+                
+                // 更新導航欄購物車數量
+                if (window.FrontProducts && window.FrontProducts.updateCartCount) {
+                    window.FrontProducts.updateCartCount();
+                } else if (window.localCart && window.localCart.updateCartUI) {
+                    window.localCart.updateCartUI();
+                }
+            }
+        }
+
+        // 更新訂單摘要
+        function updateCartSummary() {
+            if (cart.length === 0) {
+                renderEmptyCart();
+                return;
+            }
+            
+            // 計算小計（確保價格和數量都是數字）
+            const subtotal = cart.reduce((sum, item) => {
+                const price = parseFloat(item.price) || 0;
+                const quantity = parseInt(item.quantity) || 1;
+                return sum + (price * quantity);
+            }, 0);
+            
+            // 運費計算（滿1000免運，超商取貨運費 60 元）
+            const shippingFee = subtotal >= 1000 ? 0 : 60;
+            
+            // 折扣計算（滿1000折100 + 優惠券折扣）
+            const baseDiscount = subtotal >= 1000 ? 100 : 0;
+            const discount = baseDiscount + (couponDiscount || 0);
+            
+            const total = subtotal + shippingFee - discount;
+
+            // 更新顯示
+            const subtotalEl = document.getElementById('cartSubtotal');
+            const shippingEl = document.getElementById('cartShipping');
+            const discountEl = document.getElementById('cartDiscount');
+            const totalEl = document.getElementById('cartTotal');
+            
+            if (subtotalEl) subtotalEl.textContent = `NT$ ${subtotal.toLocaleString()}`;
+            if (shippingEl) shippingEl.textContent = shippingFee === 0 ? '免運' : `NT$ ${shippingFee}`;
+            if (discountEl) discountEl.textContent = discount > 0 ? `-NT$ ${discount.toLocaleString()}` : '-NT$ 0';
+            if (totalEl) totalEl.textContent = `NT$ ${total.toLocaleString()}`;
+
+            // 啟用/停用結帳按鈕
+            const checkoutBtn = document.getElementById('checkout-button');
+            const checkoutNavBtn = document.getElementById('checkout-btn');
+            if (checkoutBtn) {
+                checkoutBtn.disabled = false;
+            }
+            if (checkoutNavBtn) {
+                checkoutNavBtn.classList.remove('hidden');
+            }
+        }
+
+        // 套用優惠券
+        async function applyCoupon() {
+            const code = document.getElementById('couponCode').value.trim();
+            const messageEl = document.getElementById('couponMessage');
+            
+            if (!code) {
+                messageEl.textContent = '請輸入優惠碼';
+                messageEl.className = 'text-xs mt-2 text-red-500';
+                return;
+            }
+
+            // 計算當前小計（確保價格和數量都是數字）
+            const subtotal = cart.reduce((sum, item) => {
+                const price = parseFloat(item.price) || 0;
+                const quantity = parseInt(item.quantity) || 1;
+                return sum + (price * quantity);
+            }, 0);
+
+            try {
+                if (window.ApiClient) {
+                    const response = await window.ApiClient.validateCoupon(code.toUpperCase(), subtotal);
+                    
+                    if (response.success && response.data) {
+                        appliedCoupon = response.data.coupon;
+                        const discountAmount = response.data.discountAmount;
+                        
+                        // 計算折扣（這裡需要更新計算邏輯）
+                        const baseDiscount = subtotal >= 1000 ? 100 : 0;
+                        couponDiscount = discountAmount;
+                        
+                        messageEl.textContent = `✅ 優惠券「${appliedCoupon.name}」已套用！`;
+                        messageEl.className = 'text-xs mt-2 text-green-600';
+                        updateCartSummary();
+                    } else {
+                        throw new Error(response.message || '優惠碼無效或已過期');
+                    }
+                } else {
+                    throw new Error('API 客戶端未載入');
+                }
+            } catch (error) {
+                console.error('優惠碼驗證失敗:', error);
+                messageEl.textContent = `❌ ${error.message || '優惠碼無效或已過期'}`;
+                messageEl.className = 'text-xs mt-2 text-red-500';
+                appliedCoupon = null;
+                couponDiscount = 0;
+                updateCartSummary();
+            }
+        }
+
+        // 前往結帳
+        function proceedToCheckout() {
+            console.log('🛒 開始結帳流程...');
+            
+            // 重新載入購物車以確保數據最新
+            if (window.localCart && typeof window.localCart.getItems === 'function') {
+                cart = window.localCart.getItems();
+            } else {
+                cart = JSON.parse(localStorage.getItem('jiangchong_cart') || '[]');
+            }
+            
+            console.log('📦 購物車內容:', cart);
+            
+            if (cart.length === 0) {
+                alert('購物車是空的！請先加入商品。');
+                return;
+            }
+
+            // 如果有套用優惠券，儲存到 localStorage
+            if (appliedCoupon) {
+                localStorage.setItem('appliedCoupon', JSON.stringify(appliedCoupon));
+                localStorage.setItem('couponDiscount', couponDiscount.toString());
+                console.log('✅ 優惠券已儲存:', appliedCoupon);
+            } else {
+                localStorage.removeItem('appliedCoupon');
+                localStorage.removeItem('couponDiscount');
+            }
+
+            // 確保購物車數據已保存
+            if (window.localCart && typeof window.localCart.saveCart === 'function') {
+                window.localCart.saveCart();
+            }
+
+            console.log('🚀 跳轉到結帳頁面...');
+            // 跳轉到結帳頁面
+            window.location.href = 'checkout.html';
+        }
+        
+        // 將函數暴露到全局，供按鈕調用
+        window.proceedToCheckout = proceedToCheckout;
+        window.updateQuantity = updateQuantity;
+        window.removeItem = removeItem;
+        window.applyCoupon = applyCoupon;
+    </script>
+</body>
+</html>
+

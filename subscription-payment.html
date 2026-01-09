@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>付款資訊 - 匠寵 JiangChong</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .countdown-timer {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FF6B6B;
+        }
+        .payment-info-card {
+            border: 2px solid #FF6B6B;
+            background: linear-gradient(135deg, #FFF5F5 0%, #FFFFFF 100%);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .pulsing {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 導航欄 -->
+    <nav class="bg-white border-b-2 border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-black" style="color: #FF6B6B;">匠寵</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- 標題 -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-black text-gray-900 mb-2">付款資訊</h1>
+            <p class="text-gray-600">請於 <span class="countdown-timer" id="countdown">02:00</span> 內完成付款</p>
+        </div>
+
+        <!-- 轉帳資訊卡片 -->
+        <div class="payment-info-card rounded-2xl p-8 mb-8 shadow-lg">
+            <div class="flex items-center justify-center mb-6">
+                <div class="bg-green-100 rounded-full p-4 mr-4">
+                    <i class="fas fa-university text-green-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-black text-gray-900">轉帳資訊</h2>
+                    <p class="text-sm text-gray-600">請將款項轉至以下帳戶</p>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 mb-6 border-2 border-dashed border-gray-300">
+                <div class="text-center">
+                    <div class="text-sm text-gray-600 mb-2">銀行代碼</div>
+                    <div class="text-3xl font-black text-gray-900 mb-6">822</div>
+                    <div class="text-sm text-gray-600 mb-2">帳號</div>
+                    <div class="text-4xl font-black" style="color: #FF6B6B; letter-spacing: 0.1em;" id="account-number">
+                        226540037896
+                    </div>
+                </div>
+            </div>
+
+            <!-- 複製按鈕 -->
+            <div class="flex justify-center">
+                <button onclick="copyAccountInfo()" class="bg-gray-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-900 transition-colors flex items-center">
+                    <i class="fas fa-copy mr-2"></i>
+                    複製帳號資訊
+                </button>
+            </div>
+        </div>
+
+        <!-- LINE 官方帳號區塊 -->
+        <div class="bg-white rounded-2xl p-8 mb-8 shadow-lg">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full mb-4">
+                    <i class="fab fa-line text-white text-4xl"></i>
+                </div>
+                <h2 class="text-2xl font-black text-gray-900 mb-2">加入官方 LINE 帳號</h2>
+                <p class="text-gray-600">完成付款後，請加入 LINE 並點擊「訂閱爆寵」確認付款</p>
+            </div>
+
+            <!-- QR Code -->
+            <div class="text-center mb-6">
+                <div class="inline-block p-4 bg-white rounded-2xl shadow-lg border-4 border-green-500">
+                    <img src="https://www.genspark.ai/api/files/s/p1ymWhU0" 
+                         alt="LINE QR Code" 
+                         class="w-64 h-64"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTk5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5MSU5FIFFSIENvZGU8L3RleHQ+Cjwvc3ZnPg=='">
+                </div>
+                <p class="text-sm text-gray-600 mt-4 mb-2">
+                    <i class="fas fa-mobile-alt mr-1"></i>使用 LINE 掃描 QR Code 加入
+                </p>
+                <p class="text-base font-bold text-gray-900">
+                    LINE ID: <span class="font-mono text-green-600">@902rkfzv</span>
+                </p>
+            </div>
+
+            <!-- LINE 加好友按鈕 -->
+            <div class="text-center">
+                <a href="javascript:void(0)" 
+                   onclick="openLineAddFriend(event)"
+                   class="inline-flex items-center bg-green-500 text-white px-8 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg cursor-pointer">
+                    <i class="fab fa-line mr-3 text-2xl"></i>
+                    加入 LINE 官方帳號
+                </a>
+                <p class="text-xs text-gray-500 mt-3">
+                    <i class="fas fa-mobile-alt mr-1"></i>
+                    點擊後會自動開啟 LINE App 加入好友
+                </p>
+            </div>
+        </div>
+
+        <!-- 確認付款按鈕 -->
+        <div class="bg-white rounded-2xl p-8 shadow-lg">
+            <h2 class="text-2xl font-black text-gray-900 mb-4 text-center">確認付款</h2>
+            <p class="text-gray-600 text-center mb-6">加入 LINE 後，請點擊下方按鈕確認付款並提供銀行尾號</p>
+            
+            <button onclick="openPaymentConfirmModal()" 
+                    class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-lg text-lg font-black hover:from-green-600 hover:to-green-700 transition-all shadow-lg">
+                <i class="fab fa-line mr-2"></i>
+                訂閱爆寵 - 確認付款
+            </button>
+
+            <p class="text-center text-sm text-gray-500 mt-4">
+                <i class="fas fa-info-circle mr-1"></i>
+                請於完成轉帳後再點擊確認
+            </p>
+        </div>
+
+        <!-- 付款說明 -->
+        <div class="bg-blue-50 rounded-lg p-6 mt-8 border border-blue-200">
+            <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                付款說明
+            </h3>
+            <ul class="space-y-2 text-sm text-gray-700">
+                <li>• 請於 <strong>2 分鐘</strong> 內完成轉帳，逾期訂單將自動取消</li>
+                <li>• 轉帳完成後，請加入 LINE 官方帳號並點擊「訂閱爆寵」確認付款</li>
+                <li>• 確認付款時請提供銀行帳號後 <strong>5 碼</strong>，以便核對</li>
+                <li>• 確認付款後，我們會在 <strong>2 分鐘內</strong> 進行確認</li>
+                <li>• 確認完成後，訂單狀態將更新為「已付款」</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 付款成功 Modal -->
+    <div id="paymentSuccessModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
+                    <i class="fas fa-check-circle text-green-600 text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-black text-gray-900 mb-2">付款確認已提交！</h3>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <p class="text-gray-700 text-center leading-relaxed">
+                    我們會儘速確認您的付款。<br>
+                    確認完成後，訂單狀態將更新為「已付款」。
+                </p>
+                
+                <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                    <p class="text-sm text-gray-800 font-bold mb-3 flex items-center justify-center">
+                        <i class="fab fa-line text-green-600 text-xl mr-2"></i>
+                        請加入我們的 LINE 官方帳號
+                    </p>
+                    <ul class="text-sm text-gray-700 space-y-2 mb-4 text-left">
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <span>確認付款資訊並提供銀行尾號</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <span>追蹤訂單狀態</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <span>接收最新通知</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <span>與我們保持溝通</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <a href="javascript:void(0)" 
+                           onclick="openLineAddFriend(event)"
+                           class="inline-flex items-center bg-green-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600 transition-colors">
+                            <i class="fab fa-line mr-2 text-lg"></i>
+                            立即加入 LINE 好友
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <p class="text-sm text-gray-700 text-center">
+                        <strong class="text-gray-900">訂單編號：</strong>
+                        <span id="success-order-id" class="font-mono font-bold text-blue-700">-</span>
+                    </p>
+                    <p class="text-xs text-gray-600 text-center mt-2">
+                        請記下訂單編號，方便後續查詢
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="closePaymentSuccessModal()" 
+                        class="w-full bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition-colors">
+                    確認，感謝您的訂閱！
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 確認付款 Modal -->
+    <div id="paymentConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-black text-gray-900">確認付款</h3>
+                <button onclick="closePaymentConfirmModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <form id="paymentConfirmForm" onsubmit="return submitPaymentConfirmation(event)">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2 text-gray-700">
+                        銀行帳號後 5 碼 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" 
+                           id="accountLast5Digits" 
+                           name="accountLast5Digits"
+                           maxlength="5"
+                           pattern="[0-9]{5}"
+                           required
+                           class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-xl font-mono text-center focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                           placeholder="00000">
+                    <p class="text-xs text-gray-500 mt-2">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        請輸入您轉帳帳號的後 5 碼數字
+                    </p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2 text-gray-700">
+                        轉帳時間 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="datetime-local" 
+                           id="transferTime" 
+                           name="transferTime"
+                           required
+                           class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-green-500 focus:ring-2 focus:ring-green-200">
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" 
+                               name="confirmPayment" 
+                               required
+                               class="mt-1 mr-3 w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                        <span class="text-sm text-gray-700">
+                            我已確認完成轉帳，並已加入 LINE 官方帳號
+                        </span>
+                    </label>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="button" 
+                            onclick="closePaymentConfirmModal()"
+                            class="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-bold hover:bg-gray-300 transition-colors">
+                        取消
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition-colors">
+                        <i class="fab fa-line mr-2"></i>
+                        確認付款
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 從 URL 參數或 localStorage 獲取訂單資訊
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId') || sessionStorage.getItem('subscriptionOrderId') || 'SUB-' + Date.now();
+        
+        // 倒計時功能（2分鐘）
+        let timeLeft = 120; // 2分鐘 = 120秒
+        const countdownElement = document.getElementById('countdown');
+        
+        function updateCountdown() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownElement.textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 30) {
+                countdownElement.classList.add('pulsing');
+                countdownElement.style.color = '#EF4444';
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                alert('付款時間已到期，訂單已自動取消。');
+                window.location.href = 'subscription-packages.html';
+                return;
+            }
+            
+            timeLeft--;
+        }
+        
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // 立即執行一次
+        
+        // 開啟 LINE 加好友（優先使用 App，失敗則使用網頁版）
+        function openLineAddFriend(event) {
+            event.preventDefault();
+            
+            // LINE 官方帳號 ID
+            // 注意：LINE ID 格式應該不包含 @ 符號（在 URL 中）
+            const lineId = '902rkfzv'; // 移除 @ 符號，URL 中不需要
+            const lineAddFriendUrl = `https://line.me/R/ti/p/@${lineId}`;
+            
+            // LINE Deep Link（適用於手機 App）
+            // Deep Link 格式：line://ti/p/{LINE_ID}（不需要 @ 符號）
+            const lineDeepLink = `line://ti/p/${lineId}`;
+            
+            console.log('📱 準備開啟 LINE:', {
+                lineId: lineId,
+                webUrl: lineAddFriendUrl,
+                deepLink: lineDeepLink
+            });
+            
+            // 檢測是否為行動裝置
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // 行動裝置：先嘗試開啟 LINE App
+                let appOpened = false;
+                
+                // 方法：創建隱藏 iframe 來嘗試開啟 App
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.style.width = '1px';
+                iframe.style.height = '1px';
+                iframe.src = lineDeepLink;
+                document.body.appendChild(iframe);
+                
+                // 監聽頁面可見性變化（如果 App 開啟，頁面會隱藏）
+                const handleVisibilityChange = () => {
+                    if (document.hidden) {
+                        appOpened = true;
+                        document.body.removeChild(iframe);
+                    }
+                };
+                document.addEventListener('visibilitychange', handleVisibilityChange);
+                
+                // 如果 2 秒後 App 沒有開啟，則跳轉到網頁版
+                setTimeout(() => {
+                    document.removeEventListener('visibilitychange', handleVisibilityChange);
+                    if (!appOpened && iframe.parentNode) {
+                        document.body.removeChild(iframe);
+                        console.log('⚠️ App 未開啟，跳轉到網頁版');
+                        window.location.href = lineAddFriendUrl;
+                    }
+                }, 2000);
+            } else {
+                // 桌面版：直接開啟網頁版（在新視窗）
+                console.log('💻 桌面版：開啟 LINE 網頁版');
+                window.open(lineAddFriendUrl, '_blank', 'noopener,noreferrer');
+            }
+        }
+        
+        // 複製帳號資訊
+        function copyAccountInfo() {
+            const accountInfo = '(822) 226540037896';
+            navigator.clipboard.writeText(accountInfo).then(() => {
+                alert('帳號資訊已複製到剪貼簿！');
+            }).catch(() => {
+                // 備用方案
+                const textArea = document.createElement('textarea');
+                textArea.value = accountInfo;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('帳號資訊已複製到剪貼簿！');
+            });
+        }
+        
+        // 打開確認付款 Modal
+        function openPaymentConfirmModal() {
+            document.getElementById('paymentConfirmModal').classList.remove('hidden');
+            // 自動填入當前時間
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('transferTime').value = localDateTime;
+            document.getElementById('accountLast5Digits').focus();
+        }
+        
+        // 關閉確認付款 Modal
+        function closePaymentConfirmModal() {
+            const modal = document.getElementById('paymentConfirmModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+            
+            const form = document.getElementById('paymentConfirmForm');
+            if (form) {
+                form.reset();
+                // 重置按鈕狀態
+                const submitButton = form.querySelector('button[type="submit"]');
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fab fa-line mr-2"></i>確認付款';
+                }
+            }
+            
+            // 重置提交狀態
+            isSubmitting = false;
+        }
+        
+        // 顯示付款成功 Modal
+        function showPaymentSuccessModal(orderId) {
+            // 顯示訂單編號
+            const orderIdElement = document.getElementById('success-order-id');
+            if (orderIdElement && orderId) {
+                orderIdElement.textContent = orderId;
+            }
+            
+            // 顯示 Modal
+            const modal = document.getElementById('paymentSuccessModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+            
+            // 清除 sessionStorage 中的訂閱資料
+            sessionStorage.removeItem('pendingSubscriptionData');
+            sessionStorage.removeItem('subscriptionOrderId');
+        }
+        
+        // 關閉付款成功 Modal
+        function closePaymentSuccessModal() {
+            const modal = document.getElementById('paymentSuccessModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+            
+            // 延遲跳轉，確保 Modal 關閉動畫完成
+            setTimeout(() => {
+                // 導向訂單確認頁面或返回首頁
+                const orderIdElement = document.getElementById('success-order-id');
+                const orderId = orderIdElement?.textContent;
+                
+                if (orderId && orderId !== '-') {
+                    window.location.href = `order-success.html?orderId=${orderId}&type=subscription`;
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }, 300);
+        }
+        
+        // 點擊 Modal 背景關閉（可選）
+        document.addEventListener('DOMContentLoaded', () => {
+            const successModal = document.getElementById('paymentSuccessModal');
+            if (successModal) {
+                successModal.addEventListener('click', (e) => {
+                    // 如果點擊的是背景（不是 Modal 內容），則關閉
+                    if (e.target === successModal) {
+                        closePaymentSuccessModal();
+                    }
+                });
+            }
+        });
+        
+        // 防止重複提交的標記
+        let isSubmitting = false;
+        
+        // 提交付款確認
+        function submitPaymentConfirmation(event) {
+            event.preventDefault();
+            
+            // 防止重複提交
+            if (isSubmitting) {
+                console.warn('⚠️ 付款確認正在處理中，請勿重複提交');
+                return false;
+            }
+            
+            // 禁用提交按鈕
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = '處理中...';
+            }
+            
+            isSubmitting = true;
+            
+            try {
+                const formData = new FormData(event.target);
+                const accountLast5Digits = formData.get('accountLast5Digits');
+                const transferTime = formData.get('transferTime');
+                
+                // 獲取訂單資訊
+                const subscriptionData = JSON.parse(sessionStorage.getItem('pendingSubscriptionData') || '{}');
+                
+                // 構建付款確認資料
+                const paymentConfirmation = {
+                    orderId: orderId,
+                    accountLast5Digits: accountLast5Digits,
+                    transferTime: transferTime,
+                    subscriptionData: subscriptionData,
+                    confirmedAt: new Date().toISOString(),
+                    status: 'pending_verification'
+                };
+                
+                // 儲存到 localStorage（後台可以查看）
+                const pendingPayments = JSON.parse(localStorage.getItem('pendingPayments') || '[]');
+                pendingPayments.push(paymentConfirmation);
+                localStorage.setItem('pendingPayments', JSON.stringify(pendingPayments));
+                
+                // 儲存到訂單中
+                const existingSubscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+                const subscriptionIndex = existingSubscriptions.findIndex(sub => sub.id === orderId || sub.orderId === orderId);
+                if (subscriptionIndex !== -1) {
+                    existingSubscriptions[subscriptionIndex].paymentConfirmation = paymentConfirmation;
+                    existingSubscriptions[subscriptionIndex].status = 'pending_verification';
+                    existingSubscriptions[subscriptionIndex].statusName = '待確認';
+                    localStorage.setItem('subscriptions', JSON.stringify(existingSubscriptions));
+                } else {
+                    console.warn('⚠️ 找不到訂單:', orderId);
+                }
+                
+                console.log('✅ 付款確認已提交:', paymentConfirmation);
+                
+                // 關閉確認付款 Modal
+                closePaymentConfirmModal();
+                
+                // 清除倒計時
+                clearInterval(countdownInterval);
+                
+                // 顯示成功訊息 Modal
+                showPaymentSuccessModal(orderId);
+                
+            } catch (error) {
+                console.error('提交付款確認失敗:', error);
+                alert('提交失敗，請稍後再試');
+                isSubmitting = false;
+                
+                // 恢復按鈕狀態
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fab fa-line mr-2"></i>確認付款';
+                }
+            }
+            
+            return false;
+        }
+        
+        // 頁面載入時保存訂單資訊
+        window.addEventListener('DOMContentLoaded', () => {
+            // 從 sessionStorage 獲取訂閱資料
+            const subscriptionData = JSON.parse(sessionStorage.getItem('pendingSubscriptionData') || '{}');
+            if (Object.keys(subscriptionData).length > 0) {
+                console.log('📦 訂單資訊已載入:', subscriptionData);
+            }
+        });
+    </script>
+</body>
+</html>
+

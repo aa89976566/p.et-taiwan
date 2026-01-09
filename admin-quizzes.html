@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測驗管理 - 匠寵後台管理系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .sidebar-item { transition: all 0.2s ease; }
+        .sidebar-item:hover { background: rgba(230, 57, 70, 0.1); border-left: 4px solid #E63946; }
+        .sidebar-item.active { background: rgba(230, 57, 70, 0.15); border-left: 4px solid #E63946; font-weight: 600; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+    </style>
+    
+    <!-- 引入數據管理系統 -->
+    <script src="js/data-store.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/quiz-system.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- 頂部導航欄 -->
+    <nav class="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-400 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-paw text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">匠寵後台</h1>
+                        <p class="text-xs text-gray-500">測驗管理</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="relative text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                </button>
+                <div class="flex items-center space-x-3 border-l pl-4">
+                    <div class="hidden md:block text-right">
+                        <p class="text-sm font-semibold text-gray-800" id="adminName">超級管理員</p>
+                        <p class="text-xs text-gray-500" id="adminRole">Super Admin</p>
+                    </div>
+                    <button class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">A</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 側邊欄 -->
+    <aside class="fixed left-0 top-16 bottom-0 w-64 bg-white shadow-lg overflow-y-auto z-40">
+        <div class="p-4">
+            <nav class="space-y-2">
+                <a href="admin-dashboard.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-chart-line text-lg w-6"></i><span>儀表板</span>
+                </a>
+                <div class="sidebar-section">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">用戶管理</p>
+                    <a href="admin-users.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-users text-lg w-6"></i><span>用戶列表</span>
+                    </a>
+
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">商品管理</p>
+                    <a href="admin-products.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-box text-lg w-6"></i><span>產品列表</span>
+                    </a>
+                    <a href="admin-orders.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-shopping-cart text-lg w-6"></i><span>訂單管理</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">物流管理</p>
+                    <a href="admin-shipping.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-shipping-fast text-lg w-6"></i><span>物流設定</span>
+                    </a>
+                    <a href="checkout.html" target="_blank" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-truck text-lg w-6"></i><span>測試結帳流程</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">測驗系統</p>
+                    <a href="admin-quizzes.html" class="sidebar-item active flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-clipboard-list text-lg w-6"></i><span>測驗列表</span>
+                    </a>
+                    <a href="admin-quiz-stats.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-chart-pie text-lg w-6"></i><span>測驗統計</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">訂閱服務</p>
+                    <a href="admin-subscriptions.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-sync-alt text-lg w-6"></i><span>訂閱列表</span>
+                    </a>
+                    <a href="admin-jar-program.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-recycle text-lg w-6"></i><span>換罐計畫</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">數據分析</p>
+                    <a href="admin-analytics.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-chart-bar text-lg w-6"></i><span>營收報表</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">系統設定</p>
+                    <a href="admin-settings.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-cog text-lg w-6"></i><span>系統設定</span>
+                    </a>
+                    <a href="admin-login.html" onclick="logout()" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600">
+                        <i class="fas fa-sign-out-alt text-lg w-6"></i><span>登出</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- 主內容區 -->
+    <main class="ml-64 pt-16 p-8">
+        <!-- 標題 -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">測驗管理</h2>
+                    <p class="text-gray-600 mt-2">管理智能測驗系統，查看測驗結果</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="exportQuizResults()" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:shadow-lg transition">
+                        <i class="fas fa-download mr-2"></i>匯出結果
+                    </button>
+                    <button onclick="openUploadModal()" class="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg hover:shadow-lg transition">
+                        <i class="fas fa-upload mr-2"></i>上傳測驗
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 統計卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">測驗總數</p>
+                        <h3 class="text-3xl font-bold text-gray-800 mt-2">2</h3>
+                        <p class="text-sm text-gray-500 mt-2">2 個測驗項目</p>
+                    </div>
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clipboard-list text-2xl text-blue-500"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">本月完成</p>
+                        <h3 class="text-3xl font-bold text-gray-800 mt-2">456</h3>
+                        <p class="text-sm text-green-600 mt-2">
+                            <i class="fas fa-arrow-up"></i> +23.5%
+                        </p>
+                    </div>
+                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-2xl text-green-500"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">平均完成時間</p>
+                        <h3 class="text-3xl font-bold text-gray-800 mt-2">3.5</h3>
+                        <p class="text-sm text-gray-500 mt-2">分鐘</p>
+                    </div>
+                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-2xl text-purple-500"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-orange-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">平均分數</p>
+                        <h3 class="text-3xl font-bold text-gray-800 mt-2">78</h3>
+                        <p class="text-sm text-gray-500 mt-2">分</p>
+                    </div>
+                    <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-star text-2xl text-orange-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 測驗列表 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- 營養健康測驗 -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-500 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-apple-alt text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">營養健康測驗</h3>
+                            <p class="text-sm text-gray-600">quiz-nutrition.html</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                        <i class="fas fa-check-circle mr-1"></i>啟用中
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-xs text-gray-600">題目數</p>
+                        <p class="text-xl font-bold text-gray-800">10 題</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-xs text-gray-600">完成人數</p>
+                        <p class="text-xl font-bold text-gray-800">234 人</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-xs text-gray-600">平均分數</p>
+                        <p class="text-xl font-bold text-gray-800">82 分</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-xs text-gray-600">平均時間</p>
+                        <p class="text-xl font-bold text-gray-800">3 分鐘</p>
+                    </div>
+                </div>
+
+                <div class="flex space-x-2">
+                    <a href="quiz-nutrition.html" target="_blank" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg text-center hover:bg-blue-600 transition">
+                        <i class="fas fa-eye mr-2"></i>查看測驗
+                    </a>
+                    <button onclick="viewQuizResults('nutrition')" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                        <i class="fas fa-chart-bar mr-2"></i>查看結果
+                    </button>
+                </div>
+            </div>
+
+            <!-- 高齡犬腦力測驗 -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-brain text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">高齡犬腦力測驗</h3>
+                            <p class="text-sm text-gray-600">quiz-toy.html</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                        <i class="fas fa-check-circle mr-1"></i>啟用中
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-xs text-gray-600">題目數</p>
+                        <p class="text-xl font-bold text-gray-800">12 題</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-xs text-gray-600">完成人數</p>
+                        <p class="text-xl font-bold text-gray-800">222 人</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-xs text-gray-600">平均分數</p>
+                        <p class="text-xl font-bold text-gray-800">75 分</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-xs text-gray-600">平均時間</p>
+                        <p class="text-xl font-bold text-gray-800">4 分鐘</p>
+                    </div>
+                </div>
+
+                <div class="flex space-x-2">
+                    <a href="quiz-toy.html" target="_blank" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg text-center hover:bg-blue-600 transition">
+                        <i class="fas fa-eye mr-2"></i>查看測驗
+                    </a>
+                    <button onclick="viewQuizResults('toy')" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                        <i class="fas fa-chart-bar mr-2"></i>查看結果
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 最近測驗結果 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-800">最近測驗結果</h3>
+                <a href="admin-quiz-stats.html" class="text-sm text-blue-600 hover:text-blue-800">
+                    查看全部 <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">用戶</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">測驗名稱</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">完成時間</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">完成時長</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">狀態</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-800">王小明</div>
+                                <div class="text-sm text-gray-500">0912-345-678</div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-700">營養健康測驗</td>
+                            <td class="px-6 py-4 text-gray-700">2024-12-21 14:30</td>
+                            <td class="px-6 py-4 text-gray-700">2 分 45 秒</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                    <i class="fas fa-check mr-1"></i>已完成
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="viewResult(1)" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-800">李美玲</div>
+                                <div class="text-sm text-gray-500">0923-456-789</div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-700">高齡犬腦力測驗</td>
+                            <td class="px-6 py-4 text-gray-700">2024-12-21 13:15</td>
+                            <td class="px-6 py-4 text-gray-700">3 分 52 秒</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                    <i class="fas fa-check mr-1"></i>已完成
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="viewResult(2)" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-800">張大華</div>
+                                <div class="text-sm text-gray-500">0934-567-890</div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-700">營養健康測驗</td>
+                            <td class="px-6 py-4 text-gray-700">2024-12-21 11:45</td>
+                            <td class="px-6 py-4 text-gray-700">4 分 10 秒</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                    <i class="fas fa-check mr-1"></i>已完成
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="viewResult(3)" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- 上傳測驗 Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-teal-50">
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-upload mr-2 text-green-600"></i>上傳測驗結果</h3>
+                <button onclick="closeUploadModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <!-- 上傳方式選擇 -->
+                <div class="mb-6">
+                    <div class="flex space-x-4 mb-4">
+                        <button onclick="switchUploadMethod('file')" id="btnFile" class="flex-1 px-4 py-3 bg-green-500 text-white rounded-lg font-semibold">
+                            <i class="fas fa-file-upload mr-2"></i>檔案上傳
+                        </button>
+                        <button onclick="switchUploadMethod('manual')" id="btnManual" class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold">
+                            <i class="fas fa-keyboard mr-2"></i>手動輸入
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 檔案上傳 -->
+                <div id="fileUploadSection">
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-green-400 transition">
+                        <input type="file" id="quizFile" accept=".csv,.json,.xlsx" class="hidden" onchange="handleFileUpload(event)">
+                        <label for="quizFile" class="cursor-pointer">
+                            <div class="mb-4">
+                                <i class="fas fa-cloud-upload-alt text-6xl text-gray-400"></i>
+                            </div>
+                            <p class="text-lg font-semibold text-gray-700 mb-2">點擊上傳測驗結果檔案</p>
+                            <p class="text-sm text-gray-500">支援格式：CSV, JSON, Excel</p>
+                            <p class="text-sm text-gray-500 mt-1">最大檔案大小：10MB</p>
+                        </label>
+                    </div>
+
+                    <div id="uploadInfo" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-file-alt text-2xl text-green-600"></i>
+                                <div>
+                                    <p class="font-semibold text-gray-800" id="fileName">檔案名稱</p>
+                                    <p class="text-sm text-gray-600" id="fileSize">檔案大小</p>
+                                </div>
+                            </div>
+                            <button onclick="clearFile()" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-times-circle text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 檔案格式說明 -->
+                    <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>檔案格式說明</h4>
+                        <div class="text-sm text-blue-700 space-y-1">
+                            <p><strong>CSV 格式：</strong>用戶ID,測驗類型,完成時間,分數,答案...</p>
+                            <p><strong>JSON 格式：</strong>{"userId": 1, "quizType": "nutrition", ...}</p>
+                            <p><strong>Excel 格式：</strong>第一列為欄位名稱</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 手動輸入 -->
+                <div id="manualInputSection" class="hidden">
+                    <form id="manualQuizForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">測驗類型 *</label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                                <option value="nutrition">營養健康測驗</option>
+                                <option value="toy">高齡犬腦力測驗</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">用戶名稱 *</label>
+                            <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="請輸入用戶名稱">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">電話</label>
+                            <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="09XX-XXX-XXX">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">完成時間 *</label>
+                                <input type="datetime-local" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">完成時長（秒）</label>
+                                <input type="number" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="180">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">測驗結果 (JSON)</label>
+                            <textarea rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 font-mono text-sm" placeholder='{"answers": {...}, "score": 85}'></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 按鈕 -->
+                <div class="flex items-center justify-end space-x-3 mt-6 pt-6 border-t">
+                    <button onclick="closeUploadModal()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                        取消
+                    </button>
+                    <button onclick="submitUpload()" class="px-6 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg hover:shadow-lg">
+                        <i class="fas fa-check mr-2"></i>確認上傳
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 檢查登入狀態
+        const userData = localStorage.getItem('adminUser');
+        if (!userData) {
+            window.location.href = 'admin-login.html';
+        } else {
+            const user = JSON.parse(userData);
+            document.getElementById('adminName').textContent = user.name;
+            document.getElementById('adminRole').textContent = user.role;
+        }
+
+        function viewQuizResults(type) {
+            window.location.href = `admin-quiz-stats.html?type=${type}`;
+        }
+
+        function viewResult(id) {
+            alert(`查看測驗結果 ID: ${id}\n\n此功能將顯示完整的測驗答案與分析。`);
+        }
+
+        // 上傳測驗功能
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+            clearFile();
+        }
+
+        function switchUploadMethod(method) {
+            const btnFile = document.getElementById('btnFile');
+            const btnManual = document.getElementById('btnManual');
+            const fileSection = document.getElementById('fileUploadSection');
+            const manualSection = document.getElementById('manualInputSection');
+
+            if (method === 'file') {
+                btnFile.classList.remove('bg-gray-200', 'text-gray-700');
+                btnFile.classList.add('bg-green-500', 'text-white');
+                btnManual.classList.remove('bg-green-500', 'text-white');
+                btnManual.classList.add('bg-gray-200', 'text-gray-700');
+                fileSection.classList.remove('hidden');
+                manualSection.classList.add('hidden');
+            } else {
+                btnManual.classList.remove('bg-gray-200', 'text-gray-700');
+                btnManual.classList.add('bg-green-500', 'text-white');
+                btnFile.classList.remove('bg-green-500', 'text-white');
+                btnFile.classList.add('bg-gray-200', 'text-gray-700');
+                manualSection.classList.remove('hidden');
+                fileSection.classList.add('hidden');
+            }
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('檔案大小不能超過 10MB');
+                    return;
+                }
+                
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+                document.getElementById('uploadInfo').classList.remove('hidden');
+            }
+        }
+
+        function clearFile() {
+            document.getElementById('quizFile').value = '';
+            document.getElementById('uploadInfo').classList.add('hidden');
+        }
+
+        function submitUpload() {
+            alert('✅ 測驗結果已上傳！\n\n系統已成功處理您的測驗結果。');
+            closeUploadModal();
+        }
+
+        // 匯出測驗結果
+        function exportQuizResults() {
+            // 模擬匯出資料
+            const data = [
+                {
+                    userId: 1,
+                    userName: '王小明',
+                    phone: '0912-345-678',
+                    quizType: 'nutrition',
+                    quizName: '營養健康測驗',
+                    completedTime: '2024-12-21 14:30',
+                    duration: '2切45秒',
+                    score: 85,
+                    status: '已完成'
+                },
+                {
+                    userId: 2,
+                    userName: '李美麗',
+                    phone: '0923-456-789',
+                    quizType: 'toy',
+                    quizName: '高齡犬腦力測驗',
+                    completedTime: '2024-12-21 13:15',
+                    duration: '3切52秒',
+                    score: 78,
+                    status: '已完成'
+                },
+                {
+                    userId: 3,
+                    userName: '張大華',
+                    phone: '0934-567-890',
+                    quizType: 'nutrition',
+                    quizName: '營養健康測驗',
+                    completedTime: '2024-12-21 11:45',
+                    duration: '4切10秒',
+                    score: 92,
+                    status: '已完成'
+                }
+            ];
+
+            // 轉換為 CSV 格式
+            const headers = ['用戶ID', '用戶名稱', '電話', '測驗類型', '測驗名稱', '完成時間', '完成時長', '分數', '狀態'];
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => [
+                    row.userId,
+                    row.userName,
+                    row.phone,
+                    row.quizType,
+                    row.quizName,
+                    row.completedTime,
+                    row.duration,
+                    row.score,
+                    row.status
+                ].join(','))
+            ].join('\n');
+
+            // 建立下載
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `quiz_results_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert('✅ 測驗結果已匯出！\n\n檔案已下載到您的電腦。');
+        }
+
+        function logout() {
+            localStorage.removeItem('adminUser');
+        }
+    </script>
+</body>
+</html>

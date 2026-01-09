@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加入 LINE 官方帳號 - 匠寵</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .pulse-animate { animation: pulse 2s infinite; }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .slide-in-up {
+            animation: slideInUp 0.6s ease-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-animate { animation: float 3s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 via-white to-emerald-50 min-h-screen flex items-center justify-center p-4">
+    
+    <div class="max-w-md w-full">
+        <!-- LINE Icon -->
+        <div class="text-center mb-8 float-animate">
+            <div class="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-green-400 to-green-600 rounded-3xl shadow-2xl mb-4">
+                <i class="fab fa-line text-white text-7xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">加入 LINE 官方帳號</h1>
+            <p class="text-gray-600">享受專屬客服與即時服務</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-white rounded-3xl shadow-2xl p-8 slide-in-up">
+            <!-- QR Code -->
+            <div class="text-center mb-6">
+                <div class="inline-block p-4 bg-white rounded-2xl shadow-lg border-4 border-green-500">
+                    <img src="https://www.genspark.ai/api/files/s/p1ymWhU0" 
+                         alt="LINE QR Code" 
+                         class="w-64 h-64" 
+                         id="lineQRCode">
+                </div>
+                <p class="text-sm text-gray-600 mt-4 mb-2">
+                    <i class="fas fa-mobile-alt mr-1"></i>使用 LINE 掃描 QR Code
+                </p>
+                <p class="text-base font-bold text-gray-900">
+                    LINE ID: <span class="font-mono text-green-600">@902rkfzv</span>
+                </p>
+            </div>
+
+            <!-- Benefits -->
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                    <div class="flex-shrink-0 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-shipping-fast text-white"></i>
+                    </div>
+                    <div class="text-sm">
+                        <strong class="text-gray-800">訂單即時追蹤</strong>
+                        <p class="text-gray-600">配送進度主動推播</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                    <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-headset text-white"></i>
+                    </div>
+                    <div class="text-sm">
+                        <strong class="text-gray-800">專人即時客服</strong>
+                        <p class="text-gray-600">問題快速解決</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3 p-3 bg-red-50 rounded-lg">
+                    <div class="flex-shrink-0 w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-tags text-white"></i>
+                    </div>
+                    <div class="text-sm">
+                        <strong class="text-gray-800">會員專屬優惠</strong>
+                        <p class="text-gray-600">限定折扣與活動</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Friend Button -->
+            <button onclick="addLineFriend()" 
+                    class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xl font-bold rounded-xl hover:shadow-2xl transform hover:scale-105 transition-all pulse-animate">
+                <i class="fab fa-line text-2xl mr-2"></i>
+                立即加入 LINE 好友
+            </button>
+
+            <!-- Alternative Link -->
+            <div class="mt-4 text-center">
+                <button onclick="copyLineLink()" 
+                        class="text-sm text-gray-600 hover:text-green-600 transition">
+                    <i class="fas fa-link mr-1"></i>或複製連結手動加入
+                </button>
+            </div>
+        </div>
+
+        <!-- Skip Link -->
+        <div class="text-center mt-6">
+            <a href="index.html" class="text-sm text-gray-500 hover:text-gray-700 transition">
+                <i class="fas fa-times-circle mr-1"></i>稍後再說
+            </a>
+        </div>
+
+        <!-- Auto Redirect Notice -->
+        <div id="autoRedirectNotice" class="hidden mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
+            <p class="text-sm text-yellow-800">
+                <i class="fas fa-info-circle mr-1"></i>
+                偵測到您在手機上，<span id="countdown">3</span> 秒後自動開啟 LINE
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // =====================================
+        // LINE 官方帳號整合配置
+        // =====================================
+        const LINE_CONFIG = {
+            // LINE 官方帳號 ID
+            lineId: '@902rkfzv',
+            
+            // LINE 加好友連結
+            addFriendUrl: 'https://line.me/R/ti/p/@902rkfzv',
+            
+            // 替換為您的 QR Code 圖片連結
+            qrCodeUrl: 'https://www.genspark.ai/api/files/s/p1ymWhU0',
+            
+            // LIFF 整合設定（選用）
+            // 如需使用 LIFF（LINE Front-end Framework）進行深度整合
+            // 請在 LINE Developers Console 建立 LIFF App 並填入 LIFF ID
+            liffId: '', // 例如：'1234567890-AbCdEfGh'
+            
+            // 是否啟用 LIFF 整合（false = 使用標準網頁方式）
+            enableLiff: false
+        };
+
+        // =====================================
+        // LIFF 初始化（如果啟用）
+        // =====================================
+        if (LINE_CONFIG.enableLiff && LINE_CONFIG.liffId) {
+            // 載入 LIFF SDK
+            const liffScript = document.createElement('script');
+            liffScript.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
+            liffScript.onload = initializeLIFF;
+            document.head.appendChild(liffScript);
+        }
+
+        /**
+         * 初始化 LIFF
+         */
+        function initializeLIFF() {
+            liff.init({
+                liffId: LINE_CONFIG.liffId
+            }).then(() => {
+                console.log('LIFF initialized successfully');
+                
+                // 檢查是否在 LINE App 中開啟
+                if (liff.isInClient()) {
+                    console.log('在 LINE App 中開啟');
+                    
+                    // 可以使用 LIFF 的進階功能
+                    // 例如：取得用戶資料、發送訊息等
+                    handleLIFFMode();
+                } else {
+                    console.log('在外部瀏覽器中開啟');
+                }
+                
+                // 檢查是否已登入
+                if (!liff.isLoggedIn()) {
+                    console.log('用戶未登入 LINE');
+                    // 可以選擇性地要求登入
+                    // liff.login();
+                }
+            }).catch((err) => {
+                console.error('LIFF initialization failed', err);
+                // 降級使用標準方式
+                console.log('降級使用標準網頁方式');
+            });
+        }
+
+        /**
+         * LIFF 模式下的特殊處理
+         */
+        function handleLIFFMode() {
+            // 在 LINE App 中可以直接關閉視窗或執行其他動作
+            const skipLink = document.querySelector('a[href="index.html"]');
+            if (skipLink) {
+                skipLink.onclick = function(e) {
+                    e.preventDefault();
+                    liff.closeWindow();
+                };
+            }
+            
+            // 也可以取得用戶資料進行個人化
+            liff.getProfile().then(profile => {
+                console.log('用戶資料:', profile);
+                // profile.displayName, profile.userId, profile.pictureUrl
+            }).catch(err => {
+                console.error('取得用戶資料失敗', err);
+            });
+        }
+
+        // =====================================
+        // 更新 QR Code
+        // =====================================
+        document.getElementById('lineQRCode').src = LINE_CONFIG.qrCodeUrl;
+
+        /**
+         * 加入 LINE 好友
+         */
+        function addLineFriend() {
+            console.log('跳轉到 LINE 加好友頁面');
+            
+            // 記錄加好友行為
+            trackEvent('LINE_ADD_FRIEND', {
+                source: 'line-add-friend-page',
+                timestamp: new Date().toISOString(),
+                device: isMobileDevice() ? 'mobile' : 'desktop'
+            });
+
+            // 如果啟用 LIFF 且在 LINE App 中
+            if (LINE_CONFIG.enableLiff && typeof liff !== 'undefined' && liff.isInClient()) {
+                // 使用 LIFF 開啟好友頁面（內部視窗）
+                liff.openWindow({
+                    url: LINE_CONFIG.addFriendUrl,
+                    external: false
+                });
+                return;
+            }
+
+            // 標準方式：根據裝置類型跳轉
+            if (isMobileDevice()) {
+                // 手機裝置：直接開啟 LINE App
+                // 使用延遲確保事件追蹤完成
+                setTimeout(() => {
+                    window.location.href = LINE_CONFIG.addFriendUrl;
+                }, 100);
+            } else {
+                // 電腦裝置：開啟新視窗
+                const newWindow = window.open(LINE_CONFIG.addFriendUrl, '_blank', 'width=800,height=600');
+                
+                // 檢查彈出視窗是否被阻擋
+                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                    alert('⚠️ 彈出視窗被阻擋\n\n請允許瀏覽器開啟彈出視窗，或點擊下方「複製連結」手動加入');
+                } else {
+                    // 顯示友善提示
+                    setTimeout(() => {
+                        showToast('✅ 已在新視窗開啟 LINE 加好友頁面');
+                    }, 500);
+                }
+            }
+        }
+
+        /**
+         * 複製 LINE 連結
+         */
+        function copyLineLink() {
+            // 使用現代 Clipboard API（優先）
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(LINE_CONFIG.addFriendUrl)
+                    .then(() => {
+                        showCopySuccess();
+                        trackEvent('LINE_COPY_LINK');
+                    })
+                    .catch(err => {
+                        console.error('Clipboard API 失敗:', err);
+                        fallbackCopyText();
+                    });
+            } else {
+                // 降級方案
+                fallbackCopyText();
+            }
+        }
+
+        /**
+         * 降級複製方案
+         */
+        function fallbackCopyText() {
+            const tempInput = document.createElement('input');
+            tempInput.value = LINE_CONFIG.addFriendUrl;
+            tempInput.style.position = 'absolute';
+            tempInput.style.left = '-9999px';
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); // 相容行動裝置
+            
+            try {
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                
+                if (successful) {
+                    showCopySuccess();
+                    trackEvent('LINE_COPY_LINK');
+                } else {
+                    showCopyFailure();
+                }
+            } catch (err) {
+                console.error('複製失敗:', err);
+                document.body.removeChild(tempInput);
+                showCopyFailure();
+            }
+        }
+
+        /**
+         * 顯示複製成功訊息
+         */
+        function showCopySuccess() {
+            showToast(`✅ LINE 連結已複製！\n\n${LINE_CONFIG.addFriendUrl}\n\n請在 LINE 中貼上搜尋或直接開啟`);
+        }
+
+        /**
+         * 顯示複製失敗訊息
+         */
+        function showCopyFailure() {
+            alert(`⚠️ 自動複製失敗\n\n請手動複製以下連結：\n\n${LINE_CONFIG.addFriendUrl}`);
+        }
+
+        /**
+         * 顯示 Toast 提示
+         */
+        function showToast(message) {
+            // 檢查是否已有 toast
+            let toast = document.getElementById('customToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'customToast';
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #10B981;
+                    color: white;
+                    padding: 16px 24px;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                    z-index: 10000;
+                    max-width: 350px;
+                    animation: slideIn 0.3s ease-out;
+                    white-space: pre-line;
+                `;
+                document.body.appendChild(toast);
+            }
+            
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            // 3 秒後自動消失
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 300);
+            }, 3000);
+        }
+
+        /**
+         * 偵測是否為手機裝置
+         */
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        /**
+         * 追蹤事件（可整合 GA 或其他分析工具）
+         */
+        function trackEvent(eventName, eventData = {}) {
+            console.log('Event:', eventName, eventData);
+            
+            // 整合 Google Analytics 4
+            if (typeof gtag !== 'undefined') {
+                gtag('event', eventName, eventData);
+            }
+            
+            // 整合 Facebook Pixel
+            if (typeof fbq !== 'undefined') {
+                fbq('trackCustom', eventName, eventData);
+            }
+            
+            // 儲存到 localStorage 供後續分析
+            try {
+                const events = JSON.parse(localStorage.getItem('lineEvents') || '[]');
+                events.push({
+                    event: eventName,
+                    data: eventData,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    screenSize: `${window.screen.width}x${window.screen.height}`
+                });
+                
+                // 只保留最近 100 筆事件
+                if (events.length > 100) {
+                    events.splice(0, events.length - 100);
+                }
+                
+                localStorage.setItem('lineEvents', JSON.stringify(events));
+            } catch (e) {
+                console.error('儲存事件失敗:', e);
+            }
+        }
+
+        /**
+         * 自動偵測並提示手機用戶
+         */
+        window.addEventListener('DOMContentLoaded', function() {
+            if (isMobileDevice()) {
+                // 顯示自動跳轉提示
+                const notice = document.getElementById('autoRedirectNotice');
+                notice.classList.remove('hidden');
+                
+                let countdown = 3;
+                const countdownElement = document.getElementById('countdown');
+                
+                const timer = setInterval(() => {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(timer);
+                        addLineFriend();
+                    }
+                }, 1000);
+                
+                // 記錄自動跳轉
+                trackEvent('LINE_AUTO_REDIRECT_MOBILE');
+            }
+            
+            // 記錄頁面訪問
+            trackEvent('LINE_PAGE_VIEW', {
+                device: isMobileDevice() ? 'mobile' : 'desktop',
+                referrer: document.referrer,
+                liffEnabled: LINE_CONFIG.enableLiff
+            });
+        });
+
+        /**
+         * 從 URL 參數取得來源資訊
+         */
+        const urlParams = new URLSearchParams(window.location.search);
+        const source = urlParams.get('source') || 'direct';
+        const orderId = urlParams.get('order');
+
+        if (orderId) {
+            trackEvent('LINE_FROM_ORDER', { orderId, source });
+            
+            // 在頁面上顯示訂單相關資訊（選用）
+            console.log('來自訂單:', orderId);
+        }
+
+        // CSS 動畫
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

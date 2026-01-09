@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員登入 - 匠寵 JiangChong</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 導航欄 -->
+    <nav class="bg-white border-b-2 border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-black" style="color: #FF6B6B;">匠寵</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="subscription-packages.html" class="text-gray-700 hover:text-gray-900 font-medium">返回訂閱</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-red-400 to-red-600 rounded-full mb-4">
+                    <i class="fas fa-paw text-white text-4xl"></i>
+                </div>
+                <h1 class="text-3xl font-black text-gray-900 mb-2">會員登入</h1>
+                <p class="text-gray-600">登入您的帳號以繼續訂閱流程</p>
+            </div>
+
+            <!-- 登入表單 -->
+            <form id="loginForm" onsubmit="return handleLogin(event)" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Email <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email" 
+                           id="loginEmail" 
+                           name="email"
+                           required
+                           class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                           placeholder="your@email.com"
+                           autocomplete="email">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        密碼 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" 
+                           id="loginPassword" 
+                           name="password"
+                           required
+                           minlength="8"
+                           class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                           placeholder="請輸入密碼"
+                           autocomplete="current-password">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="remember" class="mr-2">
+                        <span class="text-sm text-gray-600">記住我</span>
+                    </label>
+                    <a href="#" class="text-sm text-red-600 hover:text-red-700 font-medium">
+                        忘記密碼？
+                    </a>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-lg font-bold text-lg hover:from-red-600 hover:to-red-700 transition-all shadow-lg">
+                    登入
+                </button>
+            </form>
+
+            <!-- 分隔線 -->
+            <div class="flex items-center my-6">
+                <div class="flex-1 border-t border-gray-300"></div>
+                <span class="px-4 text-sm text-gray-500">或</span>
+                <div class="flex-1 border-t border-gray-300"></div>
+            </div>
+
+            <!-- 註冊連結 -->
+            <div class="text-center">
+                <p class="text-gray-600">
+                    還沒有帳號？
+                    <a href="javascript:history.back()" class="text-red-600 hover:text-red-700 font-medium">
+                        返回註冊
+                    </a>
+                </p>
+            </div>
+
+            <!-- 提示訊息 -->
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p class="text-sm text-blue-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    登入成功後，將自動返回訂閱頁面繼續完成您的訂單。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 處理登入
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // 從 localStorage 讀取用戶資料
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // 查找用戶
+            const user = users.find(u => u.email === email);
+            
+            if (!user) {
+                alert('❌ Email 不存在，請先註冊！');
+                return false;
+            }
+            
+            if (user.password !== password) {
+                alert('❌ 密碼錯誤，請重新輸入！');
+                return false;
+            }
+            
+            // 登入成功，保存登入狀態（同步到多個 storage key）
+            const loginData = {
+                id: user.id,
+                userId: user.id,
+                email: user.email,
+                name: user.name,
+                phone: user.phone || '',
+                loginTime: new Date().toISOString()
+            };
+            
+            // 同步到多個 storage key，確保所有頁面都能識別
+            sessionStorage.setItem('currentUser', JSON.stringify(loginData));
+            localStorage.setItem('currentUser', JSON.stringify(loginData));
+            localStorage.setItem('jiangchong_user', JSON.stringify(loginData));
+            localStorage.setItem('memberUser', JSON.stringify(loginData));
+            
+            // 如果 UserAuth 存在，也同步
+            if (window.UserAuth) {
+                window.UserAuth.setUser(loginData);
+            }
+            
+            console.log('✅ 登入成功:', loginData);
+            
+            // 檢查是否有待處理的訂閱資料
+            const pendingSubscription = sessionStorage.getItem('pendingSubscription');
+            
+            // 導向訂閱頁面
+            if (pendingSubscription) {
+                // 如果有待處理的訂閱，返回訂閱頁面的 Step 5
+                window.location.href = 'subscription-packages.html?step=5';
+            } else {
+                // 否則返回訂閱首頁
+                window.location.href = 'subscription-packages.html';
+            }
+            
+            return false;
+        }
+
+        // 頁面載入時檢查是否已登入
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+            if (currentUser) {
+                // 已登入，自動導向
+                const pendingSubscription = sessionStorage.getItem('pendingSubscription');
+                if (pendingSubscription) {
+                    window.location.href = 'subscription-packages.html?step=5';
+                } else {
+                    window.location.href = 'subscription-packages.html';
+                }
+            }
+            
+            // 從 URL 參數獲取 Email（如果有的話）
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            if (email) {
+                document.getElementById('loginEmail').value = email;
+            }
+        });
+    </script>
+</body>
+</html>
 

@@ -1,0 +1,74 @@
+# 系統文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 編輯器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# 日誌文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 環境變數
+.env
+.env.local
+.env.*.local
+
+# 依賴目錄
+node_modules/
+vendor/
+
+# 構建輸出
+dist/
+build/
+*.min.js.map
+
+# 臨時文件
+*.tmp
+*.temp
+.cache/
+
+# 備份文件
+*.bak
+*.backup
+*~
+
+# 測試和調試文件
+*測試*.html
+*debug*.html
+*test*.html
+*fix*.html
+*檢查*.html
+*修復*.html
+*migrate*.html
+
+# 壓縮包
+*.zip
+*.tar.gz
+*.rar
+
+# 文檔歸檔（保留但不上傳）
+docs/archive/
+
+# 開發腳本（可選，如果不需要版本控制）
+*.sh
+
+# 臨時代碼和示例文件
+📋_*.html
+🚀_完整增強版編輯器_直接複製使用.html
+subscription-guide.html
+product-chicken-steak.html

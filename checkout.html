@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>結帳 - 匠寵</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- 全局配置 -->
+    <script src="js/config.js"></script>
+    
+    <!-- API 客戶端 (後端整合) -->
+    <script src="js/api-client.js"></script>
+    
+    <!-- 數據管理系統 -->
+    <script src="js/data-store.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/checkout-system.js"></script>
+    <script src="js/front-products.js"></script>
+    
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .step-active { background: #E63946; color: white; }
+        .step-complete { background: #10B981; color: white; }
+        .step-inactive { background: #E5E7EB; color: #9CA3AF; }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- 頂部導航 -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-red-500 text-2xl"></i>
+                    <span class="text-xl font-bold">匠寵</span>
+                </a>
+                <div class="text-gray-600">
+                    <i class="fas fa-lock mr-2"></i>安全結帳
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 結帳步驟 -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- 步驟指示器 -->
+            <div class="flex items-center justify-center mb-8">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full step-complete flex items-center justify-center font-bold">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <span class="ml-2 text-sm font-medium">購物車</span>
+                    </div>
+                    <div class="w-16 h-1 bg-green-500"></div>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full step-active flex items-center justify-center font-bold">2</div>
+                        <span class="ml-2 text-sm font-medium">配送資訊</span>
+                    </div>
+                    <div class="w-16 h-1 bg-gray-300"></div>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full step-inactive flex items-center justify-center font-bold">3</div>
+                        <span class="ml-2 text-sm font-medium text-gray-400">確認訂單</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 左側：配送和付款資訊 -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- 收件人資訊 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-user text-red-500 mr-2"></i>收件人資訊
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">姓名 *</label>
+                                <input type="text" id="receiverName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="請輸入姓名">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">手機 *</label>
+                                <input type="tel" id="receiverPhone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="0912-345-678">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="receiverEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="your@email.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 配送方式 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-shipping-fast text-red-500 mr-2"></i>配送方式
+                        </h2>
+                        
+                        <!-- 新竹物流 -->
+                        <div class="space-y-3">
+                            <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition">
+                                <input type="radio" name="shippingMethod" value="hsinchu_logistics" onchange="handleShippingMethodChange()" class="mt-1 mr-3">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-semibold text-gray-800">新竹物流</span>
+                                        <span class="text-red-600 font-bold">NT$ 120</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600">新竹物流配送，3-5 個工作天送達</p>
+                                    <div id="hsinchuLogisticsOptions" class="mt-4 space-y-3 hidden">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">配送地址 *</label>
+                                            <input type="text" id="deliveryAddress" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="請輸入完整地址">
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- 7-11 超商取貨 -->
+                            <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition">
+                                <input type="radio" name="shippingMethod" value="711_store" checked onchange="handleShippingMethodChange()" class="mt-1 mr-3">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-semibold text-gray-800">7-11 超商取貨</span>
+                                            <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">推薦</span>
+                                        </div>
+                                        <span class="text-red-600 font-bold">NT$ 60</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600">送至 7-11 門市，2-3 個工作天到店</p>
+                                    <div id="store711Options" class="mt-4 space-y-3" style="display: block;">
+                                        <button type="button" onclick="openStoreSelector('711')" class="w-full px-4 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition flex items-center justify-center">
+                                            <i class="fas fa-map-marker-alt mr-2"></i>選擇 7-11 門市
+                                        </button>
+                                        <div id="selected711Store" class="hidden mt-3 p-3 bg-gray-50 rounded-lg">
+                                            <div class="flex items-start justify-between">
+                                                <div class="flex-1">
+                                                    <p class="font-semibold text-gray-800" id="store711Name"></p>
+                                                    <p class="text-sm text-gray-600 mt-1" id="store711Address"></p>
+                                                    <p class="text-xs text-gray-500 mt-1">門市代碼: <span id="store711Code"></span></p>
+                                                </div>
+                                                <button type="button" onclick="openStoreSelector('711')" class="text-blue-600 hover:text-blue-800 text-sm">
+                                                    變更
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- 全家超商取貨 -->
+                            <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition">
+                                <input type="radio" name="shippingMethod" value="family_store" onchange="handleShippingMethodChange()" class="mt-1 mr-3">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-semibold text-gray-800">全家超商取貨</span>
+                                        <span class="text-red-600 font-bold">NT$ 60</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600">送至全家門市，2-3 個工作天到店</p>
+                                    <div id="storeFamilyOptions" class="mt-4 space-y-3 hidden">
+                                        <button type="button" onclick="openStoreSelector('family')" class="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center justify-center">
+                                            <i class="fas fa-map-marker-alt mr-2"></i>選擇全家門市
+                                        </button>
+                                        <div id="selectedFamilyStore" class="hidden mt-3 p-3 bg-gray-50 rounded-lg">
+                                            <div class="flex items-start justify-between">
+                                                <div class="flex-1">
+                                                    <p class="font-semibold text-gray-800" id="storeFamilyName"></p>
+                                                    <p class="text-sm text-gray-600 mt-1" id="storeFamilyAddress"></p>
+                                                    <p class="text-xs text-gray-500 mt-1">門市代碼: <span id="storeFamilyCode"></span></p>
+                                                </div>
+                                                <button type="button" onclick="openStoreSelector('family')" class="text-blue-600 hover:text-blue-800 text-sm">
+                                                    變更
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 付款方式 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-credit-card text-red-500 mr-2"></i>付款方式
+                        </h2>
+                        <p class="text-sm text-gray-600 mb-4">
+                            <i class="fas fa-shield-alt text-green-500 mr-1"></i>
+                            由 <strong>綠界科技 ECPay</strong> 提供安全金流服務
+                        </p>
+                        <div class="space-y-3">
+                            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition bg-blue-50">
+                                <input type="radio" name="paymentMethod" value="Credit" checked class="mr-3">
+                                <i class="fas fa-credit-card text-xl text-blue-600 mr-3"></i>
+                                <div class="flex-1">
+                                    <span class="font-medium">信用卡</span>
+                                    <p class="text-xs text-gray-500">VISA、MasterCard、JCB</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 備註 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-comment text-red-500 mr-2"></i>訂單備註
+                        </h2>
+                        <textarea id="orderNotes" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="有什麼需要我們特別注意的嗎？"></textarea>
+                    </div>
+                </div>
+
+                <!-- 右側：訂單摘要 -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl shadow-md p-6 sticky top-4">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">訂單摘要</h2>
+                        
+                        <!-- 商品列表 -->
+                        <div class="space-y-3 mb-4 max-h-64 overflow-y-auto" id="orderItems">
+                            <!-- 商品項目將動態生成 -->
+                            <div class="flex items-center space-x-3">
+                                <img src="https://via.placeholder.com/60" class="w-16 h-16 rounded-lg object-cover">
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-800">雞肉脆片</p>
+                                    <p class="text-sm text-gray-600">x 2</p>
+                                </div>
+                                <p class="font-semibold text-gray-800">NT$ 400</p>
+                            </div>
+                        </div>
+
+                        <!-- 金額明細 -->
+                        <div class="border-t pt-4 space-y-2">
+                            <div class="flex justify-between text-gray-600">
+                                <span>商品小計</span>
+                                <span id="subtotal">NT$ 400</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>運費</span>
+                                <span id="shippingFee">NT$ 60</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>折扣</span>
+                                <span id="discount" class="text-red-600">-NT$ 0</span>
+                            </div>
+                            
+                            <!-- 優惠碼輸入 -->
+                            <div class="pt-4 border-t">
+                                <div class="flex gap-2 mb-2">
+                                    <input type="text" id="couponCodeInput" placeholder="輸入優惠碼" 
+                                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm">
+                                    <button type="button" onclick="applyCouponCode()" 
+                                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-sm">
+                                        套用
+                                    </button>
+                                </div>
+                                <p id="couponMessage" class="text-xs mt-1"></p>
+                                <div id="appliedCoupon" class="hidden mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-green-700">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            <span id="appliedCouponName"></span>
+                                        </span>
+                                        <button onclick="removeCoupon()" class="text-red-500 hover:text-red-700 text-sm">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between text-xl font-bold text-gray-800 pt-2 border-t">
+                                <span>總計</span>
+                                <span id="total" class="text-red-600">NT$ 480</span>
+                            </div>
+                        </div>
+
+                        <!-- 結帳按鈕 -->
+                        <button onclick="submitOrder()" class="w-full mt-6 bg-gradient-to-r from-red-500 to-orange-400 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition">
+                            確認結帳
+                        </button>
+
+                        <div class="mt-4 text-center text-sm text-gray-500">
+                            <i class="fas fa-lock mr-1"></i>您的付款資訊受到保護
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 門市選擇 Modal（整合 Google Maps） -->
+    <div id="storeModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4" onclick="if (window.StoreLocator) window.StoreLocator.closeStoreModal(); else closeStoreModal();">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+                <h3 class="text-xl font-bold text-gray-800">
+                    <i class="fas fa-map-marker-alt mr-2 text-blue-600"></i>選擇取貨門市
+                </h3>
+                <button onclick="if (window.StoreLocator) window.StoreLocator.closeStoreModal(); else closeStoreModal();" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="flex h-[calc(90vh-80px)]">
+                <!-- 左側：地圖 -->
+                <div class="flex-1 border-r">
+                    <div id="storeMap" class="w-full h-full" style="min-height: 400px;"></div>
+                </div>
+
+                <!-- 右側：門市列表 -->
+                <div class="w-96 flex flex-col">
+                    <!-- 搜尋框 -->
+                    <div class="p-4 border-b space-y-3">
+                        <div class="flex space-x-2">
+                            <input type="text" id="storeSearch" placeholder="輸入地址或地標搜尋附近門市..." 
+                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
+                                   onkeypress="if(event.key === 'Enter') { if (window.StoreLocator) { const address = document.getElementById('storeSearch').value; window.StoreLocator.searchStoresByAddressInput(address); } }">
+                            <button onclick="if (window.StoreLocator) { const address = document.getElementById('storeSearch').value; window.StoreLocator.searchStoresByAddressInput(address); }" 
+                                    class="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <button onclick="if (window.StoreLocator) { document.getElementById('storeSearch').value = ''; window.StoreLocator.searchNearbyStores(window.StoreLocator.currentStoreType || '711'); }" 
+                                class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm">
+                            <i class="fas fa-map-marker-alt mr-2"></i>使用我的位置
+                        </button>
+                </div>
+
+                <!-- 門市列表 -->
+                    <div class="flex-1 overflow-y-auto p-4" id="storeList">
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-3"></i>
+                            <p>載入中...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全域變數
+        let currentStoreType = '';
+        let selectedStores = {
+            '711': null,
+            'family': null
+        };
+
+        // 模擬門市資料（備用）
+        const stores = {
+            '711': [
+                { code: '001234', name: '信義威秀門市', address: '台北市信義區松壽路18號' },
+                { code: '002345', name: '台北車站門市', address: '台北市中正區北平西路3號' },
+                { code: '003456', name: '西門町門市', address: '台北市萬華區西寧南路50號' }
+            ],
+            'family': [
+                { code: 'FML001', name: '中山旗艦店', address: '台北市中山區中山北路二段100號' },
+                { code: 'FML002', name: '大安店', address: '台北市大安區復興南路一段200號' }
+            ]
+        };
+
+        // 處理配送方式變更
+        function handleShippingMethodChange() {
+            const method = document.querySelector('input[name="shippingMethod"]:checked')?.value;
+            
+            if (!method) return;
+            
+            // 隱藏所有選項
+            document.getElementById('hsinchuLogisticsOptions').classList.add('hidden');
+            document.getElementById('store711Options').classList.add('hidden');
+            document.getElementById('storeFamilyOptions').classList.add('hidden');
+            
+            // 計算當前小計（用於判斷是否免運）
+            let subtotal = 0;
+            let isFreeShipping = false;
+            if (window.CheckoutSystem) {
+                const totals = window.CheckoutSystem.calculateCartTotal();
+                subtotal = totals.subtotal;
+                isFreeShipping = totals.isFreeShipping || subtotal >= 1000;
+            }
+            
+            // 根據配送方式計算運費
+            let shippingFee = 0;
+            if (!isFreeShipping) {
+                if (method === 'hsinchu_logistics') {
+                    shippingFee = 120; // 新竹物流運費
+                } else if (method === '711_store' || method === 'family_store') {
+                    shippingFee = 60; // 超商取貨運費
+                }
+            }
+            
+            // 顯示對應選項並更新運費
+            if (method === 'hsinchu_logistics') {
+                document.getElementById('hsinchuLogisticsOptions').classList.remove('hidden');
+                updateShippingFee(shippingFee);
+            } else if (method === '711_store') {
+                document.getElementById('store711Options').classList.remove('hidden');
+                updateShippingFee(shippingFee);
+            } else if (method === 'family_store') {
+                document.getElementById('storeFamilyOptions').classList.remove('hidden');
+                updateShippingFee(shippingFee);
+            }
+        }
+
+        // 更新運費
+        function updateShippingFee(fee) {
+            const shippingFeeEl = document.getElementById('shippingFee');
+            if (shippingFeeEl) {
+                shippingFeeEl.textContent = fee === 0 ? '免運' : `NT$ ${fee}`;
+            }
+            // 更新訂單摘要
+            if (window.CheckoutSystem) {
+                const totals = window.CheckoutSystem.calculateCartTotal();
+                updateOrderSummary(totals);
+            }
+        }
+
+        // 計算總價（已廢棄，使用 CheckoutSystem.calculateCartTotal）
+        function calculateTotal() {
+            // 使用 CheckoutSystem 計算
+            if (window.CheckoutSystem) {
+                const totals = window.CheckoutSystem.calculateCartTotal();
+                updateOrderSummary(totals);
+            }
+        }
+        
+        // 更新訂單摘要金額
+        function updateOrderSummary(totals) {
+            const subtotalEl = document.getElementById('subtotal');
+            const shippingFeeEl = document.getElementById('shippingFee');
+            const discountEl = document.getElementById('discount');
+            const totalEl = document.getElementById('total');
+            
+            // 確保運費正確（滿1000免運）
+            if (totals.isFreeShipping) {
+                totals.shippingFee = 0;
+            }
+            
+            if (subtotalEl) subtotalEl.textContent = 'NT$ ' + totals.subtotal.toLocaleString();
+            if (shippingFeeEl) shippingFeeEl.textContent = totals.shippingFee === 0 ? '免運' : 'NT$ ' + totals.shippingFee;
+            if (discountEl) discountEl.textContent = totals.discount > 0 ? '-NT$ ' + totals.discount.toLocaleString() : '-NT$ 0';
+            if (totalEl) totalEl.textContent = 'NT$ ' + totals.total.toLocaleString();
+        }
+
+        // 打開門市選擇器（使用新的定位系統）
+        function openStoreSelector(type) {
+            console.log('開啟門市選擇器:', type);
+            
+            // 確保 StoreLocator 已載入
+            if (window.StoreLocator) {
+                console.log('使用 StoreLocator 開啟 Modal');
+                window.StoreLocator.openStoreModal(type);
+            } else {
+                console.warn('StoreLocator 未載入，使用備用方法');
+                // 備用方法：使用舊的模擬資料
+            currentStoreType = type;
+                const modal = document.getElementById('storeModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+            renderStores();
+                } else {
+                    console.error('找不到 storeModal 元素');
+                    alert('門市選擇功能載入中，請稍後再試');
+                }
+            }
+        }
+
+        // 關閉門市選擇器
+        function closeStoreModal() {
+            document.getElementById('storeModal').classList.add('hidden');
+            document.getElementById('storeModal').classList.remove('flex');
+        }
+
+        // 渲染門市列表
+        function renderStores() {
+            const storeList = stores[currentStoreType];
+            const container = document.getElementById('storeList');
+            
+            container.innerHTML = storeList.map(store => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition cursor-pointer" onclick="selectStore('${store.code}', '${store.name}', '${store.address}')">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800 mb-1">${store.name}</p>
+                            <p class="text-sm text-gray-600 mb-1"><i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>${store.address}</p>
+                            <p class="text-xs text-gray-500"><i class="fas fa-barcode text-gray-400 mr-2"></i>門市代碼: ${store.code}</p>
+                        </div>
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
+                            選擇
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 篩選門市
+        function filterStores() {
+            const search = document.getElementById('storeSearch').value.toLowerCase();
+            const storeList = stores[currentStoreType];
+            const filtered = storeList.filter(s => 
+                s.name.toLowerCase().includes(search) || 
+                s.address.toLowerCase().includes(search) ||
+                s.code.toLowerCase().includes(search)
+            );
+            
+            const container = document.getElementById('storeList');
+            container.innerHTML = filtered.map(store => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition cursor-pointer" onclick="selectStore('${store.code}', '${store.name}', '${store.address}')">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800 mb-1">${store.name}</p>
+                            <p class="text-sm text-gray-600 mb-1"><i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>${store.address}</p>
+                            <p class="text-xs text-gray-500"><i class="fas fa-barcode text-gray-400 mr-2"></i>門市代碼: ${store.code}</p>
+                        </div>
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
+                            選擇
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 選擇門市
+        function selectStore(code, name, address) {
+            selectedStores[currentStoreType] = { code, name, address };
+            
+            // 更新顯示
+            if (currentStoreType === '711') {
+                document.getElementById('store711Code').textContent = code;
+                document.getElementById('store711Name').textContent = name;
+                document.getElementById('store711Address').textContent = address;
+                document.getElementById('selected711Store').classList.remove('hidden');
+            } else {
+                document.getElementById('storeFamilyCode').textContent = code;
+                document.getElementById('storeFamilyName').textContent = name;
+                document.getElementById('storeFamilyAddress').textContent = address;
+                document.getElementById('selectedFamilyStore').classList.remove('hidden');
+            }
+            
+            closeStoreModal();
+        }
+
+        // 提交訂單
+        async function submitOrder() {
+            const name = document.getElementById('receiverName').value.trim();
+            const phone = document.getElementById('receiverPhone').value.trim();
+            const email = document.getElementById('receiverEmail').value.trim();
+            const shippingMethod = document.querySelector('input[name="shippingMethod"]:checked')?.value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+            
+            // 基本驗證
+            if (!name || !phone) {
+                alert('⚠️ 請填寫收件人姓名和手機號碼');
+                return;
+            }
+            
+            // 驗證手機格式
+            const phoneRegex = /^09\d{8}$/;
+            if (!phoneRegex.test(phone.replace(/-/g, ''))) {
+                alert('⚠️ 請輸入正確的手機號碼格式 (例：0912-345-678)');
+                return;
+            }
+            
+            if (!shippingMethod) {
+                alert('⚠️ 請選擇配送方式');
+                return;
+            }
+            
+            if (!paymentMethod) {
+                alert('⚠️ 請選擇付款方式');
+                return;
+            }
+            
+            // 建立表單資料
+            const formData = {
+                receiverName: name,
+                receiverPhone: phone,
+                receiverEmail: email,
+                shippingMethod: shippingMethod,
+                paymentMethod: paymentMethod,
+                notes: document.getElementById('orderNotes')?.value.trim() || ''
+            };
+            
+            // 根據配送方式收集不同的資訊
+            if (shippingMethod === 'hsinchu_logistics') {
+                const address = document.getElementById('deliveryAddress').value.trim();
+                
+                if (!address) {
+                    alert('⚠️ 請填寫配送地址');
+                    return;
+                }
+                
+                if (address.length < 10) {
+                    alert('⚠️ 請輸入完整的配送地址 (包含縣市、區域、街道、門牌號)');
+                    return;
+                }
+                
+                formData.courier = '新竹物流';
+                formData.address = address;
+                
+                // 解析地址
+                const cityMatch = address.match(/(台北市|新北市|桃園市|台中市|台南市|高雄市|基隆市|新竹市|嘉義市|新竹縣|苗栗縣|彰化縣|南投縣|雲林縣|嘉義縣|屏東縣|宜蘭縣|花蓮縣|台東縣|澎湖縣|金門縣|連江縣)/);
+                const districtMatch = address.match(/([^市縣]+(區|鎮|鄉|市))/);
+                
+                if (cityMatch) formData.city = cityMatch[1];
+                if (districtMatch) formData.district = districtMatch[1];
+                
+            } else if (shippingMethod === '711_store') {
+                // 檢查是否使用 StoreLocator 選擇的門市
+                const store = window.selectedStores && window.selectedStores['711'] 
+                    ? window.selectedStores['711'] 
+                    : selectedStores['711'];
+                
+                if (!store) {
+                    alert('⚠️ 請選擇 7-11 取貨門市');
+                    return;
+                }
+                
+                formData.storeId = store.code;
+                formData.storeName = store.name;
+                formData.storeAddress = store.address;
+                
+            } else if (shippingMethod === 'family_store') {
+                // 檢查是否使用 StoreLocator 選擇的門市
+                const store = window.selectedStores && window.selectedStores['family'] 
+                    ? window.selectedStores['family'] 
+                    : selectedStores['family'];
+                
+                if (!store) {
+                    alert('⚠️ 請選擇全家取貨門市');
+                    return;
+                }
+                
+                formData.storeId = store.code;
+                formData.storeName = store.name;
+                formData.storeAddress = store.address;
+            }
+            
+            // 使用 CheckoutSystem 提交訂單
+            if (!window.CheckoutSystem) {
+                alert('⚠️ 系統尚未完全載入，請稍後再試');
+                return;
+            }
+            
+            // 顯示載入狀態
+            const submitBtn = document.querySelector('button[onclick="submitOrder()"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '處理中...';
+            
+            try {
+                const savedOrder = await window.CheckoutSystem.submitCheckoutOrder(formData);
+            
+            if (!savedOrder) {
+                alert('⚠️ 訂單建立失敗，請重試');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                return;
+            }
+            
+            console.log('✅ 訂單已建立:', savedOrder);
+            
+            // 儲存訂單 ID 到 localStorage
+            localStorage.setItem('lastOrderId', savedOrder.id);
+            
+                // 訂單建立成功，系統會自動跳轉（由 submitCheckoutOrder 處理）
+                // 如果是綠界付款，會跳轉到綠界支付頁面
+                // 如果是其他付款方式，會跳轉到訂單成功頁
+                    
+                } catch (error) {
+                console.error('❌ 訂單提交失敗:', error);
+                alert('訂單提交失敗: ' + (error.message || '未知錯誤'));
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+        
+        // 確保 submitOrder 函數暴露到全局
+        window.submitOrder = submitOrder;
+        
+        // 取得付款方式名稱
+        function getPaymentMethodName(method) {
+            const names = {
+                'credit_card': '信用卡',
+                'atm': 'ATM 轉帳',
+                'convenience_store': '超商代碼繳費',
+                'cash_on_delivery': '貨到付款'
+            };
+            return names[method] || method;
+        }
+
+        // 頁面載入時初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 結帳頁面初始化開始...');
+            
+            // 初始化 selectedStores 到全域
+            if (!window.selectedStores) {
+                window.selectedStores = {
+                    '711': null,
+                    'family': null
+                };
+            }
+            
+            // 初始化配送方式
+            setTimeout(() => {
+            handleShippingMethodChange();
+                console.log('✅ 配送方式已初始化');
+            }, 100);
+            
+            // 初始化購物車系統
+            setTimeout(() => {
+                if (window.CheckoutSystem) {
+                    // 渲染訂單項目（使用簡化版本，只在摘要顯示）
+                    renderOrderSummary();
+                    console.log('✅ 結帳系統已初始化');
+                } else {
+                    console.warn('⚠️ CheckoutSystem 模組尚未載入');
+                }
+            }, 500);
+            
+            // 確保優惠碼函數可用
+            window.applyCouponCode = async function() {
+                if (window.CheckoutSystem && typeof window.CheckoutSystem.applyCouponCode === 'function') {
+                    await window.CheckoutSystem.applyCouponCode();
+                    // 重新計算並更新摘要
+                    const totals = window.CheckoutSystem.calculateCartTotal();
+                    updateOrderSummary(totals);
+                } else {
+                    // 直接調用 checkout-system.js 中的函數
+                    if (typeof applyCouponCode === 'function') {
+                        await applyCouponCode();
+                        const totals = window.CheckoutSystem.calculateCartTotal();
+                        updateOrderSummary(totals);
+                    }
+                }
+            };
+            
+            window.removeCoupon = function() {
+                if (window.CheckoutSystem && typeof window.CheckoutSystem.removeCoupon === 'function') {
+                    window.CheckoutSystem.removeCoupon();
+                } else if (typeof removeCoupon === 'function') {
+                    removeCoupon();
+                }
+                // 重新計算並更新摘要
+                const totals = window.CheckoutSystem.calculateCartTotal();
+                updateOrderSummary(totals);
+            };
+        });
+        
+        // 渲染訂單摘要
+        function renderOrderSummary() {
+            const cart = window.CheckoutSystem.getCart();
+            const orderItemsContainer = document.getElementById('orderItems');
+            
+            if (cart.length === 0) {
+                orderItemsContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-3"></i>
+                        <p class="text-gray-500">購物車是空的</p>
+                        <a href="index.html" class="inline-block mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                            返回首頁選購
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 渲染商品列表
+            orderItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex items-center space-x-3">
+                    ${item.imageUrl ? 
+                        `<img src="${item.imageUrl}" class="w-16 h-16 rounded-lg object-cover">` :
+                        `<div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-gray-400"></i>
+                        </div>`
+                    }
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-800">${item.name}</p>
+                        <p class="text-sm text-gray-600">x ${item.quantity}</p>
+                    </div>
+                    <p class="font-semibold text-gray-800">NT$ ${(item.price * item.quantity).toLocaleString()}</p>
+                </div>
+            `).join('');
+            
+            // 更新金額
+            const totals = window.CheckoutSystem.calculateCartTotal();
+            updateOrderSummary(totals);
+        }
+        
+        // 監聽運費變更，更新總額
+        function handleShippingFeeChange() {
+            if (window.CheckoutSystem) {
+                const totals = window.CheckoutSystem.calculateCartTotal();
+                
+                // 如果小計 >= 1000，強制免運（無論選擇什麼配送方式）
+                if (totals.isFreeShipping) {
+                    totals.shippingFee = 0;
+                }
+                
+                // 更新訂單摘要
+                updateOrderSummary(totals);
+            }
+        }
+    </script>
+    
+    <!-- Store Locator System -->
+    <script src="js/store-locator.js"></script>
+    
+    <!-- Shipping Sync System -->
+    <script src="js/shipping-sync.js"></script>
+    
+    <!-- ECPay Payment Integration -->
+    <script src="js/ecpay-payment.js"></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+/* 7-11 超商門市選擇器樣式 */
+
+/* 配送方式選擇 */
+.shipping-option {
+    display: block;
+    margin-bottom: 12px;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.shipping-option:hover {
+    border-color: #FF6B6B;
+    background: #FFF5F5;
+}
+
+.shipping-option.selected {
+    border-color: #FF6B6B;
+    background: #FFF5F5;
+}
+
+.shipping-option input[type="radio"] {
+    display: none;
+}
+
+.shipping-option-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.shipping-option-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.shipping-option-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+.shipping-fee {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6B7280;
+}
+
+.shipping-fee.free {
+    color: #10B981;
+}
+
+.shipping-option-desc {
+    font-size: 14px;
+    color: #6B7280;
+    margin: 0;
+}
+
+/* 門市選擇器容器 */
+#store-selector-container {
+    margin-top: 20px;
+}
+
+/* 篩選區域 */
+.store-filter-section {
+    background: #F9FAFB;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.filter-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.filter-row:last-child {
+    margin-bottom: 0;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.search-input-wrapper input:focus {
+    outline: none;
+    border-color: #FF6B6B;
+}
+
+.filter-row select {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.filter-row select:focus {
+    outline: none;
+    border-color: #FF6B6B;
+}
+
+/* 門市列表 */
+#store-list {
+    max-height: 500px;
+    overflow-y: auto;
+    display: grid;
+    gap: 12px;
+}
+
+#store-list.loading-stores {
+    text-align: center;
+    padding: 40px;
+    color: #6B7280;
+}
+
+/* 門市項目 */
+.store-item {
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.store-item:hover {
+    border-color: #FF6B6B;
+    background: #FFF5F5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1);
+}
+
+.store-item.selected {
+    border-color: #FF6B6B;
+    background: #FFF5F5;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.store-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.store-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1F2937;
+    margin: 0;
+}
+
+.store-code {
+    font-size: 12px;
+    color: #6B7280;
+    background: #F3F4F6;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.store-item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.store-address {
+    font-size: 14px;
+    color: #4B5563;
+    margin: 0;
+}
+
+.store-contact {
+    font-size: 12px;
+    color: #6B7280;
+    margin: 0;
+}
+
+/* 已選擇門市顯示 */
+.selected-store-card {
+    border: 2px solid #10B981;
+    border-radius: 8px;
+    padding: 20px;
+    background: #F0FDF4;
+}
+
+.selected-store-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.selected-store-badge {
+    display: inline-block;
+    background: #10B981;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
+.change-store-btn {
+    background: none;
+    border: 1px solid #10B981;
+    color: #10B981;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.change-store-btn:hover {
+    background: #10B981;
+    color: white;
+}
+
+.selected-store-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.selected-store-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1F2937;
+    margin: 0;
+}
+
+.selected-store-code {
+    font-size: 14px;
+    color: #6B7280;
+    margin: 0;
+}
+
+.selected-store-address {
+    font-size: 14px;
+    color: #4B5563;
+    margin: 0;
+}
+
+.selected-store-phone {
+    font-size: 14px;
+    color: #4B5563;
+    margin: 0;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+    }
+
+    .store-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    #store-list {
+        max-height: 400px;
+    }
+}
+
+/* 滾動條樣式 */
+#store-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#store-list::-webkit-scrollbar-track {
+    background: #F3F4F6;
+    border-radius: 4px;
+}
+
+#store-list::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 4px;
+}
+
+#store-list::-webkit-scrollbar-thumb:hover {
+    background: #9CA3AF;
+}
+

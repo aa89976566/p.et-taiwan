@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂閱選項管理 - 匠寵後台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .tab-button.active {
+            background-color: #FF6B6B;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- 後台導航 -->
+    <nav class="bg-gray-900 text-white p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">匠寵後台管理系統</h1>
+            <div class="flex gap-4">
+                <a href="admin-dashboard.html" class="hover:text-gray-300">儀表板</a>
+                <a href="admin-products.html" class="hover:text-gray-300">產品管理</a>
+                <a href="admin-subscription-options.html" class="text-yellow-400">訂閱選項</a>
+                <a href="admin-orders.html" class="hover:text-gray-300">訂單管理</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        
+        <div class="mb-8">
+            <h2 class="text-3xl font-black mb-2">訂閱選項管理</h2>
+            <p class="text-gray-600">管理訂閱表單中的蛋白質、蔬果凍乾、凍乾粉選項</p>
+        </div>
+
+        <!-- 分頁標籤 -->
+        <div class="flex gap-2 mb-6">
+            <button class="tab-button px-6 py-3 font-bold rounded active" onclick="switchTab('protein')">
+                蛋白質選項
+            </button>
+            <button class="tab-button px-6 py-3 font-bold rounded bg-gray-200" onclick="switchTab('veggie')">
+                蔬果凍乾選項
+            </button>
+            <button class="tab-button px-6 py-3 font-bold rounded bg-gray-200" onclick="switchTab('powder')">
+                凍乾粉選項
+            </button>
+        </div>
+
+        <!-- 蛋白質選項管理 -->
+        <div id="protein-tab" class="tab-content">
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4">新增蛋白質選項</h3>
+                <form id="protein-form" class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">選項ID (英文)</label>
+                        <input type="text" name="id" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="beef" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">選項名稱</label>
+                        <input type="text" name="name" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="牛肉系列" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">重量</label>
+                        <input type="text" name="weight" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="30g 或 50g/80g">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">描述</label>
+                        <input type="text" name="description" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="牛肉地瓜乾">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">功效</label>
+                        <input type="text" name="benefit" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="補充能量·增強體力" required>
+                    </div>
+                    <div class="col-span-2">
+                        <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded font-bold hover:bg-green-600">
+                            + 新增選項
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-xl font-bold mb-4">現有蛋白質選項</h3>
+                <div id="protein-list" class="space-y-4">
+                    <!-- 動態載入 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 蔬果凍乾選項管理 -->
+        <div id="veggie-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4">新增蔬果凍乾選項</h3>
+                <form id="veggie-form" class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">選項ID (英文)</label>
+                        <input type="text" name="id" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="zucchini" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">選項名稱</label>
+                        <input type="text" name="name" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="櫛瓜凍乾" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">重量</label>
+                        <input type="text" name="weight" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="15g">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium mb-2">功效</label>
+                        <input type="text" name="benefit" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="改善食糞·減重" required>
+                    </div>
+                    <div class="col-span-2">
+                        <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded font-bold hover:bg-green-600">
+                            + 新增選項
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-xl font-bold mb-4">現有蔬果凍乾選項</h3>
+                <div id="veggie-list" class="space-y-4">
+                    <!-- 動態載入 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 凍乾粉選項管理 -->
+        <div id="powder-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4">新增凍乾粉選項</h3>
+                <form id="powder-form" class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">選項ID (英文)</label>
+                        <input type="text" name="id" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="beef-tendon" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">選項名稱</label>
+                        <input type="text" name="name" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="牛腱肉凍乾粉" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">重量</label>
+                        <input type="text" name="weight" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="30g/50g">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium mb-2">功效</label>
+                        <input type="text" name="benefit" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="增肌·術後恢復" required>
+                    </div>
+                    <div class="col-span-2">
+                        <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded font-bold hover:bg-green-600">
+                            + 新增選項
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-xl font-bold mb-4">現有凍乾粉選項</h3>
+                <div id="powder-list" class="space-y-4">
+                    <!-- 動態載入 -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 本地存儲數據（實際應該連接後台API）
+        let optionsData = {
+            protein: JSON.parse(localStorage.getItem('protein-options') || '[]'),
+            veggie: JSON.parse(localStorage.getItem('veggie-options') || '[]'),
+            powder: JSON.parse(localStorage.getItem('powder-options') || '[]')
+        };
+
+        // 初始化預設數據（根據實際12種產品分類，重量根據套組在前台動態顯示）
+        if (optionsData.protein.length === 0) {
+            optionsData.protein = [
+                { id: 'duck-throat', name: '鴨喉', description: '關節保健磨牙潔齒', benefit: '關節保健·磨牙潔齒' },
+                { id: 'duck-lung', name: '鴨肺', description: '低脂高蛋白易消化', benefit: '低脂高蛋白·易消化' },
+                { id: 'chicken-jerky', name: '雞肉乾', description: '增肌訓練獎勵', benefit: '增肌·訓練獎勵' },
+                { id: 'duck-apple', name: '鴨肉蘋果肉乾', description: '溫和蛋白助消化', benefit: '溫和蛋白·助消化' },
+                { id: 'beef-sweet-potato', name: '牛肉地瓜乾', description: '補充能量增強體力', benefit: '補充能量·增強體力' },
+                { id: 'small-fish', name: '小魚乾', description: '補鈣骨骼保健', benefit: '補鈣·骨骼保健' }
+            ];
+        }
+
+        if (optionsData.veggie.length === 0) {
+            optionsData.veggie = [
+                { id: 'zucchini', name: '櫛瓜凍乾', benefit: '改善食糞·減重' },
+                { id: 'pumpkin', name: '南瓜凍乾', benefit: '腸道調理·改善便秘' }
+            ];
+        }
+
+        if (optionsData.powder.length === 0) {
+            optionsData.powder = [
+                { id: 'beef-tendon', name: '牛腱肉凍乾粉', benefit: '增肌·術後恢復' },
+                { id: 'chicken-liver-powder', name: '雞肉雞肝凍乾粉', benefit: '明目補血·開胃' },
+                { id: 'chicken-red-yeast', name: '雞肉紅麴凍乾粉', benefit: '心血管保健·抗氧化' }
+            ];
+        }
+
+        // 切換標籤頁
+        function switchTab(tabName) {
+            // 隱藏所有內容
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(el => {
+                el.classList.remove('active');
+                el.classList.add('bg-gray-200');
+            });
+
+            // 顯示目標內容
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            
+            // 找到對應的按鈕並設置為 active
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach((btn, index) => {
+                const tabNames = ['protein', 'veggie', 'powder'];
+                if (tabNames[index] === tabName) {
+                    btn.classList.add('active');
+                    btn.classList.remove('bg-gray-200');
+                }
+            });
+
+            // 重新渲染列表
+            renderList(tabName);
+        }
+
+        // 渲染選項列表
+        function renderList(type) {
+            const container = document.getElementById(`${type}-list`);
+            const options = optionsData[type];
+
+            if (options.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">目前沒有任何選項</p>';
+                return;
+            }
+
+            container.innerHTML = options.map((option, index) => `
+                <div class="border-2 border-gray-200 rounded p-4 flex justify-between items-center">
+                    <div>
+                        <div class="font-bold text-lg">${option.name}</div>
+                        ${option.weight ? `<div class="text-sm font-bold" style="color: #FF6B6B;">${option.weight}</div>` : ''}
+                        ${option.description ? `<div class="text-sm text-gray-600">${option.description}</div>` : ''}
+                        <div class="text-sm text-gray-500 mt-1">${option.benefit}</div>
+                        <div class="text-xs text-gray-400 mt-1">ID: ${option.id}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editOption('${type}', ${index})" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            編輯
+                        </button>
+                        <button onclick="deleteOption('${type}', ${index})" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                            刪除
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 新增選項
+        function addOption(type, formData) {
+            const option = {
+                id: formData.get('id'),
+                name: formData.get('name'),
+                weight: formData.get('weight') || '',
+                description: formData.get('description') || '',
+                benefit: formData.get('benefit')
+            };
+
+            // 檢查ID是否重複
+            if (optionsData[type].some(opt => opt.id === option.id)) {
+                alert('選項ID已存在！請使用不同的ID。');
+                return;
+            }
+
+            optionsData[type].push(option);
+            saveToStorage(type);
+            renderList(type);
+            document.getElementById(`${type}-form`).reset();
+            alert('選項已新增！');
+        }
+
+        // 刪除選項
+        function deleteOption(type, index) {
+            if (confirm('確定要刪除這個選項嗎？')) {
+                optionsData[type].splice(index, 1);
+                saveToStorage(type);
+                renderList(type);
+                alert('選項已刪除！');
+            }
+        }
+
+        // 編輯選項
+        function editOption(type, index) {
+            const option = optionsData[type][index];
+            const newName = prompt('輸入新的選項名稱：', option.name);
+            if (newName) {
+                option.name = newName;
+                const newBenefit = prompt('輸入新的功效：', option.benefit);
+                if (newBenefit) {
+                    option.benefit = newBenefit;
+                    if (option.description !== undefined) {
+                        const newDesc = prompt('輸入新的描述：', option.description);
+                        if (newDesc !== null) option.description = newDesc;
+                    }
+                    saveToStorage(type);
+                    renderList(type);
+                    alert('選項已更新！');
+                }
+            }
+        }
+
+        // 保存到本地存儲
+        function saveToStorage(type) {
+            localStorage.setItem(`${type}-options`, JSON.stringify(optionsData[type]));
+        }
+
+        // 表單提交處理
+        document.getElementById('protein-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            addOption('protein', new FormData(e.target));
+        });
+
+        document.getElementById('veggie-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            addOption('veggie', new FormData(e.target));
+        });
+
+        document.getElementById('powder-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            addOption('powder', new FormData(e.target));
+        });
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            renderList('protein');
+            
+            // 保存初始數據
+            ['protein', 'veggie', 'powder'].forEach(type => saveToStorage(type));
+        });
+    </script>
+</body>
+</html>

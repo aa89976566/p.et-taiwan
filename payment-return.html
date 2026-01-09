@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>付款處理中 - 匠寵</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen flex items-center justify-center">
+    <div class="max-w-2xl mx-auto px-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 text-center">
+            <div id="loading-state" class="hidden">
+                <div class="spinner mx-auto mb-6"></div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">付款處理中...</h2>
+                <p class="text-gray-600">請稍候，正在確認您的付款資訊</p>
+            </div>
+
+            <div id="success-state" class="hidden">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-check text-green-500 text-4xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-3">付款成功！</h2>
+                <p class="text-gray-600 mb-6">感謝您的購買，訂單已成立</p>
+                <div id="payment-details" class="bg-gray-50 rounded-2xl p-6 mb-6 text-left">
+                    <!-- 付款詳情將動態填入 -->
+                </div>
+                <button onclick="goToOrderSuccess()" class="px-8 py-4 bg-gradient-to-r from-red-500 to-orange-400 text-white font-bold rounded-xl hover:shadow-xl transition-all">
+                    <i class="fas fa-arrow-right mr-2"></i>查看訂單詳情
+                </button>
+            </div>
+
+            <div id="pending-state" class="hidden">
+                <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-clock text-yellow-500 text-4xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-3">等待付款</h2>
+                <p class="text-gray-600 mb-6">請依照以下資訊完成付款</p>
+                <div id="pending-details" class="bg-yellow-50 rounded-2xl p-6 mb-6 text-left border-2 border-yellow-300">
+                    <!-- 付款資訊將動態填入 -->
+                </div>
+                <button onclick="goToOrderSuccess()" class="px-8 py-4 bg-gradient-to-r from-red-500 to-orange-400 text-white font-bold rounded-xl hover:shadow-xl transition-all">
+                    <i class="fas fa-arrow-right mr-2"></i>返回訂單詳情
+                </button>
+            </div>
+
+            <div id="fail-state" class="hidden">
+                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-times text-red-500 text-4xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-3">付款失敗</h2>
+                <p class="text-gray-600 mb-2" id="fail-message">付款過程發生錯誤</p>
+                <p class="text-sm text-gray-500 mb-6">請重新嘗試或聯繫客服</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="retryPayment()" class="px-6 py-3 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 transition-all">
+                        <i class="fas fa-redo mr-2"></i>重新付款
+                    </button>
+                    <a href="index.html" class="px-6 py-3 bg-gray-500 text-white font-bold rounded-xl hover:bg-gray-600 transition-all text-center">
+                        <i class="fas fa-home mr-2"></i>返回首頁
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API 客戶端 (後端整合) -->
+    <script src="js/api-client.js"></script>
+    
+    <script src="js/ecpay-integration.js"></script>
+    <script>
+        // 顯示載入狀態
+        document.getElementById('loading-state').classList.remove('hidden');
+
+        // 處理綠界回傳結果
+        setTimeout(() => {
+            const result = window.ECPayIntegration.handleECPayReturn();
+            
+            // 隱藏載入狀態
+            document.getElementById('loading-state').classList.add('hidden');
+            
+            // 根據結果顯示對應狀態
+            if (result.rtnCode === '1') {
+                // 付款成功
+                showSuccessState(result);
+            } else if (result.rtnCode === '2') {
+                // ATM 虛擬帳號取得成功（等待付款）
+                showPendingState(result);
+            } else if (result.rtnCode === '10100073') {
+                // 超商代碼取得成功（等待付款）
+                showPendingState(result);
+            } else if (result.rtnCode === '10100073') {
+                // 超商條碼取得成功（等待付款）
+                showPendingState(result);
+            } else {
+                // 付款失敗
+                showFailState(result);
+            }
+        }, 1500);
+
+        function showSuccessState(result) {
+            const successDiv = document.getElementById('success-state');
+            const detailsDiv = document.getElementById('payment-details');
+            
+            detailsDiv.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">訂單編號</span>
+                        <span class="font-semibold text-gray-800">${result.merchantTradeNo}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">綠界交易編號</span>
+                        <span class="font-semibold text-gray-800">${result.tradeNo || '-'}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">付款金額</span>
+                        <span class="font-semibold text-red-600">NT$ ${result.tradeAmt}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">付款時間</span>
+                        <span class="font-semibold text-gray-800">${result.paymentDate || '-'}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">付款方式</span>
+                        <span class="font-semibold text-gray-800">${getPaymentTypeName(result.paymentType)}</span>
+                    </div>
+                </div>
+            `;
+            
+            successDiv.classList.remove('hidden');
+        }
+
+        function showPendingState(result) {
+            const pendingDiv = document.getElementById('pending-state');
+            const detailsDiv = document.getElementById('pending-details');
+            
+            // 取得 localStorage 中的訂單資料
+            const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+            
+            let paymentInfo = '';
+            
+            // ATM 虛擬帳號
+            if (result.paymentType === 'ATM_TAISHIN' || result.paymentType === 'ATM_ESUN') {
+                paymentInfo = `
+                    <div class="mb-4">
+                        <h3 class="font-bold text-lg text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-university text-yellow-600 mr-2"></i>
+                            ATM 虛擬帳號資訊
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">銀行代碼</p>
+                                <p class="text-xl font-mono font-bold text-gray-800">${result.BankCode || '-'}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">虛擬帳號</p>
+                                <p class="text-2xl font-mono font-bold text-gray-800">${result.vAccount || '-'}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">繳費金額</p>
+                                <p class="text-xl font-bold text-red-600">NT$ ${result.tradeAmt}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">繳費期限</p>
+                                <p class="text-lg font-semibold text-gray-800">${result.ExpireDate || '-'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border-2 border-yellow-400">
+                        <p class="text-sm text-gray-700 mb-2">
+                            <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                            <strong>繳費步驟：</strong>
+                        </p>
+                        <ol class="text-sm text-gray-700 space-y-1 ml-4">
+                            <li>1. 至任一 ATM 或網路銀行</li>
+                            <li>2. 選擇「轉帳」功能</li>
+                            <li>3. 輸入銀行代碼與虛擬帳號</li>
+                            <li>4. 輸入繳費金額</li>
+                            <li>5. 完成轉帳</li>
+                        </ol>
+                    </div>
+                `;
+            }
+            // 超商代碼
+            else if (result.paymentType === 'CVS_CVS' || result.paymentType === 'CVS_OK' || result.paymentType === 'CVS_FAMILY' || result.paymentType === 'CVS_HILIFE') {
+                paymentInfo = `
+                    <div class="mb-4">
+                        <h3 class="font-bold text-lg text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-store text-yellow-600 mr-2"></i>
+                            超商代碼繳費資訊
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">繳費代碼</p>
+                                <p class="text-3xl font-mono font-bold text-gray-800 tracking-wider">${result.PaymentNo || '-'}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">繳費金額</p>
+                                <p class="text-xl font-bold text-red-600">NT$ ${result.tradeAmt}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">繳費期限</p>
+                                <p class="text-lg font-semibold text-gray-800">${result.ExpireDate || '-'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border-2 border-yellow-400">
+                        <p class="text-sm text-gray-700 mb-2">
+                            <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                            <strong>繳費步驟：</strong>
+                        </p>
+                        <ol class="text-sm text-gray-700 space-y-1 ml-4">
+                            <li>1. 至 7-11、全家、萊爾富、OK 超商</li>
+                            <li>2. 告知店員「代碼繳費」</li>
+                            <li>3. 提供繳費代碼</li>
+                            <li>4. 繳納指定金額</li>
+                            <li>5. 保留繳費收據</li>
+                        </ol>
+                    </div>
+                `;
+            }
+            
+            detailsDiv.innerHTML = paymentInfo;
+            pendingDiv.classList.remove('hidden');
+        }
+
+        function showFailState(result) {
+            const failDiv = document.getElementById('fail-state');
+            const failMessage = document.getElementById('fail-message');
+            
+            failMessage.textContent = result.rtnMsg || '付款過程發生錯誤，請重新嘗試';
+            failDiv.classList.remove('hidden');
+        }
+
+        function getPaymentTypeName(type) {
+            const types = {
+                'Credit_CreditCard': '信用卡',
+                'ATM_TAISHIN': 'ATM 轉帳（台新銀行）',
+                'ATM_ESUN': 'ATM 轉帳（玉山銀行）',
+                'CVS_CVS': '超商代碼（7-11）',
+                'CVS_OK': '超商代碼（OK超商）',
+                'CVS_FAMILY': '超商代碼（全家）',
+                'CVS_HILIFE': '超商代碼（萊爾富）',
+                'BARCODE_BARCODE': '超商條碼'
+            };
+            return types[type] || type || '未知';
+        }
+
+        function goToOrderSuccess() {
+            window.location.href = 'order-success.html';
+        }
+
+        function retryPayment() {
+            window.location.href = 'checkout.html';
+        }
+    </script>
+</body>
+</html>

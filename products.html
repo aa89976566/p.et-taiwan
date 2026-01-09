@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="匠寵 - 為您的毛孩挑選最適合的產品，手作零食 × 益智玩具 × 訂閱方案">
+    <title>產品列表 - 匠寵商店 🐾</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- API Client -->
+    <script src="js/api-client.js"></script>
+    
+    <!-- Local Cart System -->
+    <script src="js/local-cart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        * {
+            font-family: 'Nunito', 'Noto Sans TC', sans-serif;
+        }
+        
+        /* 首頁風格：白色背景 */
+        body {
+            background: #ffffff;
+            min-height: 100vh;
+        }
+        
+        /* 產品卡片 - 首頁風格 */
+        .product-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 圖片懸停效果 - 首頁風格 */
+        .product-image {
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        /* 標籤 - 首頁風格 */
+        .special-badge {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+        }
+        
+        /* 按鈕效果 - 首頁風格 */
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #EE5A6F 0%, #DD4960 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 107, 107, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #44A08D 0%, #3A8B7A 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(78, 205, 196, 0.4);
+        }
+        
+        /* 篩選按鈕 - 首頁風格 */
+        .filter-btn {
+            transition: all 0.3s ease;
+            background-color: #f7f9fc;
+            color: #2C3E50;
+            border: 2px solid transparent;
+        }
+        
+        .filter-btn:hover {
+            background-color: #e8ecf0;
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+            color: white;
+            border-color: #FF6B6B;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+        
+        /* 搜尋框 - 首頁風格 */
+        .search-box {
+            background: white;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+        
+        .search-box:focus {
+            border-color: #FF6B6B;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+        
+        /* 價格標籤 - 首頁風格 */
+        .price-tag {
+            color: #FF6B6B;
+        }
+        
+        /* 評分星星 */
+        .star {
+            color: #FFD700;
+        }
+        
+        /* Loading 動畫 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #FF6B6B;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 頁面標題區 - 首頁風格 */
+        .page-header {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="font-sans bg-white text-dark">
+    
+    <!-- Navigation - 與首頁一致 -->
+    <nav class="fixed top-0 w-full bg-white shadow-md z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-primary text-3xl"></i>
+                    <span class="text-2xl font-bold text-dark">匠寵</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-dark hover:text-primary transition">首頁</a>
+                    <a href="products.html" class="text-primary font-semibold">產品系列</a>
+                    <a href="index.html#crowdfunding" class="text-dark hover:text-primary transition">集資項目</a>
+                    <a href="index.html#quiz" class="text-dark hover:text-primary transition">找適合方案</a>
+                    <a href="index.html#jar-exchange" class="text-dark hover:text-primary transition">換罐計畫</a>
+                    <a href="index.html#subscription" class="text-dark hover:text-primary transition">訂閱方案</a>
+                    <a href="index.html#about" class="text-dark hover:text-primary transition">關於我們</a>
+                    
+                    <!-- 購物車 -->
+                    <a href="cart.html" id="cart-button" class="relative bg-primary text-white px-6 py-2 rounded-full hover:bg-red-600 transition inline-flex items-center">
+                        <i class="fas fa-shopping-cart mr-2"></i>購物車
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-accent text-dark text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center" style="display: none;">0</span>
+                    </a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-dark text-2xl" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div class="hidden md:hidden mt-4 pb-4" id="mobile-menu">
+                <a href="index.html" class="block py-2 text-dark hover:text-primary transition">首頁</a>
+                <a href="products.html" class="block py-2 text-primary font-semibold">產品系列</a>
+                <a href="index.html#crowdfunding" class="block py-2 text-dark hover:text-primary transition">集資項目</a>
+                <a href="index.html#quiz" class="block py-2 text-dark hover:text-primary transition">找適合方案</a>
+                <a href="index.html#jar-exchange" class="block py-2 text-dark hover:text-primary transition">換罐計畫</a>
+                <a href="index.html#subscription" class="block py-2 text-dark hover:text-primary transition">訂閱方案</a>
+                <a href="index.html#about" class="block py-2 text-dark hover:text-primary transition">關於我們</a>
+                <a href="cart.html" class="block py-2 text-dark hover:text-primary transition">
+                    <i class="fas fa-shopping-cart mr-2"></i>購物車
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 導航欄佔位 -->
+    <div class="h-20"></div>
+
+    <!-- 頁面標題 - 首頁風格 -->
+    <div class="page-header py-16 mb-8">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">🛍️ 產品系列</h1>
+            <p class="text-xl opacity-90">為您的毛孩挑選最適合的產品</p>
+        </div>
+    </div>
+
+    <!-- 快速導航按鈕 -->
+    <div class="container mx-auto px-4 mb-8">
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="#toys-section" class="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition font-semibold border-2 border-transparent hover:border-orange-400">
+                🧠 益智玩具
+            </a>
+            <a href="#snacks-section" class="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition font-semibold border-2 border-transparent hover:border-red-400">
+                🍗 手作零食
+            </a>
+            <a href="#subscription-section" class="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition font-semibold border-2 border-transparent hover:border-cyan-400">
+                📦 訂閱服務
+            </a>
+            </div>
+        </div>
+
+    <!-- 益智玩具系列 -->
+    <section id="toys-section" class="py-16 mb-8" style="background: linear-gradient(135deg, #FFF5E6 0%, #FFE5CC 100%);">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4" style="color: #FF8C42;">
+                    🧠 益智玩具防老系列
+                </h2>
+                <p class="text-xl text-gray-700">讓毛孩動腦動手，延緩認知退化！</p>
+    </div>
+
+            <div class="bg-white rounded-3xl p-8 mb-8 shadow-lg">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4" style="color: #FF8C42;">產品特色</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-orange-400 mr-3 mt-1"></i>
+                                <span>維也納大學研究證實：益智刺激可延緩寵物認知退化</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-orange-400 mr-3 mt-1"></i>
+                                <span>嗅聞刺激型、互動解謎型、記憶訓練型</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-orange-400 mr-3 mt-1"></i>
+                                <span>難度分級：初級/中級/高級</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="text-center">
+                        <img src="https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=500" alt="益智玩具" class="rounded-2xl shadow-lg mx-auto max-w-sm">
+                </div>
+                    </div>
+                </div>
+
+            <!-- 玩具產品網格 -->
+            <div id="toysProductsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- 產品將從 API 動態載入 -->
+                    </div>
+            
+            <div class="text-center">
+                <a href="quiz-toy.html" class="inline-block bg-orange-400 text-white px-8 py-3 rounded-full hover:bg-orange-500 transition font-semibold">
+                    不確定選哪款？2分鐘找出最適合的玩具 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+                    </div>
+                        </div>
+    </section>
+
+    <!-- 手作零食系列 -->
+    <section id="snacks-section" class="py-16 mb-8" style="background: linear-gradient(135deg, #FFE6E6 0%, #FFCCCC 100%);">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-primary">
+                    🏮 台灣夜市手作零食
+                </h2>
+                <p class="text-xl text-gray-700">與寵物共享，文化傳承的味道</p>
+                </div>
+
+            <div class="bg-white rounded-3xl p-8 mb-8 shadow-lg">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="text-center order-2 md:order-1">
+                        <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500" alt="手作零食" class="rounded-2xl shadow-lg mx-auto max-w-sm">
+                </div>
+                    <div class="order-1 md:order-2">
+                        <h3 class="text-2xl font-bold mb-4 text-primary">產品特色</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-primary mr-3 mt-1"></i>
+                                <span>手工製作，天然無添加</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-primary mr-3 mt-1"></i>
+                                <span>台灣在地食材</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-primary mr-3 mt-1"></i>
+                                <span>夜市風味靈感</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-primary mr-3 mt-1"></i>
+                                <span>適合訓練獎勵、日常零食</span>
+                            </li>
+                        </ul>
+                </div>
+        </div>
+    </div>
+
+            <!-- 零食產品網格 -->
+            <div id="snacksProductsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- 產品將從 API 動態載入 -->
+                    </div>
+                    
+            <div class="text-center">
+                <a href="quiz-loading.html?type=nutrition" class="inline-block bg-primary text-white px-8 py-3 rounded-full hover:bg-red-600 transition font-semibold">
+                    不知道選什麼？做個營養測驗 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+                            </div>
+                        </div>
+    </section>
+
+    <!-- 訂閱服務系列 -->
+    <section id="subscription-section" class="py-16 mb-8" style="background: linear-gradient(135deg, #E0F7F7 0%, #CCF0F0 100%);">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4" style="color: #4ECDC4;">
+                    ♻️ 營養罐訂閱系列
+                </h2>
+                <p class="text-xl text-gray-700">定期配送，新鮮直達</p>
+                        </div>
+                        
+            <div class="bg-white rounded-3xl p-8 mb-8 shadow-lg">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4" style="color: #4ECDC4;">產品特色</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-check mr-3 mt-1" style="color: #4ECDC4;"></i>
+                                <span>主餐 + 副餐（營養粉）科學配方</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check mr-3 mt-1" style="color: #4ECDC4;"></i>
+                                <span>兩週訂閱制，新鮮配送</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check mr-3 mt-1" style="color: #4ECDC4;"></i>
+                                <span>玻璃罐可循環使用</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check mr-3 mt-1" style="color: #4ECDC4;"></i>
+                                <span>搭配「換罐計畫」更環保</span>
+                            </li>
+                        </ul>
+                            </div>
+                    <div class="text-center">
+                        <img src="https://www.genspark.ai/api/files/s/VwgxRxOz" alt="訂閱服務" class="rounded-2xl shadow-lg mx-auto max-w-sm">
+                            </div>
+                            </div>
+                        </div>
+                        
+            <!-- 訂閱產品網格 -->
+            <div id="subscriptionProductsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- 產品將從 API 動態載入 -->
+                        </div>
+                        
+            <div class="text-center">
+                <a href="index.html#jar-exchange" class="inline-block px-8 py-3 rounded-full transition font-semibold text-white" style="background: #4ECDC4;">
+                    了解換罐計畫 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+                        </div>
+                    </div>
+    </section>
+
+    <script>
+        // 產品數據
+        let PRODUCTS = [];
+        let filteredProducts = [];
+        let currentCategory = '';
+
+        // 初始化
+        async function init() {
+            console.log('📦 產品頁面初始化...');
+            
+            // 更新購物車徽章
+                    updateCartBadge();
+            
+            // 載入產品數據
+            await loadProducts();
+            
+            // 渲染各系列產品
+            renderProductsByCategory();
+            
+            // 平滑滾動
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        }
+        
+        // 載入產品數據
+        async function loadProducts() {
+            const loadingEl = document.getElementById('loading');
+            const gridEl = document.getElementById('productsGrid');
+            
+            try {
+                // 嘗試從 API 載入
+                if (window.ApiClient && typeof window.ApiClient.getProducts === 'function') {
+                    console.log('📡 從 API 載入產品...');
+                    const response = await window.ApiClient.getProducts({ limit: 100 });
+                    if (response && response.success && response.data && response.data.products) {
+                        PRODUCTS = response.data.products.map(p => ({
+                            id: p.id,
+                            name: p.name,
+                            subtitle: p.description || '',
+                            category: p.category || 'other',
+                            price: p.price || 0,
+                            originalPrice: p.originalPrice || 0,
+                            image: p.imageUrl || 'https://via.placeholder.com/400',
+                            rating: p.rating || 4.5,
+                            sales: p.salesCount || 0,
+                            tags: getProductTags(p),
+                            description: p.description || '',
+                            emoji: getCategoryEmoji(p.category)
+                        }));
+                        console.log('✅ 從 API 載入', PRODUCTS.length, '個產品');
+                    }
+                }
+                
+                // 如果 API 載入失敗或沒有產品，使用備用數據
+                if (PRODUCTS.length === 0) {
+                    console.log('📦 使用備用產品數據...');
+                    PRODUCTS = getFallbackProducts();
+                }
+                
+                loadingEl.classList.add('hidden');
+                filteredProducts = [...PRODUCTS];
+                
+                // 渲染產品
+                renderProductsByCategory();
+                
+            } catch (error) {
+                console.error('❌ 載入產品失敗:', error);
+                PRODUCTS = getFallbackProducts();
+                filteredProducts = [...PRODUCTS];
+                loadingEl.classList.add('hidden');
+                renderProductsByCategory();
+            }
+        }
+        
+        // 獲取產品標籤
+        function getProductTags(product) {
+            const tags = [];
+            if (product.salesCount > 100) tags.push('熱銷');
+            if (product.rating >= 4.5) tags.push('推薦');
+            if (product.originalPrice && product.originalPrice > product.price) tags.push('限時優惠');
+            return tags;
+        }
+        
+        // 獲取分類 emoji
+        function getCategoryEmoji(category) {
+            const emojiMap = {
+                'snacks': '🍗',
+                'toys': '🧸',
+                'subscription': '📦',
+                'crowdfunding': '🚀'
+            };
+            return emojiMap[category] || '🐾';
+        }
+        
+        // 備用產品數據
+        function getFallbackProducts() {
+            return [
+                {
+                    id: '1',
+                    name: '超大雞排乾',
+                    subtitle: '巨無霸尺寸，滿足感爆棚！',
+                category: 'snacks',
+                    price: 380,
+                    originalPrice: 450,
+                    image: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
+                rating: 4.8,
+                    sales: 328,
+                    tags: ['熱銷', '新品'],
+                    description: '100%台灣雞胸肉，無添加防腐劑，手工烘烤。',
+                    emoji: '🍗'
+                },
+                {
+                    id: '2',
+                    name: '壕大大雞排乾',
+                    subtitle: '奢華等級，毛孩最愛！',
+                category: 'snacks',
+                    price: 450,
+                    originalPrice: 550,
+                    image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=500',
+                rating: 4.9,
+                    sales: 256,
+                    tags: ['限時優惠', '熱銷'],
+                    description: '頂級雞胸肉，特殊醃製，口感酥脆。',
+                    emoji: '⭐'
+                },
+                {
+                    id: '3',
+                    name: '智能益智球',
+                    subtitle: '越玩越聰明！',
+                category: 'toys',
+                    price: 680,
+                    originalPrice: 0,
+                    image: 'https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=500',
+                rating: 4.7,
+                    sales: 189,
+                tags: ['推薦'],
+                    description: '維也納大學研究設計，提升智力。',
+                    emoji: '🧠'
+                },
+                {
+                    id: '4',
+                    name: '營養訂閱罐罐',
+                    subtitle: '客製化營養配方',
+                category: 'subscription',
+                    price: 1280,
+                    originalPrice: 1500,
+                    image: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
+                rating: 4.6,
+                    sales: 145,
+                    tags: ['訂閱'],
+                    description: '每月定期配送，依測驗結果客製化。',
+                    emoji: '📦'
+                }
+            ];
+        }
+
+        // 渲染產品卡片
+        function renderProductCard(product) {
+            return `
+                <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer card-hover" onclick="goToDetail('${product.id}')">
+                    <!-- 標籤 -->
+                    <div class="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
+                        ${product.tags.map(tag => `
+                            <span class="special-badge text-white px-3 py-1 rounded-full text-xs font-bold">
+                                ${tag}
+                            </span>
+                        `).join('')}
+                        ${product.originalPrice > 0 ? `
+                            <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                省 ${Math.round((1 - product.price / product.originalPrice) * 100)}%
+                            </span>
+                        ` : ''}
+                    </div>
+                    
+                    <!-- 圖片 -->
+                    <div class="relative overflow-hidden" style="padding-top: 75%;">
+                        <img src="${product.image}" alt="${product.name}" 
+                             class="product-image absolute top-0 left-0 w-full h-full object-cover">
+                    </div>
+                    
+                    <!-- 產品資訊 -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-dark mb-2 line-clamp-2">${product.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${product.subtitle}</p>
+                        
+                        <!-- 評分與銷量 -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-1">
+                                ${Array(5).fill(0).map((_, i) => `
+                                    <i class="fas fa-star star text-sm ${i < Math.floor(product.rating) ? '' : 'opacity-30'}"></i>
+                                `).join('')}
+                                <span class="ml-2 text-sm font-semibold text-gray-600">${product.rating}</span>
+                            </div>
+                            <span class="text-sm text-gray-500">
+                                已售 ${product.sales}
+                            </span>
+                        </div>
+                        
+                        <!-- 價格 -->
+                        <div class="mb-6">
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-3xl font-bold price-tag">
+                                    NT$ ${product.price.toLocaleString()}
+                                </span>
+                                ${product.originalPrice > 0 ? `
+                                    <span class="text-lg text-gray-400 line-through">
+                                        NT$ ${product.originalPrice.toLocaleString()}
+                                    </span>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- 按鈕 -->
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); addToCart('${product.id}')" 
+                                    class="btn-primary text-white px-4 py-3 rounded-lg font-semibold flex-1">
+                                <i class="fas fa-shopping-cart mr-2"></i>
+                                加入購物車
+                            </button>
+                            <button onclick="event.stopPropagation(); quickView('${product.id}')" 
+                                    class="btn-secondary text-white px-4 py-3 rounded-lg font-semibold">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 按分類渲染產品
+        function renderProductsByCategory() {
+            // 玩具系列
+            const toysGrid = document.getElementById('toysProductsGrid');
+            const toysProducts = PRODUCTS.filter(p => p.category === 'toys');
+            if (toysGrid) {
+                toysGrid.innerHTML = toysProducts.length > 0 
+                    ? toysProducts.map(renderProductCard).join('')
+                    : '<div class="col-span-full text-center py-8 text-gray-500">暫無玩具產品</div>';
+            }
+            
+            // 零食系列
+            const snacksGrid = document.getElementById('snacksProductsGrid');
+            const snacksProducts = PRODUCTS.filter(p => p.category === 'snacks');
+            if (snacksGrid) {
+                snacksGrid.innerHTML = snacksProducts.length > 0 
+                    ? snacksProducts.map(renderProductCard).join('')
+                    : '<div class="col-span-full text-center py-8 text-gray-500">暫無零食產品</div>';
+            }
+            
+            // 訂閱系列
+            const subscriptionGrid = document.getElementById('subscriptionProductsGrid');
+            const subscriptionProducts = PRODUCTS.filter(p => p.category === 'subscription');
+            if (subscriptionGrid) {
+                subscriptionGrid.innerHTML = subscriptionProducts.length > 0 
+                    ? subscriptionProducts.map(renderProductCard).join('')
+                    : '<div class="col-span-full text-center py-8 text-gray-500">暫無訂閱產品</div>';
+            }
+        }
+
+        // 跳轉到詳情頁
+        function goToDetail(id) {
+            window.location.href = `product-detail.html?id=${id}`;
+        }
+
+        // 加入購物車
+        function addToCart(id) {
+            const product = PRODUCTS.find(p => p.id === id);
+            if (!product) {
+                showNotification('找不到商品', 'error');
+                return;
+            }
+            
+            // 使用統一的購物車系統
+            if (window.addToCart && typeof window.addToCart === 'function') {
+                window.addToCart(id, product.name, product.price, product.image, 1);
+                showNotification(`${product.emoji} ${product.name} 已加入購物車！`, 'success');
+            } else if (window.localCart && typeof window.localCart.addItem === 'function') {
+                window.localCart.addItem(id, product.name, product.price, product.image, 1);
+                    updateCartBadge();
+                showNotification(`${product.emoji} ${product.name} 已加入購物車！`, 'success');
+            } else {
+                showNotification('購物車系統未載入，請重新整理頁面', 'error');
+            }
+        }
+
+        // 快速查看
+        function quickView(id) {
+            const product = PRODUCTS.find(p => p.id === id);
+            if (product) {
+                alert(`快速查看：${product.name}\n\n${product.description}\n\n價格：NT$ ${product.price}`);
+            }
+        }
+        
+        // 切換手機選單
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+        
+        // 通知系統
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: 'from-green-500 to-emerald-500',
+                error: 'from-red-500 to-pink-500',
+                info: 'from-blue-500 to-cyan-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-24 right-8 bg-gradient-to-r ${colors[type]} text-white px-6 py-4 rounded-2xl shadow-2xl z-50 font-bold animate-bounce`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'none';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(400px)';
+                notification.style.transition = 'all 0.5s';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // 更新購物車徽章
+        function updateCartBadge() {
+            let count = 0;
+            
+            if (window.localCart && typeof window.localCart.getItemCount === 'function') {
+                count = window.localCart.getItemCount() || 0;
+            } else {
+                try {
+                    const cartData = localStorage.getItem('jiangchong_cart');
+                    if (cartData) {
+                        const cart = JSON.parse(cartData);
+                        count = cart.reduce((total, item) => total + (parseInt(item.quantity) || 1), 0);
+                    }
+                } catch (error) {
+                    console.error('讀取購物車失敗:', error);
+                }
+            }
+            
+            // 更新購物車徽章
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                cartCount.textContent = count;
+                if (count > 0) {
+                    cartCount.style.display = 'flex';
+                } else {
+                    cartCount.style.display = 'none';
+                }
+            }
+        }
+        
+        // 監聽購物車更新事件
+        window.addEventListener('cartUpdated', function() {
+            updateCartBadge();
+        });
+        
+        // 定期檢查購物車更新
+        setInterval(function() {
+            updateCartBadge();
+        }, 1000);
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

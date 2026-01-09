@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>匠寵後台 - 產品管理系統</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        /* 側邊欄樣式 */
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-item {
+            transition: all 0.2s;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-item.active {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 表格樣式 */
+        .table-hover:hover {
+            background-color: #F3F4F6;
+        }
+        
+        /* Modal 動畫 */
+        .modal {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* 圖片預覽 */
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        /* 產品卡片 */
+        .product-card {
+            transition: all 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 徽章樣式 */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .badge-warning {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .badge-danger {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+        
+        /* 按鈕效果 */
+        .btn-hover:hover {
+            transform: scale(1.05);
+        }
+        
+        /* 通知樣式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- 頂部導航欄 -->
+    <nav class="bg-white shadow-md fixed w-full top-0 z-50">
+        <div class="max-w-full mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden text-gray-600 hover:text-blue-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        匠寵後台
+                    </h1>
+                    <span class="text-gray-600">|</span>
+                    <span class="text-lg font-semibold text-gray-700">產品管理</span>
+                </div>
+                
+            <div class="flex items-center space-x-4">
+                    <button onclick="window.open('index.html', '_blank')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all btn-hover">
+                        <i class="fas fa-external-link-alt mr-2"></i>
+                        <span class="hidden sm:inline">預覽前台</span>
+                </button>
+                    
+                <div class="flex items-center space-x-3 border-l pl-4">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=3B82F6&color=fff" 
+                             alt="Admin" 
+                             class="w-10 h-10 rounded-full">
+                        <div class="hidden md:block">
+                            <p class="text-sm font-semibold text-gray-700">管理員</p>
+                            <p class="text-xs text-gray-500">admin@jiangchong.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 側邊欄 -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg z-40 overflow-y-auto">
+        <div class="p-6">
+            <div class="space-y-2">
+                <!-- 儀表板 -->
+                <a href="admin-dashboard.html" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded-xl">
+                    <i class="fas fa-chart-line w-6"></i>
+                    <span class="ml-3">儀表板</span>
+                </a>
+                
+                <!-- 產品管理 -->
+                <div class="sidebar-item active flex items-center px-4 py-3 rounded-xl">
+                    <i class="fas fa-box w-6"></i>
+                    <span class="ml-3">產品管理</span>
+                </div>
+                
+                <!-- 訂單管理 -->
+                <a href="admin-orders.html" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded-xl">
+                    <i class="fas fa-shopping-cart w-6"></i>
+                    <span class="ml-3">訂單管理</span>
+                </a>
+                
+                <!-- 會員管理 -->
+                <a href="admin-users.html" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded-xl">
+                    <i class="fas fa-users w-6"></i>
+                    <span class="ml-3">會員管理</span>
+                </a>
+                
+                <!-- 首頁內容 -->
+                <a href="admin-homepage.html" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded-xl">
+                    <i class="fas fa-home w-6"></i>
+                    <span class="ml-3">首頁內容</span>
+                    </a>
+                </div>
+        </div>
+    </aside>
+
+    <!-- 主內容區 -->
+    <main class="lg:ml-64 pt-20 p-6">
+
+        <!-- 統計卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">總產品數</p>
+                        <h3 class="text-3xl font-bold text-gray-800 mt-1" id="totalProducts">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-box text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">上架中</p>
+                        <h3 class="text-3xl font-bold text-green-600 mt-1" id="activeProducts">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">低庫存</p>
+                        <h3 class="text-3xl font-bold text-orange-600 mt-1" id="lowStockProducts">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-orange-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">總庫存值</p>
+                        <h3 class="text-3xl font-bold text-purple-600 mt-1" id="totalStockValue">$0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-dollar-sign text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作欄 -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                <!-- 左側：搜尋 + 篩選 -->
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 flex-1">
+                    <!-- 搜尋 -->
+                    <div class="relative flex-1 max-w-md">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput"
+                            placeholder="搜尋產品名稱或 SKU..." 
+                            class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            oninput="filterProducts()">
+                    </div>
+                    
+                    <!-- 分類篩選 -->
+                    <select id="categoryFilter" onchange="filterProducts()" class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                        <option value="">所有分類</option>
+                        <option value="snacks">手作零食</option>
+                        <option value="toys">益智玩具</option>
+                        <option value="subscription">訂閱罐罐</option>
+                        <option value="crowdfunding">集資項目</option>
+                    </select>
+                    
+                    <!-- 狀態篩選 -->
+                    <select id="statusFilter" onchange="filterProducts()" class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                        <option value="">所有狀態</option>
+                        <option value="active">上架中</option>
+                        <option value="inactive">已下架</option>
+                        <option value="out_of_stock">已售完</option>
+                    </select>
+                </div>
+                
+                <!-- 右側：視圖切換 + 新增按鈕 -->
+                <div class="flex space-x-3">
+                    <!-- 視圖切換 -->
+                    <div class="flex bg-gray-100 rounded-xl p-1">
+                        <button onclick="switchView('table')" id="tableViewBtn" class="px-4 py-2 rounded-lg bg-white shadow-sm">
+                            <i class="fas fa-th-list"></i>
+                        </button>
+                        <button onclick="switchView('grid')" id="gridViewBtn" class="px-4 py-2 rounded-lg">
+                            <i class="fas fa-th"></i>
+                        </button>
+            </div>
+                    
+                    <!-- 新增產品按鈕 -->
+                    <button onclick="openAddProductModal()" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all btn-hover font-semibold">
+                        <i class="fas fa-plus mr-2"></i>
+                        新增產品
+                </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 表格視圖 -->
+        <div id="tableView" class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-left">
+                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="w-5 h-5 rounded">
+                            </th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">產品圖片</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">產品名稱</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">SKU</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">分類</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">價格</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">庫存</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">狀態</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- 動態生成 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分頁 -->
+            <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                <div class="text-sm text-gray-600">
+                    顯示 <span id="showingStart">1</span> - <span id="showingEnd">10</span>，共 <span id="totalCount">0</span> 個產品
+                </div>
+                <div class="flex space-x-2" id="pagination">
+                    <!-- 動態生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 網格視圖 -->
+        <div id="gridView" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- 動態生成 -->
+        </div>
+        
+    </main>
+
+    <!-- 新增/編輯產品 Modal -->
+    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content">
+            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-gray-800" id="modalTitle">新增產品</h2>
+                <button onclick="closeProductModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="productForm" class="p-6 space-y-6">
+                <input type="hidden" id="productId">
+                
+                <!-- 基本資訊 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                        基本資訊
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">產品名稱 *</label>
+                            <input type="text" id="productName" required 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                   placeholder="例：台灣夜市雞排乾">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">SKU 編號 *</label>
+                            <input type="text" id="productSKU" required 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                   placeholder="例：SNK-001">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">分類 *</label>
+                            <select id="productCategory" required 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                                <option value="">請選擇分類</option>
+                                <option value="snacks">手作零食</option>
+                            <option value="toys">益智玩具</option>
+                                <option value="subscription">訂閱罐罐</option>
+                                <option value="crowdfunding">集資項目</option>
+                        </select>
+                    </div>
+                        
+                    <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">狀態 *</label>
+                            <select id="productStatus" required 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                                <option value="active">上架中</option>
+                                <option value="inactive">已下架</option>
+                                <option value="out_of_stock">已售完</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">產品描述</label>
+                        <textarea id="productDescription" rows="4" 
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                  placeholder="輸入產品描述..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- 價格與庫存 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
+                        價格與庫存
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">售價 (NT$) *</label>
+                            <input type="number" id="productPrice" required min="0" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                   placeholder="0">
+                        </div>
+                        
+                    <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">原價 (NT$)</label>
+                            <input type="number" id="productOriginalPrice" min="0" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                   placeholder="0">
+                    </div>
+                        
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">庫存數量 *</label>
+                            <input type="number" id="productStock" required min="0" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                   placeholder="0">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">低庫存警示值</label>
+                        <input type="number" id="productLowStockThreshold" min="0" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                               placeholder="10" value="10">
+                        <p class="mt-1 text-sm text-gray-500">當庫存低於此數值時會顯示警告</p>
+                    </div>
+                </div>
+                
+                <!-- 圖片上傳 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-image text-purple-600 mr-2"></i>
+                        產品圖片
+                    </h3>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">圖片 URL</label>
+                        <input type="url" id="productImageUrl" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                               placeholder="https://example.com/image.jpg"
+                               onchange="previewImage()">
+                        <p class="mt-1 text-sm text-gray-500">請輸入圖片網址，或上傳圖片到圖床後貼上連結</p>
+                    </div>
+                    
+                    <div id="imagePreviewContainer" class="hidden">
+                        <p class="text-sm font-medium text-gray-700 mb-2">圖片預覽：</p>
+                        <img id="imagePreview" src="" alt="預覽" class="image-preview border border-gray-300">
+                    </div>
+                </div>
+                
+                <!-- 規格選項 -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-list text-orange-600 mr-2"></i>
+                            規格選項
+                        </h3>
+                        <button type="button" onclick="addVariant()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                            <i class="fas fa-plus mr-2"></i>新增規格
+                        </button>
+                    </div>
+                    
+                    <div id="variantsContainer" class="space-y-3">
+                        <!-- 動態生成規格 -->
+                    </div>
+                </div>
+                
+                <!-- 其他資訊 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-cog text-gray-600 mr-2"></i>
+                        其他資訊
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">評分 (1-5)</label>
+                            <input type="number" id="productRating" min="1" max="5" step="0.1" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                   placeholder="4.5" value="4.5">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">銷售數量</label>
+                            <input type="number" id="productSalesCount" min="0" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                                   placeholder="0" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 按鈕 -->
+                <div class="flex space-x-3 pt-4 border-t border-gray-200">
+                    <button type="button" onclick="closeProductModal()" 
+                            class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold">
+                        取消
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg font-semibold">
+                        <i class="fas fa-save mr-2"></i>
+                        儲存產品
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 通知容器 -->
+    <div id="notificationContainer"></div>
+
+    <script>
+        // ==================== 數據管理 ====================
+        
+        const STORAGE_KEY = 'jiangchong_admin_products';
+        let products = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let currentView = 'table';
+        
+        // 示例數據
+        const sampleProducts = [
+            {
+                id: '1',
+                name: '台灣夜市雞排乾',
+                sku: 'SNK-001',
+                category: 'snacks',
+                price: 380,
+                originalPrice: 450,
+                stock: 150,
+                lowStockThreshold: 20,
+                status: 'active',
+                imageUrl: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400',
+                description: '精選台灣本地雞胸肉，手工製作，無添加防腐劑。保留夜市雞排香氣，營養美味兼具。',
+                variants: [
+                    { name: '100g', price: 380, stock: 100 },
+                    { name: '200g', price: 680, stock: 50 }
+                ],
+                rating: 4.8,
+                salesCount: 328,
+                createdAt: Date.now() - 86400000 * 30
+            },
+            {
+                id: '2',
+                name: '壕大大雞排乾',
+                sku: 'SNK-002',
+                category: 'snacks',
+                price: 450,
+                originalPrice: 550,
+                stock: 8,
+                lowStockThreshold: 10,
+                status: 'active',
+                imageUrl: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=400',
+                description: '超大尺寸雞排，奢華享受。採用頂級雞胸肉，經過特殊調味醃製，口感酥脆。',
+                variants: [
+                    { name: '150g', price: 450, stock: 5 },
+                    { name: '300g', price: 850, stock: 3 }
+                ],
+                rating: 4.9,
+                salesCount: 256,
+                createdAt: Date.now() - 86400000 * 20
+            },
+            {
+                id: '3',
+                name: '智能益智球',
+                sku: 'TOY-001',
+                category: 'toys',
+                price: 680,
+                originalPrice: 0,
+                stock: 45,
+                lowStockThreshold: 15,
+                status: 'active',
+                imageUrl: 'https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=400',
+                description: '基於維也納大學研究設計的益智玩具，提升寵物智力，預防老年退化。',
+                variants: [],
+                rating: 4.7,
+                salesCount: 189,
+                createdAt: Date.now() - 86400000 * 25
+            },
+            {
+                id: '4',
+                name: '營養訂閱罐罐 - 雞肉',
+                sku: 'SUB-001',
+                category: 'subscription',
+                price: 1280,
+                originalPrice: 1500,
+                stock: 0,
+                lowStockThreshold: 10,
+                status: 'out_of_stock',
+                imageUrl: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400',
+                description: '每月定期配送新鮮罐罐，依測驗結果客製化配方，確保寵物獲得最佳營養。',
+                variants: [
+                    { name: '月訂閱 (4罐)', price: 1280, stock: 0 },
+                    { name: '季訂閱 (12罐)', price: 3600, stock: 0 }
+                ],
+                rating: 4.6,
+                salesCount: 145,
+                createdAt: Date.now() - 86400000 * 15
+            },
+            {
+                id: '5',
+                name: '互動尋寶玩具',
+                sku: 'TOY-002',
+                category: 'toys',
+                price: 580,
+                originalPrice: 0,
+                stock: 0,
+                lowStockThreshold: 10,
+                status: 'inactive',
+                imageUrl: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400',
+                description: '鼓勵寵物主動探索的互動玩具，訓練嗅覺與智力，適合各種年齡層。',
+                variants: [],
+                rating: 4.5,
+                salesCount: 98,
+                createdAt: Date.now() - 86400000 * 10
+            }
+        ];
+        
+        // ==================== 初始化 ====================
+        
+        function init() {
+            loadProducts();
+            renderProducts();
+            updateStatistics();
+        }
+        
+        // 載入產品數據
+        function loadProducts() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                products = JSON.parse(stored);
+            } else {
+                products = sampleProducts;
+                saveProducts();
+            }
+        }
+        
+        // 保存產品數據
+        function saveProducts() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+        }
+        
+        // ==================== 統計數據 ====================
+        
+        function updateStatistics() {
+            const total = products.length;
+            const active = products.filter(p => p.status === 'active').length;
+            const lowStock = products.filter(p => p.stock <= p.lowStockThreshold && p.stock > 0).length;
+            const totalValue = products.reduce((sum, p) => sum + (p.price * p.stock), 0);
+            
+            document.getElementById('totalProducts').textContent = total;
+            document.getElementById('activeProducts').textContent = active;
+            document.getElementById('lowStockProducts').textContent = lowStock;
+            document.getElementById('totalStockValue').textContent = `$${totalValue.toLocaleString()}`;
+        }
+        
+        // ==================== 產品渲染 ====================
+        
+        function renderProducts() {
+            if (currentView === 'table') {
+                renderTableView();
+            } else {
+                renderGridView();
+            }
+            renderPagination();
+        }
+        
+        // 表格視圖
+        function renderTableView() {
+            const tbody = document.getElementById('productsTableBody');
+            const filtered = getFilteredProducts();
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paged = filtered.slice(start, end);
+            
+            tbody.innerHTML = paged.map(product => `
+                <tr class="border-b border-gray-200 table-hover">
+                    <td class="px-6 py-4">
+                        <input type="checkbox" class="w-5 h-5 rounded product-checkbox" data-id="${product.id}">
+                    </td>
+                    <td class="px-6 py-4">
+                        <img src="${product.imageUrl}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-semibold text-gray-800">${product.name}</div>
+                        <div class="text-sm text-gray-500">${product.description?.substring(0, 50)}...</div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600">${product.sku}</td>
+                    <td class="px-6 py-4">
+                        ${getCategoryBadge(product.category)}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-semibold text-gray-800">NT$ ${product.price.toLocaleString()}</div>
+                        ${product.originalPrice > 0 ? `<div class="text-sm text-gray-400 line-through">NT$ ${product.originalPrice.toLocaleString()}</div>` : ''}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${getStockBadge(product.stock, product.lowStockThreshold)}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${getStatusBadge(product.status)}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <button onclick="editProduct('${product.id}')" class="text-blue-600 hover:text-blue-800" title="編輯">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteProduct('${product.id}')" class="text-red-600 hover:text-red-800" title="刪除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            updatePageInfo(filtered.length);
+        }
+        
+        // 網格視圖
+        function renderGridView() {
+            const container = document.getElementById('gridView');
+            const filtered = getFilteredProducts();
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paged = filtered.slice(start, end);
+            
+            container.innerHTML = paged.map(product => `
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden product-card">
+                    <div class="relative">
+                        <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 right-3">
+                            ${getStatusBadge(product.status)}
+                        </div>
+                        ${product.originalPrice > 0 ? `
+                            <div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                省 ${Math.round((1 - product.price / product.originalPrice) * 100)}%
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="p-5">
+                        <div class="mb-3">
+                            ${getCategoryBadge(product.category)}
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">${product.name}</h3>
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${product.description}</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <div class="text-2xl font-bold text-gray-800">NT$ ${product.price.toLocaleString()}</div>
+                                ${product.originalPrice > 0 ? `<div class="text-sm text-gray-400 line-through">NT$ ${product.originalPrice.toLocaleString()}</div>` : ''}
+                            </div>
+                            <div class="text-right">
+                                ${getStockBadge(product.stock, product.lowStockThreshold)}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-sm text-gray-600 mb-4">
+                            <div><i class="fas fa-star text-yellow-400 mr-1"></i>${product.rating}</div>
+                            <div><i class="fas fa-shopping-cart mr-1"></i>已售 ${product.salesCount}</div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editProduct('${product.id}')" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                <i class="fas fa-edit mr-1"></i>編輯
+                            </button>
+                            <button onclick="deleteProduct('${product.id}')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // ==================== 篩選與搜尋 ====================
+        
+        function getFilteredProducts() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            return products.filter(product => {
+                const matchSearch = !search || 
+                    product.name.toLowerCase().includes(search) || 
+                    product.sku.toLowerCase().includes(search);
+                const matchCategory = !category || product.category === category;
+                const matchStatus = !status || product.status === status;
+                
+                return matchSearch && matchCategory && matchStatus;
+            });
+        }
+        
+        function filterProducts() {
+            currentPage = 1;
+            renderProducts();
+        }
+        
+        // ==================== 視圖切換 ====================
+        
+        function switchView(view) {
+            currentView = view;
+            
+            document.getElementById('tableView').classList.toggle('hidden', view !== 'table');
+            document.getElementById('gridView').classList.toggle('hidden', view !== 'grid');
+            
+            document.getElementById('tableViewBtn').classList.toggle('bg-white', view === 'table');
+            document.getElementById('tableViewBtn').classList.toggle('shadow-sm', view === 'table');
+            document.getElementById('gridViewBtn').classList.toggle('bg-white', view === 'grid');
+            document.getElementById('gridViewBtn').classList.toggle('shadow-sm', view === 'grid');
+            
+            renderProducts();
+        }
+        
+        // ==================== 分頁 ====================
+        
+        function renderPagination() {
+            const filtered = getFilteredProducts();
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            let html = '';
+            
+            // 上一頁
+            html += `
+                <button onclick="changePage(${currentPage - 1})" 
+                        ${currentPage === 1 ? 'disabled' : ''} 
+                        class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+            
+            // 頁碼
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `
+                        <button onclick="changePage(${i})" 
+                                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 ${i === currentPage ? 'bg-blue-600 text-white border-blue-600' : ''}">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += '<span class="px-2">...</span>';
+                }
+            }
+            
+            // 下一頁
+            html += `
+                <button onclick="changePage(${currentPage + 1})" 
+                        ${currentPage === totalPages ? 'disabled' : ''} 
+                        class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+            
+            pagination.innerHTML = html;
+        }
+        
+        function changePage(page) {
+            const filtered = getFilteredProducts();
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage = page;
+            renderProducts();
+            
+            // 滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function updatePageInfo(total) {
+            const start = (currentPage - 1) * itemsPerPage + 1;
+            const end = Math.min(start + itemsPerPage - 1, total);
+            
+            document.getElementById('showingStart').textContent = start;
+            document.getElementById('showingEnd').textContent = end;
+            document.getElementById('totalCount').textContent = total;
+        }
+        
+        // ==================== Modal 管理 ====================
+        
+        function openAddProductModal() {
+            document.getElementById('modalTitle').textContent = '新增產品';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+            document.getElementById('variantsContainer').innerHTML = '';
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+        
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+        
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            
+            document.getElementById('modalTitle').textContent = '編輯產品';
+            document.getElementById('productId').value = product.id;
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productSKU').value = product.sku;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('productStatus').value = product.status;
+            document.getElementById('productDescription').value = product.description || '';
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productOriginalPrice').value = product.originalPrice || '';
+            document.getElementById('productStock').value = product.stock;
+            document.getElementById('productLowStockThreshold').value = product.lowStockThreshold;
+            document.getElementById('productImageUrl').value = product.imageUrl || '';
+            document.getElementById('productRating').value = product.rating;
+            document.getElementById('productSalesCount').value = product.salesCount;
+            
+            // 預覽圖片
+            if (product.imageUrl) {
+                document.getElementById('imagePreview').src = product.imageUrl;
+                document.getElementById('imagePreviewContainer').classList.remove('hidden');
+            }
+            
+            // 載入規格
+            document.getElementById('variantsContainer').innerHTML = '';
+            if (product.variants && product.variants.length > 0) {
+                product.variants.forEach(variant => {
+                    addVariant(variant);
+                });
+            }
+            
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+        
+        // ==================== 表單處理 ====================
+        
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('productId').value;
+            const productData = {
+                id: id || Date.now().toString(),
+                name: document.getElementById('productName').value,
+                sku: document.getElementById('productSKU').value,
+                category: document.getElementById('productCategory').value,
+                status: document.getElementById('productStatus').value,
+                description: document.getElementById('productDescription').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                originalPrice: parseFloat(document.getElementById('productOriginalPrice').value) || 0,
+                stock: parseInt(document.getElementById('productStock').value),
+                lowStockThreshold: parseInt(document.getElementById('productLowStockThreshold').value),
+                imageUrl: document.getElementById('productImageUrl').value,
+                rating: parseFloat(document.getElementById('productRating').value),
+                salesCount: parseInt(document.getElementById('productSalesCount').value),
+                variants: getVariants(),
+                createdAt: id ? products.find(p => p.id === id)?.createdAt : Date.now()
+            };
+            
+            if (id) {
+                // 更新
+                const index = products.findIndex(p => p.id === id);
+                products[index] = productData;
+                showNotification('產品更新成功！', 'success');
+            } else {
+                // 新增
+                products.unshift(productData);
+                showNotification('產品新增成功！', 'success');
+            }
+            
+            saveProducts();
+            closeProductModal();
+            renderProducts();
+            updateStatistics();
+        });
+        
+        // 圖片預覽
+        function previewImage() {
+            const url = document.getElementById('productImageUrl').value;
+            if (url) {
+                document.getElementById('imagePreview').src = url;
+                document.getElementById('imagePreviewContainer').classList.remove('hidden');
+            } else {
+                document.getElementById('imagePreviewContainer').classList.add('hidden');
+            }
+        }
+        
+        // ==================== 規格管理 ====================
+        
+        let variantIndex = 0;
+        
+        function addVariant(data = null) {
+            const container = document.getElementById('variantsContainer');
+            const id = variantIndex++;
+            
+            const div = document.createElement('div');
+            div.className = 'flex space-x-3 items-center';
+            div.id = `variant-${id}`;
+            div.innerHTML = `
+                <input type="text" placeholder="規格名稱" value="${data?.name || ''}" 
+                       class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 variant-name">
+                <input type="number" placeholder="價格" value="${data?.price || ''}" 
+                       class="w-32 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 variant-price">
+                <input type="number" placeholder="庫存" value="${data?.stock || ''}" 
+                       class="w-32 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 variant-stock">
+                <button type="button" onclick="removeVariant(${id})" class="px-3 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            
+            container.appendChild(div);
+        }
+        
+        function removeVariant(id) {
+            document.getElementById(`variant-${id}`).remove();
+        }
+        
+        function getVariants() {
+            const variants = [];
+            document.querySelectorAll('#variantsContainer > div').forEach(div => {
+                const name = div.querySelector('.variant-name').value;
+                const price = parseFloat(div.querySelector('.variant-price').value);
+                const stock = parseInt(div.querySelector('.variant-stock').value);
+                
+                if (name && price >= 0 && stock >= 0) {
+                    variants.push({ name, price, stock });
+                }
+            });
+            return variants;
+        }
+        
+        // ==================== 刪除產品 ====================
+        
+        function deleteProduct(id) {
+            if (!confirm('確定要刪除此產品嗎？此操作無法復原。')) return;
+            
+            products = products.filter(p => p.id !== id);
+            saveProducts();
+            renderProducts();
+            updateStatistics();
+            showNotification('產品已刪除', 'success');
+        }
+        
+        // ==================== 批量操作 ====================
+        
+        function toggleSelectAll() {
+            const checked = document.getElementById('selectAll').checked;
+            document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+                checkbox.checked = checked;
+            });
+        }
+        
+        // ==================== 輔助函數 ====================
+        
+        function getCategoryBadge(category) {
+            const categories = {
+                snacks: { text: '手作零食', color: 'bg-orange-100 text-orange-700' },
+                toys: { text: '益智玩具', color: 'bg-purple-100 text-purple-700' },
+                subscription: { text: '訂閱罐罐', color: 'bg-blue-100 text-blue-700' },
+                crowdfunding: { text: '集資項目', color: 'bg-green-100 text-green-700' }
+            };
+            
+            const cat = categories[category] || { text: category, color: 'bg-gray-100 text-gray-700' };
+            return `<span class="badge ${cat.color}">${cat.text}</span>`;
+        }
+        
+        function getStatusBadge(status) {
+            const statuses = {
+                active: { text: '上架中', class: 'badge-success' },
+                inactive: { text: '已下架', class: 'badge-warning' },
+                out_of_stock: { text: '已售完', class: 'badge-danger' }
+            };
+            
+            const st = statuses[status] || { text: status, class: 'badge-warning' };
+            return `<span class="badge ${st.class}">${st.text}</span>`;
+        }
+        
+        function getStockBadge(stock, threshold) {
+            if (stock === 0) {
+                return `<span class="badge badge-danger">無庫存</span>`;
+            } else if (stock <= threshold) {
+                return `<span class="badge badge-warning">${stock} 件 (低庫存)</span>`;
+            } else {
+                return `<span class="badge badge-success">${stock} 件</span>`;
+            }
+        }
+        
+        // ==================== 通知系統 ====================
+        
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${colors[type]} text-white px-6 py-4 rounded-xl shadow-lg flex items-center space-x-3`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} text-2xl"></i>
+                <span class="font-semibold">${message}</span>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // ==================== 側邊欄 ====================
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+        
+        // ==================== 初始化執行 ====================
+        
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // 點擊 Modal 外部關閉
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeProductModal();
+            }
+        });
+    </script>
+</body>
+</html>

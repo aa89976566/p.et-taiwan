@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單完成 - 匠寵</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- API 客戶端 (後端整合) -->
+    <script src="js/api-client.js"></script>
+    
+    <style>
+        body { font-family: 'Noto Sans TC', 'Nunito', sans-serif; }
+        .pulse-animation { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 via-white to-blue-50 min-h-screen">
+    <!-- Success Container -->
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Success Card -->
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden fade-in">
+                
+                <!-- Success Header -->
+                <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center py-12 px-6">
+                    <div class="mb-6">
+                        <div class="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full">
+                            <i class="fas fa-check text-green-500 text-5xl"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-4xl font-bold mb-3">訂單完成！</h1>
+                    <p class="text-xl text-green-100">感謝您的購買，我們已收到您的訂單</p>
+                </div>
+
+                <!-- Order Info -->
+                <div class="p-8">
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center">
+                                <p class="text-sm text-gray-600 mb-1">訂單編號</p>
+                                <p class="text-2xl font-bold text-gray-800" id="orderNumber">#2024120016</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm text-gray-600 mb-1">訂單金額</p>
+                                <p class="text-2xl font-bold text-red-600" id="orderAmount">NT$ 2,060</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm text-gray-600 mb-1">付款狀態</p>
+                                <p class="text-sm"><span class="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 font-semibold">
+                                    <i class="fas fa-check-circle mr-2"></i>付款成功
+                                </span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LINE Customer Service Section -->
+                    <div class="border-4 border-green-400 rounded-2xl p-8 mb-8 bg-gradient-to-br from-green-50 to-emerald-50">
+                        <div class="text-center mb-6">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-full mb-4 pulse-animation">
+                                <i class="fab fa-line text-white text-3xl"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-2">
+                                <i class="fas fa-gift text-red-500 mr-2"></i>即刻加入 LINE 官方帳號
+                            </h2>
+                            <p class="text-lg text-gray-700 mb-1">獲得專屬客服支援與優惠資訊</p>
+                            <p class="text-sm text-gray-600">訂單查詢 | 物流追蹤 | 產品諮詢 | 專屬優惠</p>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-6">
+                            <!-- QR Code -->
+                            <div class="flex-shrink-0">
+                                <div class="bg-white p-4 rounded-2xl shadow-lg border-4 border-green-500">
+                                    <img src="https://www.genspark.ai/api/files/s/p1ymWhU0" alt="LINE QR Code" class="w-48 h-48">
+                                </div>
+                                <p class="text-center text-sm text-gray-600 mt-3 mb-1">
+                                    <i class="fas fa-mobile-alt mr-1"></i>掃描 QR Code 加入
+                                </p>
+                                <p class="text-center text-sm font-bold text-gray-900">
+                                    LINE ID: <span class="font-mono text-green-600">@902rkfzv</span>
+                                </p>
+                            </div>
+
+                            <!-- Benefits -->
+                            <div class="flex-1">
+                                <div class="space-y-3">
+                                    <div class="flex items-start space-x-3 bg-white rounded-xl p-4 shadow-sm">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-shipping-fast text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-800">即時物流追蹤</h3>
+                                            <p class="text-sm text-gray-600">訂單狀態即時推播，配送進度一手掌握</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3 bg-white rounded-xl p-4 shadow-sm">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-headset text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-800">專屬客服支援</h3>
+                                            <p class="text-sm text-gray-600">專人即時回覆，解決您的任何問題</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3 bg-white rounded-xl p-4 shadow-sm">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-tags text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-800">專屬優惠活動</h3>
+                                            <p class="text-sm text-gray-600">會員限定優惠、首購禮、生日禮</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3 bg-white rounded-xl p-4 shadow-sm">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-bell text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-800">新品搶先知道</h3>
+                                            <p class="text-sm text-gray-600">最新產品、限量商品第一時間通知</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Friend Button -->
+                        <div class="text-center">
+                            <a href="https://line.me/R/ti/p/@jiangchong" target="_blank" class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xl font-bold rounded-full hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <i class="fab fa-line text-3xl mr-3"></i>
+                                立即加入 LINE 官方帳號
+                                <i class="fas fa-arrow-right ml-3"></i>
+                            </a>
+                            <p class="text-xs text-gray-500 mt-3">點擊按鈕或掃描 QR Code 即可加入</p>
+                        </div>
+                    </div>
+
+                    <!-- Order Details -->
+                    <div class="bg-gray-50 rounded-2xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-box-open text-blue-500 mr-2"></i>訂單詳情
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">收件人</span>
+                                <span class="font-semibold text-gray-800" id="receiverName">王小明</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">聯絡電話</span>
+                                <span class="font-semibold text-gray-800" id="receiverPhone">0912-345-678</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">配送方式</span>
+                                <span class="font-semibold text-gray-800" id="shippingMethod">新竹貨運 - 宅配到府</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">配送地址</span>
+                                <span class="font-semibold text-gray-800 text-right" id="shippingAddress">台北市信義區信義路五段7號</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">預計送達</span>
+                                <span class="font-semibold text-green-600">2-3 個工作天</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div class="bg-blue-50 rounded-2xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-clipboard-check text-green-500 mr-2"></i>接下來...
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                                <div>
+                                    <p class="font-semibold text-gray-800">加入 LINE 官方帳號</p>
+                                    <p class="text-sm text-gray-600">即時接收訂單進度通知</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                                <div>
+                                    <p class="font-semibold text-gray-800">等待商家確認訂單</p>
+                                    <p class="text-sm text-gray-600">我們會盡快為您準備商品</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                                <div>
+                                    <p class="font-semibold text-gray-800">商品出貨通知</p>
+                                    <p class="text-sm text-gray-600">出貨後會提供物流追蹤號碼</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                                <div>
+                                    <p class="font-semibold text-gray-800">收到商品並享用</p>
+                                    <p class="text-sm text-gray-600">預計 2-3 個工作天送達</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="index.html" class="flex-1 px-6 py-4 bg-gradient-to-r from-red-500 to-orange-400 text-white text-center font-bold rounded-xl hover:shadow-xl transition-all">
+                            <i class="fas fa-home mr-2"></i>返回首頁
+                        </a>
+                        <button onclick="window.print()" class="flex-1 px-6 py-4 bg-gray-600 text-white text-center font-bold rounded-xl hover:bg-gray-700 transition-all">
+                            <i class="fas fa-print mr-2"></i>列印訂單
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Note -->
+            <div class="text-center mt-8 text-sm text-gray-600">
+                <p class="mb-2">
+                    <i class="fas fa-shield-alt text-green-500 mr-1"></i>
+                    您的個人資料已加密保護，請放心購物
+                </p>
+                <p>
+                    如有任何問題，請加入 LINE 官方帳號或來電 <a href="tel:0800-123-456" class="text-red-500 hover:text-red-600 font-semibold">0800-123-456</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get order data from URL parameters or localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generate order number
+            const orderNumber = '#' + new Date().getFullYear() + 
+                                 String(new Date().getMonth() + 1).padStart(2, '0') + 
+                                 String(new Date().getDate()).padStart(2, '0') + 
+                                 String(Math.floor(Math.random() * 1000)).padStart(4, '0');
+            
+            document.getElementById('orderNumber').textContent = orderNumber;
+
+            // Try to get order data from localStorage
+            const orderData = localStorage.getItem('lastOrder');
+            if (orderData) {
+                try {
+                    const order = JSON.parse(orderData);
+                    if (order.receiver) {
+                        document.getElementById('receiverName').textContent = order.receiver.name;
+                        document.getElementById('receiverPhone').textContent = order.receiver.phone;
+                    }
+                    if (order.shipping) {
+                        let shippingText = order.shipping.method || '宅配到府';
+                        if (order.shipping.store) {
+                            shippingText = order.shipping.store + ' - 超商取貨';
+                        }
+                        document.getElementById('shippingMethod').textContent = shippingText;
+                        
+                        if (order.shipping.address) {
+                            document.getElementById('shippingAddress').textContent = order.shipping.address;
+                        } else if (order.shipping.storeAddress) {
+                            document.getElementById('shippingAddress').textContent = order.shipping.storeAddress;
+                        }
+                    }
+                    if (order.total) {
+                        document.getElementById('orderAmount').textContent = 'NT$ ' + order.total;
+                    }
+                } catch (e) {
+                    console.log('無法載入訂單資料');
+                }
+            }
+
+            // Show success animation
+            setTimeout(() => {
+                // Optional: Add confetti or celebration animation
+                console.log('訂單完成！');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

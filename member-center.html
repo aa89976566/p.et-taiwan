@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員中心 - 匠寵</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/member.css">
+    
+    <!-- 全局配置 -->
+    <script src="js/config.js"></script>
+    
+    <!-- API 客戶端 -->
+    <script src="js/api-client.js"></script>
+    
+    <!-- 用戶認證 -->
+    <script src="js/user-auth.js"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B6B',
+                        secondary: '#4ECDC4',
+                        accent: '#FFD93D',
+                        dark: '#2C3E50',
+                        light: '#F7F9FC'
+                    },
+                    fontFamily: {
+                        'sans': ['Nunito', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* 設計變數 */
+        :root {
+            --color-primary: #0B1E3F;
+            --color-text-main: #111827;
+            --color-text-secondary: #475569;
+            --color-accent-1: #4FD1C5;
+            --color-accent-2: #A0F0E0;
+            --color-alert: #FB7185;
+            --color-warm: #FDBA74;
+            --bg-light: #F9FAFB;
+            --bg-section: #FFFFFF;
+        }
+        
+        body { 
+            font-family: 'Noto Sans TC', 'Nunito', 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--color-text-main);
+            min-height: 100vh;
+        }
+        
+        /* 頁面標題區塊 - 簡約風格 */
+        .member-header {
+            background: var(--bg-section);
+            color: var(--color-primary);
+            border-radius: 0;
+            box-shadow: none;
+            border-bottom: 1px solid #E5E7EB;
+            text-align: center;
+            padding: 64px 24px;
+        }
+        
+        .member-header h1 {
+            font-size: 60px;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-bottom: 16px;
+        }
+        
+        .member-header p {
+            font-size: 20px;
+            color: var(--color-text-secondary);
+        }
+        
+        /* 標籤導航 - 簡約風格 */
+        .tab-active {
+            background: var(--color-primary);
+            color: white;
+            border-radius: 0;
+            position: relative;
+            font-weight: 600;
+        }
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color-accent-1);
+        }
+        
+        .tab-inactive {
+            background: var(--bg-section);
+            color: var(--color-text-secondary);
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+        .tab-inactive:hover {
+            background: var(--bg-light);
+            color: var(--color-primary);
+        }
+        
+        /* 卡片樣式 - 簡約風格 */
+        .member-card {
+            background: var(--bg-section);
+            border-radius: 0;
+            box-shadow: none;
+            transition: all 0.3s ease;
+            border: 1px solid #E5E7EB;
+            padding: 48px;
+        }
+        .member-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* 訂單卡片 */
+        .order-card {
+            transition: all 0.3s ease;
+            border-radius: 0;
+            border: 1px solid #E5E7EB;
+            background: var(--bg-section);
+        }
+        .order-card:hover {
+            border-color: var(--color-accent-1);
+            box-shadow: 0 4px 12px rgba(79, 209, 197, 0.1);
+        }
+        
+        /* 狀態標籤 - 簡約風格 */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: none;
+        }
+        .status-paid { 
+            background: var(--color-accent-2);
+            color: var(--color-primary);
+        }
+        .status-pending { 
+            background: var(--color-warm);
+            color: var(--color-primary);
+        }
+        .status-shipped { 
+            background: var(--color-accent-2);
+            color: var(--color-primary);
+        }
+        .status-delivered { 
+            background: var(--color-accent-2);
+            color: var(--color-primary);
+        }
+        .status-cancelled { 
+            background: var(--color-alert);
+            color: white;
+        }
+        
+        /* 按鈕樣式 - 簡約風格 */
+        .btn-primary {
+            background: var(--color-accent-1);
+            color: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: none;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: var(--color-accent-2);
+            color: var(--color-primary);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: var(--color-primary);
+            color: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: none;
+            font-weight: 600;
+        }
+        .btn-secondary:hover {
+            background: var(--color-text-main);
+            transform: translateY(-1px);
+        }
+        
+        /* 輸入框樣式 */
+        input, select, textarea {
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+            color: var(--color-text-main);
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--color-accent-1);
+            box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.1);
+            outline: none;
+        }
+        
+        /* 統計卡片 */
+        .stat-card {
+            background: var(--bg-section);
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            border-color: var(--color-accent-1);
+        }
+        
+        /* 會員等級卡片 */
+        .level-card {
+            background: var(--color-primary);
+            border-radius: 0;
+            box-shadow: none;
+            color: white;
+        }
+        
+        /* 進度條 */
+        .progress-bar {
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            height: 8px;
+        }
+        .progress-fill {
+            background: var(--color-accent-1);
+            border-radius: 8px;
+            box-shadow: none;
+            height: 8px;
+        }
+        
+        /* 分隔線 */
+        .divider {
+            height: 1px;
+            background: #E5E7EB;
+            margin: 32px 0;
+            border: none;
+        }
+        
+        /* 圖示容器 */
+        .icon-container {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        /* 標題樣式 */
+        h2 {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-bottom: 32px;
+        }
+        
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+        
+        /* 文字顏色 */
+        .text-primary {
+            color: var(--color-primary) !important;
+        }
+        
+        .text-secondary {
+            color: var(--color-text-secondary) !important;
+        }
+        
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            .member-header h1 {
+                font-size: 48px;
+            }
+            .member-card {
+                padding: 32px 24px;
+            }
+            h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white shadow-md z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-primary text-3xl"></i>
+                    <span class="text-2xl font-bold" style="color: var(--color-primary);">匠寵</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="transition" style="color: var(--color-text-main);" onmouseover="this.style.color='var(--color-accent-1)'" onmouseout="this.style.color='var(--color-text-main)'">
+                        <i class="fas fa-home mr-2"></i>返回首頁
+                    </a>
+                    <button onclick="handleLogout()" class="text-red-600 hover:text-red-700 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-24">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- Page Header -->
+            <div class="member-header">
+                <h1>會員中心</h1>
+                <p id="memberGreeting">歡迎回來！</p>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="bg-white mb-6 overflow-hidden border border-gray-200">
+                <div class="flex border-b border-gray-200 overflow-x-auto">
+                    <button onclick="switchTab('profile')" id="tab-profile" class="flex-1 py-4 px-6 tab-active font-semibold transition whitespace-nowrap">
+                        <i class="fas fa-user mr-2"></i>個人資料
+                    </button>
+                    <button onclick="switchTab('orders')" id="tab-orders" class="flex-1 py-4 px-6 tab-inactive font-semibold transition whitespace-nowrap">
+                        <i class="fas fa-shopping-bag mr-2"></i>購買紀錄
+                    </button>
+                    <button onclick="switchTab('subscriptions')" id="tab-subscriptions" class="flex-1 py-4 px-6 tab-inactive font-semibold transition whitespace-nowrap">
+                        <i class="fas fa-calendar-check mr-2"></i>訂閱管理
+                    </button>
+                    <button onclick="switchTab('quizzes')" id="tab-quizzes" class="flex-1 py-4 px-6 tab-inactive font-semibold transition whitespace-nowrap">
+                        <i class="fas fa-clipboard-check mr-2"></i>測驗記錄
+                    </button>
+                    <button onclick="switchTab('favorites')" id="tab-favorites" class="flex-1 py-4 px-6 tab-inactive font-semibold transition whitespace-nowrap">
+                        <i class="fas fa-heart mr-2"></i>我的收藏
+                    </button>
+                    <button onclick="switchTab('coupons')" id="tab-coupons" class="flex-1 py-4 px-6 tab-inactive font-semibold transition whitespace-nowrap">
+                        <i class="fas fa-ticket-alt mr-2"></i>優惠券
+                    </button>
+                    <button onclick="switchTab('addresses')" id="tab-addresses" class="flex-1 py-4 px-6 tab-inactive font-semibold transition whitespace-nowrap">
+                        <i class="fas fa-map-marker-alt mr-2"></i>地址管理
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content: 個人資料 -->
+            <div id="content-profile" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 左側：個人資訊 -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- 基本資料 -->
+                        <div class="member-card p-6">
+                            <h2 class="text-2xl font-bold text-primary mb-6">
+                                <i class="fas fa-id-card text-primary mr-2"></i>基本資料
+                            </h2>
+                            <form id="profileForm" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2" style="color: var(--color-text-main);">姓名</label>
+                                        <input type="text" id="profileName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2" style="color: var(--color-text-main);">Email</label>
+                                        <input type="email" id="profileEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2" style="color: var(--color-text-main);">手機號碼</label>
+                                        <input type="tel" id="profilePhone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2" style="color: var(--color-text-main);">註冊日期</label>
+                                        <input type="text" id="profileRegisteredAt" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                    </div>
+                                </div>
+                                <div class="pt-4">
+                                    <button type="submit" class="btn-primary text-white px-8 py-3 font-semibold">
+                                        <i class="fas fa-save mr-2"></i>儲存變更
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- 密碼變更 -->
+                        <div class="member-card p-6">
+                        <h2 class="text-2xl font-bold text-primary mb-6">
+                                <i class="fas fa-lock text-primary mr-2"></i>密碼變更
+                            </h2>
+                            <form id="passwordForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">目前密碼</label>
+                                    <input type="password" id="currentPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">新密碼</label>
+                                    <input type="password" id="newPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">確認新密碼</label>
+                                    <input type="password" id="confirmPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                                <div class="pt-4">
+                                    <button type="submit" class="btn-secondary text-white px-8 py-3 font-semibold">
+                                        <i class="fas fa-key mr-2"></i>變更密碼
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 右側：統計資訊 -->
+                    <div class="space-y-6">
+                        <!-- 會員統計 -->
+                        <div class="member-card p-6">
+                            <h3 class="text-xl font-bold text-primary mb-4">
+                                <i class="fas fa-chart-line text-primary mr-2"></i>會員統計
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center p-3 stat-card rounded-lg">
+                                    <span style="color: var(--color-text-secondary);">總訂單數</span>
+                                    <span class="text-2xl font-bold text-primary" id="statTotalOrders">0</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 stat-card rounded-lg">
+                                    <span style="color: var(--color-text-secondary);">總消費金額</span>
+                                    <span class="text-2xl font-bold" style="color: var(--color-accent-1);" id="statTotalSpent">NT$ 0</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 stat-card rounded-lg">
+                                    <span style="color: var(--color-text-secondary);">完成測驗</span>
+                                    <span class="text-2xl font-bold" style="color: var(--color-warm);" id="statQuizCompleted">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 會員等級 -->
+                        <div class="level-card p-6 text-white">
+                            <h3 class="text-xl font-bold mb-4 text-white">會員等級</h3>
+                            <div class="text-3xl font-bold mb-2" id="memberLevelBadge">一般會員</div>
+                            <div class="text-sm text-white/80 mb-4">累積消費達 NT$ 5,000 升級 VIP</div>
+                            <div class="progress-bar w-full h-3 mb-2">
+                                <div class="progress-fill h-3" id="levelProgress" style="width: 0%"></div>
+                            </div>
+                            <div class="text-xs text-white/80">距離下一級還需 NT$ <span id="levelRemaining">5,000</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: 購買紀錄 -->
+            <div id="content-orders" class="tab-content hidden">
+                <div class="member-card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-primary">
+                            <i class="fas fa-shopping-bag text-primary mr-2"></i>購買紀錄
+                        </h2>
+                        <div class="flex space-x-2">
+                            <select id="orderFilter" onchange="filterOrders()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                                <option value="all">全部訂單</option>
+                                <option value="pending">待付款</option>
+                                <option value="confirmed">已確認</option>
+                                <option value="shipped">已出貨</option>
+                                <option value="delivered">已完成</option>
+                                <option value="cancelled">已取消</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 訂單列表 -->
+                    <div id="ordersList" class="space-y-4">
+                        <!-- 訂單項目將動態載入 -->
+                        <div class="text-center py-12">
+                            <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600">載入中...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: 訂閱管理 -->
+            <div id="content-subscriptions" class="tab-content hidden">
+                <div class="member-card p-6">
+                    <h2 class="text-2xl font-bold text-primary mb-6">
+                        <i class="fas fa-calendar-check text-primary mr-2"></i>訂閱管理
+                    </h2>
+                    <div id="subscriptionsList" class="space-y-4">
+                        <div class="text-center py-12">
+                            <i class="fas fa-calendar-times text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600">目前沒有訂閱方案</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: 測驗記錄 -->
+            <div id="content-quizzes" class="tab-content hidden">
+                <div class="member-card p-6">
+                    <h2 class="text-2xl font-bold text-primary mb-6">
+                        <i class="fas fa-clipboard-check text-primary mr-2"></i>測驗記錄
+                    </h2>
+                    <div id="quizzesList" class="space-y-4">
+                        <div class="text-center py-12">
+                            <i class="fas fa-clipboard text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600">目前沒有測驗記錄</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: 我的收藏 -->
+            <div id="content-favorites" class="tab-content hidden">
+                <div class="member-card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-primary">
+                            <i class="fas fa-heart text-primary mr-2"></i>我的收藏
+                        </h2>
+                        <div class="text-sm text-gray-600">
+                            共 <span id="favoriteCount">0</span> 項商品
+                        </div>
+                    </div>
+                    <div id="favoritesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="text-center py-12 col-span-full">
+                            <i class="fas fa-heart text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 mb-4">目前沒有收藏商品</p>
+                            <a href="index.html#products" class="text-primary hover:underline">前往選購</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: 優惠券 -->
+            <div id="content-coupons" class="tab-content hidden">
+                <div class="member-card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-primary">
+                            <i class="fas fa-ticket-alt text-primary mr-2"></i>我的優惠券
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button onclick="filterCoupons('all')" class="btn-primary px-4 py-2 text-white">
+                                全部
+                            </button>
+                            <button onclick="filterCoupons('available')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                                可使用
+                            </button>
+                            <button onclick="filterCoupons('used')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                                已使用
+                            </button>
+                            <button onclick="filterCoupons('expired')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                                已過期
+                            </button>
+                        </div>
+                    </div>
+                    <div id="couponsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="text-center py-12 col-span-full">
+                            <i class="fas fa-ticket-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600">目前沒有優惠券</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: 地址管理 -->
+            <div id="content-addresses" class="tab-content hidden">
+                <div class="member-card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-primary">
+                            <i class="fas fa-map-marker-alt text-primary mr-2"></i>地址管理
+                        </h2>
+                        <button onclick="openAddAddressModal()" class="btn-primary text-white px-6 py-3">
+                            <i class="fas fa-plus mr-2"></i>新增地址
+                        </button>
+                    </div>
+                    <div id="addressesList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="text-center py-12 col-span-full">
+                            <i class="fas fa-map-marker-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 mb-4">目前沒有儲存的地址</p>
+                            <button onclick="openAddAddressModal()" class="text-primary hover:underline">新增第一個地址</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Address Modal -->
+    <div id="addressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="member-card w-full max-w-md border-2 border-primary/20">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-primary" id="addressModalTitle">新增地址</h3>
+                    <button onclick="closeAddressModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="addressForm" onsubmit="saveAddress(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">收件人姓名 *</label>
+                            <input type="text" id="addressName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="請輸入姓名">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">電話 *</label>
+                            <input type="tel" id="addressPhone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0912-345-678">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">縣市 *</label>
+                                <input type="text" id="addressCity" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="台北市">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">區域 *</label>
+                                <input type="text" id="addressDistrict" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="中正區">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">詳細地址 *</label>
+                            <input type="text" id="addressDetail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="請輸入詳細地址">
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 mt-6">
+                        <button type="button" onclick="closeAddressModal()" class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition">
+                            取消
+                        </button>
+                        <button type="submit" class="flex-1 btn-primary text-white px-6 py-3">
+                            <i class="fas fa-save mr-2"></i>儲存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                                <h3 class="text-2xl font-bold text-primary">訂單詳情</h3>
+                <button onclick="closeOrderDetail()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <div id="orderDetailContent" class="p-6">
+                <!-- 訂單詳情內容將動態載入 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let orders = [];
+        let currentTab = 'profile';
+
+        // 頁面載入
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 檢查登入狀態（多種方式）
+            let userData = null;
+            
+            // 方式 1: 使用 UserAuth
+            if (window.UserAuth && window.UserAuth.isLoggedIn()) {
+                currentUser = window.UserAuth.getCurrentUser();
+            }
+            
+            // 方式 2: 從 LocalStorage 載入（新格式）
+            if (!currentUser) {
+                const storageKey = (window.CONFIG && window.CONFIG.STORAGE_KEYS && window.CONFIG.STORAGE_KEYS.USER) || 'jiangchong_user';
+                const userDataStr = localStorage.getItem(storageKey);
+                if (userDataStr) {
+                    try {
+                        currentUser = JSON.parse(userDataStr);
+                    } catch (e) {
+                        console.error('解析用戶資料失敗:', e);
+                    }
+                }
+            }
+            
+            // 方式 3: 從 LocalStorage 載入（舊格式）
+            if (!currentUser) {
+                const oldUserData = localStorage.getItem('memberUser');
+                if (oldUserData) {
+                    try {
+                        currentUser = JSON.parse(oldUserData);
+                    } catch (e) {
+                        console.error('解析舊用戶資料失敗:', e);
+                    }
+                }
+            }
+            
+            // 方式 4: 從 currentUser 載入（訂閱流程使用）
+            if (!currentUser) {
+                const currentUserData = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+                if (currentUserData) {
+                    try {
+                        currentUser = JSON.parse(currentUserData);
+                    } catch (e) {
+                        console.error('解析 currentUser 資料失敗:', e);
+                    }
+                }
+            }
+            
+            // 如果還是沒有用戶資料，跳轉到首頁
+            if (!currentUser) {
+                alert('請先登入');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 載入用戶資料
+            await loadUserProfile();
+            await loadOrders();
+            
+            // 檢查 URL hash 決定預設標籤
+            const hash = window.location.hash.replace('#', '');
+            const defaultTab = hash && ['profile', 'orders', 'subscriptions', 'quizzes', 'favorites', 'coupons', 'addresses'].includes(hash) ? hash : 'profile';
+            switchTab(defaultTab);
+        });
+
+        // 切換標籤
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // 更新標籤按鈕樣式
+            document.querySelectorAll('[id^="tab-"]').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('tab-inactive');
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('tab-inactive');
+            document.getElementById(`tab-${tab}`).classList.add('tab-active');
+
+            // 顯示對應內容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`content-${tab}`).classList.remove('hidden');
+
+            // 載入對應資料
+            if (tab === 'orders') {
+                loadOrders();
+            } else if (tab === 'subscriptions') {
+                loadSubscriptions();
+            } else if (tab === 'quizzes') {
+                loadQuizzes();
+            } else if (tab === 'favorites') {
+                loadFavorites();
+            } else if (tab === 'coupons') {
+                loadCoupons();
+            } else if (tab === 'addresses') {
+                loadAddresses();
+            }
+        }
+
+        // 載入用戶資料
+        async function loadUserProfile() {
+            if (!currentUser) return;
+
+            // 更新頁面顯示
+            document.getElementById('memberGreeting').textContent = `歡迎回來，${currentUser.name || '會員'}！`;
+            document.getElementById('profileName').value = currentUser.name || '';
+            document.getElementById('profileEmail').value = currentUser.email || '';
+            document.getElementById('profilePhone').value = currentUser.phone || '';
+            
+            
+            if (currentUser.registeredAt) {
+                const date = new Date(currentUser.registeredAt);
+                document.getElementById('profileRegisteredAt').value = date.toLocaleDateString('zh-TW');
+            }
+
+            // 更新會員等級
+            const memberLevel = currentUser.memberLevel || 'normal';
+            const levelNames = {
+                'normal': '一般會員',
+                'vip': 'VIP 會員',
+                'gold': '黃金會員',
+                'platinum': '白金會員',
+                'admin': '管理員'
+            };
+            const memberLevelEl = document.getElementById('memberLevel');
+            if (memberLevelEl) {
+                memberLevelEl.textContent = levelNames[memberLevel] || '一般會員';
+            }
+            document.getElementById('memberLevelBadge').textContent = levelNames[memberLevel] || '一般會員';
+
+            // 更新統計（檢查元素是否存在）
+            const statTotalOrdersEl = document.getElementById('statTotalOrders');
+            if (statTotalOrdersEl) {
+                statTotalOrdersEl.textContent = currentUser.totalOrders || 0;
+            }
+            const statTotalSpentEl = document.getElementById('statTotalSpent');
+            if (statTotalSpentEl) {
+                statTotalSpentEl.textContent = `NT$ ${(currentUser.totalSpent || 0).toLocaleString()}`;
+            }
+            const statQuizCompletedEl = document.getElementById('statQuizCompleted');
+            if (statQuizCompletedEl) {
+                statQuizCompletedEl.textContent = currentUser.quizCompleted || 0;
+            }
+
+            // 更新會員等級進度（檢查元素是否存在）
+            const levelProgressEl = document.getElementById('levelProgress');
+            const levelRemainingEl = document.getElementById('levelRemaining');
+            if (levelProgressEl && levelRemainingEl) {
+            const totalSpent = currentUser.totalSpent || 0;
+            const nextLevelThreshold = 5000;
+            const progress = Math.min((totalSpent / nextLevelThreshold) * 100, 100);
+                levelProgressEl.style.width = `${progress}%`;
+                levelRemainingEl.textContent = Math.max(0, nextLevelThreshold - totalSpent).toLocaleString();
+            }
+        }
+
+        // 載入訂單
+        async function loadOrders() {
+            const ordersList = document.getElementById('ordersList');
+            ordersList.innerHTML = '<div class="text-center py-12"><i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i><p class="text-gray-600">載入中...</p></div>';
+
+            try {
+                let orders = [];
+                
+                // 嘗試使用後端 API
+                if (window.ApiClient && currentUser?.token) {
+                    try {
+                    const response = await window.ApiClient.getOrders();
+                    if (response.success && response.data) {
+                        orders = Array.isArray(response.data) ? response.data : [];
+                    }
+                    } catch (apiError) {
+                        console.warn('⚠️ API 載入失敗，改用本地資料:', apiError.message);
+                        // API 失敗時繼續使用本地資料
+                    }
+                }
+                
+                // 如果 API 沒有資料，從本地載入
+                if (orders.length === 0) {
+                    // 從 DataStore 載入一般訂單
+                    if (window.DataStore) {
+                        const allOrders = window.DataStore.getAll('orders') || [];
+                        orders = allOrders.filter(order => 
+                            order.userId === currentUser?.id || 
+                            (order.receiver && order.receiver.email === currentUser?.email)
+                        );
+                    }
+                    
+                    // 從 localStorage.orders 載入（如果存在）
+                    try {
+                        const localStorageOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                        const filteredOrders = localStorageOrders.filter(order => 
+                            order.userId === currentUser?.id || 
+                            (order.receiver && order.receiver.email === currentUser?.email)
+                        );
+                        // 合併並去重（根據 orderId）
+                        const orderIds = new Set(orders.map(o => o.id || o.orderId));
+                        filteredOrders.forEach(order => {
+                            const orderId = order.id || order.orderId;
+                            if (!orderIds.has(orderId)) {
+                                orders.push(order);
+                                orderIds.add(orderId);
+                            }
+                        });
+                    } catch (e) {
+                        console.warn('載入 localStorage.orders 失敗:', e);
+                    }
+                    
+                    // 從 localStorage.subscriptions 載入訂閱訂單
+                    try {
+                        const subscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+                        const userSubscriptions = subscriptions.filter(sub => {
+                            const userEmail = sub.user?.email || sub.delivery?.recipientEmail || '';
+                            const userId = sub.user?.userId || sub.user?.id || sub.userId || '';
+                            const currentUserId = currentUser?.id || currentUser?.userId || '';
+                            const currentUserEmail = currentUser?.email || '';
+                            
+                            // 比對 email 或 userId（不區分大小寫）
+                            return userEmail === currentUserEmail || 
+                                   userId === currentUserId ||
+                                   (userEmail && currentUserEmail && userEmail.toLowerCase() === currentUserEmail.toLowerCase());
+                        });
+                        
+                        // 將訂閱訂單轉換為訂單格式
+                        const subscriptionOrders = userSubscriptions.map(sub => {
+                            const subInfo = sub.subscription || {};
+                            const delivery = sub.delivery || {};
+                            const pricing = sub.pricing || {};
+                            
+                            // 建立訂單項目
+                            const items = [];
+                            if (subInfo.proteinName) {
+                                items.push({
+                                    name: subInfo.proteinName,
+                                    quantity: 1,
+                                    price: 0 // 訂閱方案價格已包含在總價中
+                                });
+                            }
+                            if (subInfo.veggieName) {
+                                items.push({
+                                    name: subInfo.veggieName,
+                                    quantity: 1,
+                                    price: 0
+                                });
+                            }
+                            if (subInfo.powderName) {
+                                items.push({
+                                    name: subInfo.powderName,
+                                    quantity: 1,
+                                    price: 0
+                                });
+                            }
+                            
+                            // 轉換為訂單格式
+                            return {
+                                id: sub.orderId || sub.id,
+                                orderId: sub.orderId || sub.id,
+                                userId: sub.user?.userId || sub.userId || currentUser?.id,
+                                type: 'subscription', // 標記為訂閱訂單
+                                orderDate: new Date(sub.createdAt || sub.delivery?.createdAt || Date.now()).getTime(),
+                                createdAt: sub.createdAt || sub.delivery?.createdAt || new Date().toISOString(),
+                                items: items.length > 0 ? items : [{
+                                    name: `${subInfo.planName || '訂閱方案'}`,
+                                    quantity: 1,
+                                    price: pricing.total || subInfo.price || 0
+                                }],
+                                subtotal: pricing.subtotal || subInfo.price || 0,
+                                shippingFee: pricing.shippingFee || delivery.shippingFee || 0,
+                                discount: 0,
+                                total: pricing.total || (pricing.subtotal || subInfo.price || 0) + (pricing.shippingFee || delivery.shippingFee || 0),
+                                receiver: {
+                                    name: delivery.recipientName || sub.user?.name || '',
+                                    phone: delivery.phone || sub.user?.phone || '',
+                                    email: sub.user?.email || delivery.recipientEmail || currentUser?.email || ''
+                                },
+                                shipping: {
+                                    method: delivery.method || 'home_delivery',
+                                    address: delivery.address || '',
+                                    city: delivery.city || '',
+                                    district: delivery.district || '',
+                                    zipCode: delivery.postalCode || '',
+                                    storeName: delivery.storeName || '',
+                                    storeAddress: delivery.storeAddress || ''
+                                },
+                                payment: {
+                                    method: 'bank_transfer', // 訂閱預設為銀行轉帳
+                                    status: sub.status === 'pending_verification' ? 'pending' : 
+                                           (sub.status === 'active' ? 'paid' : sub.status || 'pending')
+                                },
+                                status: sub.status === 'pending_verification' ? 'pending' : 
+                                       (sub.status === 'active' ? 'confirmed' : sub.status || 'pending'),
+                                deliveryStatus: 'pending',
+                                notes: `訂閱方案: ${subInfo.planName || ''}`,
+                                // 保留原始訂閱資料
+                                subscriptionData: sub
+                            };
+                        });
+                        
+                        // 合併訂閱訂單到訂單列表
+                        const orderIds = new Set(orders.map(o => o.id || o.orderId));
+                        subscriptionOrders.forEach(order => {
+                            const orderId = order.id || order.orderId;
+                            if (!orderIds.has(orderId)) {
+                                orders.push(order);
+                                orderIds.add(orderId);
+                            }
+                        });
+                    } catch (e) {
+                        console.warn('載入訂閱訂單失敗:', e);
+                    }
+                }
+
+                if (orders.length === 0) {
+                    ordersList.innerHTML = `
+                        <div class="text-center py-12">
+                            <i class="fas fa-shopping-bag text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 text-lg mb-2">目前沒有訂單記錄</p>
+                            <a href="index.html" class="text-primary hover:underline">前往購物</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // 排序：最新的在前
+                orders.sort((a, b) => {
+                    const dateA = a.orderDate || a.createdAt || new Date(a.createdAt || 0).getTime() || 0;
+                    const dateB = b.orderDate || b.createdAt || new Date(b.createdAt || 0).getTime() || 0;
+                    return dateB - dateA;
+                });
+
+                renderOrders(orders);
+            } catch (error) {
+                console.error('載入訂單失敗:', error);
+                ordersList.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
+                        <p class="text-red-600 mb-2">載入訂單失敗</p>
+                        <p class="text-sm text-gray-500">錯誤訊息: ${error.message}</p>
+                        <button onclick="loadOrders()" class="mt-4 text-primary hover:underline">重試</button>
+                    </div>
+                `;
+            }
+        }
+
+        // 渲染訂單列表
+        function renderOrders(orderList) {
+            const ordersList = document.getElementById('ordersList');
+            
+            if (orderList.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-shopping-bag text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600">沒有符合條件的訂單</p>
+                    </div>
+                `;
+                return;
+            }
+
+            ordersList.innerHTML = orderList.map(order => {
+                const orderDate = new Date(order.orderDate || order.createdAt || Date.now());
+                const status = order.status || 'pending';
+                const paymentStatus = order.paymentStatus || order.payment?.status || 'pending';
+                const deliveryStatus = order.deliveryStatus || order.shipping?.status || 'pending';
+                
+                const statusConfig = {
+                    'pending': { class: 'status-pending', text: '待處理', icon: 'clock' },
+                    'confirmed': { class: 'status-paid', text: '已確認', icon: 'check-circle' },
+                    'shipped': { class: 'status-shipped', text: '已出貨', icon: 'truck' },
+                    'delivered': { class: 'status-delivered', text: '已完成', icon: 'check-double' },
+                    'cancelled': { class: 'status-cancelled', text: '已取消', icon: 'times-circle' }
+                };
+
+                const displayStatus = deliveryStatus === 'delivered' ? 'delivered' : 
+                                    deliveryStatus === 'shipped' ? 'shipped' :
+                                    status === 'confirmed' ? 'confirmed' :
+                                    status === 'cancelled' ? 'cancelled' : 'pending';
+                
+                const statusInfo = statusConfig[displayStatus] || statusConfig.pending;
+                const orderId = order.id || order.orderId || 'N/A';
+                const total = order.total || (order.subtotal || 0) + (order.shippingFee || 0) - (order.discount || 0);
+                const items = order.items || [];
+                const itemCount = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+                return `
+                    <div class="order-card bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-4 mb-3">
+                                    <div>
+                                        <div class="font-bold text-lg text-primary">訂單編號: ${orderId}</div>
+                                        <div class="text-sm text-gray-600">${orderDate.toLocaleString('zh-TW')}</div>
+                                    </div>
+                                    <span class="status-badge ${statusInfo.class}">
+                                        <i class="fas fa-${statusInfo.icon} mr-1"></i>${statusInfo.text}
+                                    </span>
+                                </div>
+                                <div class="text-gray-600 text-sm">
+                                    ${order.type === 'subscription' ? '<span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded mr-2">訂閱訂單</span>' : ''}
+                                    <i class="fas fa-box mr-2"></i>${itemCount} 項商品
+                                    <span class="mx-2">|</span>
+                                    <i class="fas fa-dollar-sign mr-2"></i>NT$ ${total.toLocaleString()}
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="viewOrderDetail('${orderId}')" class="btn-primary text-white px-6 py-2">
+                                    <i class="fas fa-eye mr-2"></i>查看詳情
+                                </button>
+                                ${paymentStatus === 'pending' && status !== 'cancelled' ? `
+                                    <button onclick="payOrder('${orderId}')" class="btn-secondary text-white px-6 py-2">
+                                        <i class="fas fa-credit-card mr-2"></i>立即付款
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 篩選訂單
+        function filterOrders() {
+            const filter = document.getElementById('orderFilter').value;
+            let filteredOrders = orders;
+
+            if (filter !== 'all') {
+                filteredOrders = orders.filter(order => {
+                    const status = order.status || 'pending';
+                    const deliveryStatus = order.deliveryStatus || 'pending';
+                    
+                    if (filter === 'pending') return status === 'pending' && order.paymentStatus !== 'paid';
+                    if (filter === 'confirmed') return status === 'confirmed';
+                    if (filter === 'shipped') return deliveryStatus === 'shipped';
+                    if (filter === 'delivered') return deliveryStatus === 'delivered';
+                    if (filter === 'cancelled') return status === 'cancelled';
+                    return true;
+                });
+            }
+
+            renderOrders(filteredOrders);
+        }
+
+        // 查看訂單詳情
+        async function viewOrderDetail(orderId) {
+            const order = orders.find(o => (o.id || o.orderId) === orderId);
+            if (!order) {
+                alert('找不到訂單資料');
+                return;
+            }
+
+            const modal = document.getElementById('orderDetailModal');
+            const content = document.getElementById('orderDetailContent');
+            
+            const orderDate = new Date(order.orderDate || order.createdAt || Date.now());
+            const items = order.items || [];
+            const subtotal = order.subtotal || 0;
+            const shippingFee = order.shippingFee || 0;
+            const discount = order.discount || 0;
+            const total = order.total || (subtotal + shippingFee - discount);
+
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <!-- 訂單資訊 -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="font-bold text-lg mb-4">訂單資訊</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-600">訂單編號:</span>
+                                <span class="font-semibold ml-2">${orderId}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">訂單日期:</span>
+                                <span class="font-semibold ml-2">${orderDate.toLocaleString('zh-TW')}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">付款狀態:</span>
+                                <span class="font-semibold ml-2">${order.paymentStatus === 'paid' ? '已付款' : '待付款'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">配送狀態:</span>
+                                <span class="font-semibold ml-2">${getDeliveryStatusText(order.deliveryStatus)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 商品明細 -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-4">商品明細</h4>
+                        <div class="space-y-3">
+                            ${items.map(item => `
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex-1">
+                                        <div class="font-semibold">${item.name || '商品'}</div>
+                                        <div class="text-sm text-gray-600">數量: ${item.quantity || 1}</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold">NT$ ${(item.price || 0).toLocaleString()}</div>
+                                        <div class="text-sm text-gray-600">小計: NT$ ${((item.price || 0) * (item.quantity || 1)).toLocaleString()}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 收件資訊 -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-4">收件資訊</h4>
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <div class="space-y-2 text-sm">
+                                <div><span class="text-gray-600">收件人:</span> <span class="font-semibold">${order.receiverName || order.receiver?.name || '-'}</span></div>
+                                <div><span class="text-gray-600">電話:</span> <span class="font-semibold">${order.receiverPhone || order.receiver?.phone || '-'}</span></div>
+                                <div><span class="text-gray-600">地址:</span> <span class="font-semibold">${getShippingAddress(order)}</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 金額明細 -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-4">金額明細</h4>
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">商品小計:</span>
+                                    <span class="font-semibold">NT$ ${subtotal.toLocaleString()}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">運費:</span>
+                                    <span class="font-semibold">NT$ ${shippingFee.toLocaleString()}</span>
+                                </div>
+                                ${discount > 0 ? `
+                                    <div class="flex justify-between text-red-600">
+                                        <span>折扣:</span>
+                                        <span class="font-semibold">-NT$ ${discount.toLocaleString()}</span>
+                                    </div>
+                                ` : ''}
+                                <div class="border-t border-gray-300 pt-3 mt-3">
+                                    <div class="flex justify-between text-xl font-bold">
+                                        <span>總計:</span>
+                                        <span class="text-primary">NT$ ${total.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        // 關閉訂單詳情
+        function closeOrderDetail() {
+            document.getElementById('orderDetailModal').classList.add('hidden');
+        }
+
+        // 取得配送狀態文字
+        function getDeliveryStatusText(status) {
+            const statusMap = {
+                'pending': '待出貨',
+                'shipped': '已出貨',
+                'delivered': '已送達',
+                'cancelled': '已取消'
+            };
+            return statusMap[status] || '處理中';
+        }
+
+        // 取得配送地址
+        function getShippingAddress(order) {
+            if (order.shippingAddress) {
+                return `${order.shippingCity || ''}${order.shippingDistrict || ''}${order.shippingAddress}`;
+            }
+            if (order.shipping?.address) {
+                return `${order.shipping.city || ''}${order.shipping.district || ''}${order.shipping.address}`;
+            }
+            if (order.receiver?.address) {
+                return order.receiver.address;
+            }
+            return '-';
+        }
+
+        // 付款訂單
+        function payOrder(orderId) {
+            // 跳轉到結帳頁面或付款頁面
+            window.location.href = `checkout.html?orderId=${orderId}`;
+        }
+
+        // 載入訂閱
+        async function loadSubscriptions() {
+            const subscriptionsList = document.getElementById('subscriptionsList');
+            subscriptionsList.innerHTML = '<div class="text-center py-12"><i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i><p class="text-gray-600">載入中...</p></div>';
+
+            try {
+                let subscriptions = [];
+                
+                // 從 localStorage.subscriptions 載入訂閱資料
+                try {
+                    const storedSubscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+                    // 過濾當前用戶的訂閱（根據 email 或 userId）
+                    subscriptions = storedSubscriptions.filter(sub => {
+                        const userEmail = sub.user?.email || sub.delivery?.recipientEmail || '';
+                        const userId = sub.user?.userId || sub.userId || '';
+                        return userEmail === currentUser?.email || userId === currentUser?.id;
+                    });
+                } catch (e) {
+                    console.warn('載入訂閱資料失敗:', e);
+                }
+
+                if (subscriptions.length === 0) {
+            subscriptionsList.innerHTML = `
+                <div class="text-center py-12">
+                    <i class="fas fa-calendar-times text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 text-lg mb-2">目前沒有訂閱方案</p>
+                            <a href="subscription-packages.html" class="text-primary hover:underline">查看訂閱方案</a>
+                </div>
+            `;
+                    return;
+                }
+
+                // 排序：最新的在前
+                subscriptions.sort((a, b) => {
+                    const dateA = new Date(a.createdAt || a.delivery?.createdAt || 0).getTime();
+                    const dateB = new Date(b.createdAt || b.delivery?.createdAt || 0).getTime();
+                    return dateB - dateA;
+                });
+
+                // 渲染訂閱列表
+                renderSubscriptions(subscriptions);
+            } catch (error) {
+                console.error('載入訂閱失敗:', error);
+                subscriptionsList.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
+                        <p class="text-red-600 mb-2">載入訂閱失敗</p>
+                        <button onclick="loadSubscriptions()" class="mt-4 text-primary hover:underline">重試</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // 渲染訂閱列表
+        function renderSubscriptions(subscriptions) {
+            const subscriptionsList = document.getElementById('subscriptionsList');
+            
+            if (subscriptions.length === 0) {
+                subscriptionsList.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-calendar-times text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 text-lg mb-2">目前沒有訂閱方案</p>
+                        <a href="subscription-packages.html" class="text-primary hover:underline">查看訂閱方案</a>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="space-y-4">';
+            
+            subscriptions.forEach(sub => {
+                const subInfo = sub.subscription || {};
+                const delivery = sub.delivery || {};
+                const planName = subInfo.planName || '-';
+                const orderId = sub.orderId || sub.id || '-';
+                const status = sub.status || delivery.status || 'pending';
+                const statusText = {
+                    'pending': '待付款',
+                    'pending_verification': '付款確認中',
+                    'active': '進行中',
+                    'paused': '已暫停',
+                    'cancelled': '已取消'
+                }[status] || status;
+                
+                const statusColor = {
+                    'pending': 'bg-gray-100 text-gray-800',
+                    'pending_verification': 'bg-yellow-100 text-yellow-800',
+                    'active': 'bg-green-100 text-green-800',
+                    'paused': 'bg-orange-100 text-orange-800',
+                    'cancelled': 'bg-red-100 text-red-800'
+                }[status] || 'bg-gray-100 text-gray-800';
+                
+                const createdAt = sub.createdAt || delivery.createdAt || '';
+                const dateStr = createdAt ? new Date(createdAt).toLocaleDateString('zh-TW') : '-';
+                const total = sub.pricing?.total || subInfo.price || 0;
+
+                html += `
+                    <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">${planName}</h3>
+                                <p class="text-sm text-gray-500">訂單編號: <span class="font-mono">${orderId}</span></p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${statusColor}">${statusText}</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-gray-500">蛋白質:</span>
+                                <span class="ml-2 font-medium">${subInfo.proteinName || '-'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">蔬果凍乾:</span>
+                                <span class="ml-2 font-medium">${subInfo.veggieName || '-'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">凍乾粉:</span>
+                                <span class="ml-2 font-medium">${subInfo.powderName || '-'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">總金額:</span>
+                                <span class="ml-2 font-bold text-primary">NT$ ${total}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-xs text-gray-500 border-t pt-3">
+                            建立時間: ${dateStr}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            subscriptionsList.innerHTML = html;
+        }
+
+        // 載入測驗記錄
+        async function loadQuizzes() {
+            const quizzesList = document.getElementById('quizzesList');
+            
+            try {
+                // 從 LocalStorage 載入測驗結果
+                const nutritionAnswers = JSON.parse(localStorage.getItem('nutritionQuizAnswers') || 'null');
+                const toyAnswers = JSON.parse(localStorage.getItem('toyQuizAnswers') || 'null');
+                
+                // 從 DataStore 載入（如果有）
+                let quizResults = [];
+                if (window.DataStore) {
+                    quizResults = window.DataStore.getAll('quizResults') || [];
+                    // 過濾當前用戶的測驗結果
+                    if (currentUser) {
+                        quizResults = quizResults.filter(r => r.userId === currentUser.id || r.userId === 'guest');
+                    }
+                }
+                
+                if (quizResults.length === 0 && !nutritionAnswers && !toyAnswers) {
+                    quizzesList.innerHTML = `
+                        <div class="text-center py-12">
+                            <i class="fas fa-clipboard text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 mb-4">目前沒有測驗記錄</p>
+                            <div class="space-x-4 mt-4">
+                                <a href="quiz-nutrition.html" class="inline-block btn-primary text-white px-6 py-3">
+                                    <i class="fas fa-utensils mr-2"></i>營養測驗
+                                </a>
+                                <a href="quiz-toy.html" class="inline-block btn-secondary text-white px-6 py-3">
+                                    <i class="fas fa-puzzle-piece mr-2"></i>玩具測驗
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // 顯示測驗記錄
+                let html = '<div class="space-y-4">';
+                
+                // 顯示營養測驗結果
+                if (nutritionAnswers) {
+                    const petName = nutritionAnswers[1] || '未命名';
+                    const petType = nutritionAnswers[2] === 'dog' ? '狗狗' : '貓咪';
+                    const completedDate = new Date().toLocaleDateString('zh-TW');
+                    
+                    html += `
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-dark mb-1">
+                                        <i class="fas fa-utensils text-primary mr-2"></i>營養健康測驗
+                                    </h3>
+                                    <p class="text-sm text-gray-600">${petName}（${petType}）</p>
+                                </div>
+                                <span class="text-xs text-gray-500">${completedDate}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="quiz-result.html?type=nutrition" class="flex-1 btn-primary text-white px-4 py-2 text-center text-sm">
+                                    查看結果
+                                </a>
+                                <a href="quiz-nutrition.html" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm">
+                                    重新測驗
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // 顯示玩具測驗結果
+                if (toyAnswers) {
+                    const petName = toyAnswers[2] || '未命名';
+                    const petType = toyAnswers[1] === 'dog' ? '狗狗' : '貓咪';
+                    const completedDate = new Date().toLocaleDateString('zh-TW');
+                    
+                    html += `
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-dark mb-1">
+                                        <i class="fas fa-puzzle-piece text-secondary mr-2"></i>老犬腦力測驗
+                                    </h3>
+                                    <p class="text-sm text-gray-600">${petName}（${petType}）</p>
+                                </div>
+                                <span class="text-xs text-gray-500">${completedDate}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="quiz-result.html?type=toy" class="flex-1 btn-secondary text-white px-4 py-2 text-center text-sm">
+                                    查看結果
+                                </a>
+                                <a href="quiz-toy.html" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm">
+                                    重新測驗
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // 顯示 DataStore 中的測驗結果
+                quizResults.forEach(result => {
+                    const quizTypeLabels = {
+                        'nutrition': '營養健康測驗',
+                        'toy': '老犬腦力測驗'
+                    };
+                    const completedDate = new Date(result.completedAt).toLocaleDateString('zh-TW');
+                    const petName = result.petInfo?.name || '未命名';
+                    
+                    html += `
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-dark mb-1">
+                                        <i class="fas fa-${result.quizType === 'nutrition' ? 'utensils' : 'puzzle-piece'} text-${result.quizType === 'nutrition' ? 'primary' : 'secondary'} mr-2"></i>
+                                        ${quizTypeLabels[result.quizType] || '測驗'}
+                                    </h3>
+                                    <p class="text-sm text-gray-600">${petName}</p>
+                                </div>
+                                <span class="text-xs text-gray-500">${completedDate}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="quiz-result.html?type=${result.quizType}" class="flex-1 bg-${result.quizType === 'nutrition' ? 'primary' : 'secondary'} text-white px-4 py-2 rounded-lg hover:bg-${result.quizType === 'nutrition' ? 'red-600' : 'teal-500'} transition text-center text-sm">
+                                    查看結果
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                quizzesList.innerHTML = html;
+            } catch (error) {
+                console.error('載入測驗記錄失敗:', error);
+                quizzesList.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-4xl text-yellow-400 mb-4"></i>
+                        <p class="text-gray-600 mb-4">載入測驗記錄時發生錯誤</p>
+                        <a href="quiz-nutrition.html" class="text-primary hover:underline mr-4">營養測驗</a>
+                        <a href="quiz-toy.html" class="text-primary hover:underline">玩具測驗</a>
+                    </div>
+                `;
+            }
+        }
+
+        // 儲存個人資料
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('profileName').value;
+            const phone = document.getElementById('profilePhone').value;
+
+            try {
+                // 更新用戶資料（這裡可以整合後端 API）
+                if (window.ApiClient && currentUser?.token) {
+                    // 使用後端 API 更新
+                    // await window.ApiClient.updateProfile({ name, phone });
+                } else if (window.DataStore) {
+                    // 使用本地更新
+                    window.DataStore.update('users', currentUser.id, { name, phone });
+                }
+
+                // 更新本地儲存
+                currentUser.name = name;
+                currentUser.phone = phone;
+                window.UserAuth.saveUser(currentUser);
+
+                alert('個人資料已更新！');
+                await loadUserProfile();
+            } catch (error) {
+                console.error('更新失敗:', error);
+                alert('更新失敗，請稍後再試');
+            }
+        });
+
+        // 變更密碼
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('新密碼與確認密碼不一致');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('密碼長度至少 6 位');
+                return;
+            }
+
+            try {
+                // 這裡可以整合後端 API 變更密碼
+                alert('密碼變更功能開發中...');
+                document.getElementById('passwordForm').reset();
+            } catch (error) {
+                console.error('變更密碼失敗:', error);
+                alert('變更密碼失敗，請稍後再試');
+            }
+        });
+
+        // 登出
+        function handleLogout() {
+            if (confirm('確定要登出嗎？')) {
+                if (window.UserAuth) {
+                    window.UserAuth.logout();
+                } else {
+                    localStorage.removeItem(CONFIG.STORAGE_KEYS.USER || 'jiangchong_user');
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+        // 點擊 Modal 外部關閉
+        document.getElementById('orderDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeOrderDetail();
+            }
+        });
+
+        // ==================== 收藏功能 ====================
+        async function loadFavorites() {
+            const favoritesList = document.getElementById('favoritesList');
+            favoritesList.innerHTML = '<div class="text-center py-12 col-span-full"><i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i><p class="text-gray-600">載入中...</p></div>';
+
+            try {
+                // 從 LocalStorage 載入收藏
+                const favorites = JSON.parse(localStorage.getItem('jiangchong_favorites') || '[]');
+                
+                if (favorites.length === 0) {
+                    favoritesList.innerHTML = `
+                        <div class="text-center py-12 col-span-full">
+                            <i class="fas fa-heart text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 mb-4">目前沒有收藏商品</p>
+                            <a href="index.html#products" class="text-primary hover:underline">前往選購</a>
+                        </div>
+                    `;
+                    document.getElementById('favoriteCount').textContent = '0';
+                    return;
+                }
+
+                document.getElementById('favoriteCount').textContent = favorites.length;
+
+                // 獲取商品詳情
+                let products = [];
+                if (window.DataStore) {
+                    products = window.DataStore.getAll('products');
+                }
+
+                favoritesList.innerHTML = favorites.map(favId => {
+                    const product = products.find(p => p.id === favId) || { id: favId, name: '商品', price: 0, imageUrl: '' };
+                    return `
+                        <div class="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition">
+                            <div class="flex gap-4">
+                                <img src="${product.imageUrl || 'https://via.placeholder.com/100'}" alt="${product.name}" class="w-24 h-24 object-cover rounded-lg">
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-dark mb-1">${product.name}</h3>
+                                    <p class="text-primary font-bold mb-3">NT$ ${(product.price || 0).toLocaleString()}</p>
+                                    <div class="flex gap-2">
+                                        <a href="index.html#products" class="flex-1 btn-primary text-white px-4 py-2 text-center text-sm">
+                                            查看商品
+                                        </a>
+                                        <button onclick="removeFavorite('${favId}')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('載入收藏失敗:', error);
+            }
+        }
+
+        function removeFavorite(productId) {
+            if (confirm('確定要移除收藏嗎？')) {
+                const favorites = JSON.parse(localStorage.getItem('jiangchong_favorites') || '[]');
+                const newFavorites = favorites.filter(id => id !== productId);
+                localStorage.setItem('jiangchong_favorites', JSON.stringify(newFavorites));
+                loadFavorites();
+            }
+        }
+
+        // ==================== 優惠券功能 ====================
+        async function loadCoupons() {
+            const couponsList = document.getElementById('couponsList');
+            couponsList.innerHTML = '<div class="text-center py-12 col-span-full"><i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i><p class="text-gray-600">載入中...</p></div>';
+
+            try {
+                // 從 LocalStorage 載入優惠券
+                const userCoupons = JSON.parse(localStorage.getItem('jiangchong_user_coupons') || '[]');
+                
+                if (userCoupons.length === 0) {
+                    couponsList.innerHTML = `
+                        <div class="text-center py-12 col-span-full">
+                            <i class="fas fa-ticket-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 mb-4">目前沒有優惠券</p>
+                            <p class="text-sm text-gray-500">完成訂單或參與活動即可獲得優惠券</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                couponsList.innerHTML = userCoupons.map(coupon => {
+                    const isExpired = coupon.expireDate && new Date(coupon.expireDate) < new Date();
+                    const isUsed = coupon.used === true;
+                    const statusClass = isUsed ? 'opacity-50' : isExpired ? 'opacity-50' : '';
+                    const statusText = isUsed ? '已使用' : isExpired ? '已過期' : '可使用';
+                    const statusColor = isUsed ? 'bg-gray-500' : isExpired ? 'bg-gray-500' : 'bg-green-500';
+
+                    return `
+                        <div class="border-2 border-dashed ${isExpired || isUsed ? 'border-gray-300' : 'border-primary'} rounded-xl p-6 ${statusClass}">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <div class="text-2xl font-bold text-primary mb-1">${coupon.name || '優惠券'}</div>
+                                    <div class="text-sm text-gray-600">${coupon.description || ''}</div>
+                                </div>
+                                <span class="status-badge ${statusColor} text-white">${statusText}</span>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <div class="text-center">
+                                    <div class="text-xs text-gray-600 mb-1">優惠碼</div>
+                                    <div class="text-2xl font-mono font-bold text-dark">${coupon.code || 'N/A'}</div>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-2">
+                                <i class="fas fa-tag mr-2"></i>
+                                ${coupon.type === 'percentage' ? `折扣 ${coupon.value}%` : `折抵 NT$ ${coupon.value}`}
+                            </div>
+                            ${coupon.expireDate ? `
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-calendar mr-2"></i>
+                                    有效期至 ${new Date(coupon.expireDate).toLocaleDateString('zh-TW')}
+                                </div>
+                            ` : ''}
+                            ${!isUsed && !isExpired ? `
+                                <button onclick="copyCouponCode('${coupon.code}')" class="w-full mt-4 btn-primary text-white px-4 py-2">
+                                    <i class="fas fa-copy mr-2"></i>複製優惠碼
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('載入優惠券失敗:', error);
+            }
+        }
+
+        function filterCoupons(filter) {
+            // 更新按鈕狀態
+            document.querySelectorAll('#content-coupons button').forEach(btn => {
+                if (btn.textContent.includes('全部') || btn.textContent.includes('可使用') || btn.textContent.includes('已使用') || btn.textContent.includes('已過期')) {
+                    if (btn.textContent.includes(filter === 'all' ? '全部' : filter === 'available' ? '可使用' : filter === 'used' ? '已使用' : '已過期')) {
+                        btn.classList.remove('bg-gray-200', 'text-gray-700');
+                        btn.classList.add('bg-primary', 'text-white');
+                    } else {
+                        btn.classList.remove('bg-primary', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    }
+                }
+            });
+            loadCoupons(); // 重新載入並套用篩選
+        }
+
+        function copyCouponCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert(`優惠碼 ${code} 已複製到剪貼簿！`);
+            });
+        }
+
+        // ==================== 地址管理功能 ====================
+        async function loadAddresses() {
+            const addressesList = document.getElementById('addressesList');
+            addressesList.innerHTML = '<div class="text-center py-12 col-span-full"><i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i><p class="text-gray-600">載入中...</p></div>';
+
+            try {
+                // 從 LocalStorage 載入地址
+                const addresses = JSON.parse(localStorage.getItem('jiangchong_addresses') || '[]');
+                
+                if (addresses.length === 0) {
+                    addressesList.innerHTML = `
+                        <div class="text-center py-12 col-span-full">
+                            <i class="fas fa-map-marker-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 mb-4">目前沒有儲存的地址</p>
+                            <button onclick="openAddAddressModal()" class="text-primary hover:underline">新增第一個地址</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                addressesList.innerHTML = addresses.map((addr, index) => `
+                    <div class="bg-white border-2 ${addr.isDefault ? 'border-primary' : 'border-gray-200'} rounded-xl p-6 hover:shadow-lg transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                ${addr.isDefault ? '<span class="bg-primary text-white text-xs px-2 py-1 rounded-full mb-2 inline-block">預設地址</span>' : ''}
+                                <div class="font-bold text-lg text-dark mb-2">${addr.name || '收件人'}</div>
+                                <div class="text-gray-600 text-sm space-y-1">
+                                    <div><i class="fas fa-phone mr-2"></i>${addr.phone || ''}</div>
+                                    <div><i class="fas fa-map-marker-alt mr-2"></i>${addr.fullAddress || ''}</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editAddress(${index})" class="text-primary hover:text-red-600">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteAddress(${index})" class="text-red-600 hover:text-red-700">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        ${!addr.isDefault ? `
+                            <button onclick="setDefaultAddress(${index})" class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition text-sm">
+                                設為預設地址
+                            </button>
+                        ` : ''}
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('載入地址失敗:', error);
+            }
+        }
+
+        function openAddAddressModal() {
+            // 顯示地址新增 Modal
+            const modal = document.getElementById('addressModal');
+            if (modal) {
+                // 重置表單
+                document.getElementById('addressForm').reset();
+                document.getElementById('addressModalTitle').textContent = '新增地址';
+                document.getElementById('addressModal').dataset.mode = 'add';
+                document.getElementById('addressModal').dataset.index = '';
+                modal.classList.remove('hidden');
+                return;
+            }
+            
+            // 如果 Modal 不存在，使用 prompt（備用方案）
+            const name = prompt('收件人姓名:');
+            if (!name) return;
+            
+            const phone = prompt('電話:');
+            if (!phone) return;
+            
+            const city = prompt('縣市:');
+            if (!city) return;
+            
+            const district = prompt('區域:');
+            if (!district) return;
+            
+            const address = prompt('詳細地址:');
+            if (!address) return;
+
+            const addresses = JSON.parse(localStorage.getItem('jiangchong_addresses') || '[]');
+            const isDefault = addresses.length === 0;
+            
+            addresses.push({
+                name,
+                phone,
+                city,
+                district,
+                address,
+                fullAddress: `${city}${district}${address}`,
+                isDefault
+            });
+
+            localStorage.setItem('jiangchong_addresses', JSON.stringify(addresses));
+            loadAddresses();
+            alert('地址已新增！');
+        }
+
+        function editAddress(index) {
+            const addresses = JSON.parse(localStorage.getItem('jiangchong_addresses') || '[]');
+            const addr = addresses[index];
+            if (!addr) return;
+
+            // 顯示地址編輯 Modal
+            const modal = document.getElementById('addressModal');
+            if (modal) {
+                // 填入現有資料
+                document.getElementById('addressName').value = addr.name || '';
+                document.getElementById('addressPhone').value = addr.phone || '';
+                document.getElementById('addressCity').value = addr.city || '';
+                document.getElementById('addressDistrict').value = addr.district || '';
+                document.getElementById('addressDetail').value = addr.address || '';
+                document.getElementById('addressModalTitle').textContent = '編輯地址';
+                document.getElementById('addressModal').dataset.mode = 'edit';
+                document.getElementById('addressModal').dataset.index = index;
+                modal.classList.remove('hidden');
+                return;
+            }
+            
+            // 如果 Modal 不存在，使用 prompt（備用方案）
+            const name = prompt('收件人姓名:', addr.name);
+            if (!name) return;
+            
+            const phone = prompt('電話:', addr.phone);
+            if (!phone) return;
+            
+            const city = prompt('縣市:', addr.city);
+            if (!city) return;
+            
+            const district = prompt('區域:', addr.district);
+            if (!district) return;
+            
+            const address = prompt('詳細地址:', addr.address);
+            if (!address) return;
+
+            addresses[index] = {
+                ...addr,
+                name,
+                phone,
+                city,
+                district,
+                address,
+                fullAddress: `${city}${district}${address}`
+            };
+
+            localStorage.setItem('jiangchong_addresses', JSON.stringify(addresses));
+            loadAddresses();
+            alert('地址已更新！');
+        }
+
+        function deleteAddress(index) {
+            if (!confirm('確定要刪除此地址嗎？')) return;
+            
+            const addresses = JSON.parse(localStorage.getItem('jiangchong_addresses') || '[]');
+            addresses.splice(index, 1);
+            localStorage.setItem('jiangchong_addresses', JSON.stringify(addresses));
+            loadAddresses();
+        }
+
+        function setDefaultAddress(index) {
+            const addresses = JSON.parse(localStorage.getItem('jiangchong_addresses') || '[]');
+            addresses.forEach((addr, i) => {
+                addr.isDefault = i === index;
+            });
+            localStorage.setItem('jiangchong_addresses', JSON.stringify(addresses));
+            loadAddresses();
+        }
+
+        // 地址 Modal 功能
+        function closeAddressModal() {
+            const modal = document.getElementById('addressModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function saveAddress(event) {
+            event.preventDefault();
+            
+            const modal = document.getElementById('addressModal');
+            const mode = modal.dataset.mode; // 'add' or 'edit'
+            const index = modal.dataset.index;
+            
+            const name = document.getElementById('addressName').value.trim();
+            const phone = document.getElementById('addressPhone').value.trim();
+            const city = document.getElementById('addressCity').value.trim();
+            const district = document.getElementById('addressDistrict').value.trim();
+            const address = document.getElementById('addressDetail').value.trim();
+            
+            if (!name || !phone || !city || !district || !address) {
+                alert('請填寫所有必填欄位');
+                return;
+            }
+            
+            const addresses = JSON.parse(localStorage.getItem('jiangchong_addresses') || '[]');
+            
+            if (mode === 'edit' && index !== '') {
+                // 編輯模式
+                const addr = addresses[parseInt(index)];
+                if (addr) {
+                    addresses[parseInt(index)] = {
+                        ...addr,
+                        name,
+                        phone,
+                        city,
+                        district,
+                        address,
+                        fullAddress: `${city}${district}${address}`
+                    };
+                }
+            } else {
+                // 新增模式
+                const isDefault = addresses.length === 0;
+                addresses.push({
+                    name,
+                    phone,
+                    city,
+                    district,
+                    address,
+                    fullAddress: `${city}${district}${address}`,
+                    isDefault
+                });
+            }
+            
+            localStorage.setItem('jiangchong_addresses', JSON.stringify(addresses));
+            loadAddresses();
+            closeAddressModal();
+            alert(mode === 'edit' ? '地址已更新！' : '地址已新增！');
+        }
+
+        // 點擊 Modal 外部關閉
+        document.addEventListener('DOMContentLoaded', function() {
+            const addressModal = document.getElementById('addressModal');
+            if (addressModal) {
+                addressModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeAddressModal();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

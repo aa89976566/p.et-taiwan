@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首頁內容管理 - 匠寵後台（增強版）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="js/data-store.js"></script>
+    <script src="js/homepage-config.js"></script>
+    
+    <style>
+        * { font-family: 'Noto Sans TC', sans-serif; }
+        .dragging { opacity: 0.5; }
+        .drag-over { border-top: 3px solid #4ECDC4; }
+        
+        /* Notification Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 頂部導航 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-paw text-pink-500 mr-2"></i>
+                        首頁內容管理（增強版）
+                    </h1>
+                </div>
+                <div class="flex space-x-4">
+                    <button onclick="previewChanges()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                        <i class="fas fa-eye mr-2"></i>預覽變更
+                    </button>
+                    <button onclick="publishChanges()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                        <i class="fas fa-rocket mr-2"></i>發布更新
+                    </button>
+                    <a href="index.html" target="_blank" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                        <i class="fas fa-external-link-alt mr-2"></i>查看前台
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 快速操作區 -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">區塊管理</h2>
+                    <p class="text-sm text-gray-600 mt-1">拖曳區塊來調整順序，點擊編輯來修改內容</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="addNewSection()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                        <i class="fas fa-plus mr-2"></i>新增區塊
+                    </button>
+                    <button onclick="resetToDefault()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                        <i class="fas fa-undo mr-2"></i>恢復預設
+                    </button>
+                </div>
+            </div>
+            
+            <div class="text-sm text-gray-500">
+                <i class="fas fa-info-circle mr-1"></i>
+                最後更新時間：<span id="last-update-time">2024-12-21 14:30</span>
+            </div>
+        </div>
+
+        <!-- 區塊列表 -->
+        <div id="sections-container" class="space-y-4">
+            <!-- 區塊將動態插入這裡 -->
+        </div>
+    </div>
+
+    <!-- 編輯 Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-gray-800" id="modal-title">編輯區塊</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <div id="modal-content" class="p-6">
+                <!-- 編輯表單將動態插入這裡 -->
+            </div>
+            
+            <div class="sticky bottom-0 bg-gray-50 px-6 py-4 flex justify-end space-x-3 border-t">
+                <button onclick="closeEditModal()" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                    取消
+                </button>
+                <button onclick="saveChanges()" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                    <i class="fas fa-save mr-2"></i>儲存變更
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditingBlock = null;
+        let draggedElement = null;
+        
+        // ==================== 換罐計畫編輯器專用變數 ====================
+        let benefitsData = [
+            '每次兌換可獲得 NT$ 50 折扣券',
+            '累計10次升級為VIP會員',
+            '免費參加工作坊和活動'
+        ];
+
+        // 區塊配置定義（與前台完全對應）
+        const SECTION_CONFIGS = {
+            hero: {
+                name: 'Hero 主視覺',
+                icon: 'fa-image',
+                color: 'blue',
+                required: true,
+                fields: {
+                    title: { type: 'text', label: '主標題', default: '為毛孩打造的健康生活' },
+                    subtitle: { type: 'textarea', label: '副標題', default: '天然新鮮的營養罐頭，讓愛犬活力滿滿' },
+                    ctaText: { type: 'text', label: 'CTA 按鈕文字', default: '探索產品' },
+                    ctaLink: { type: 'text', label: 'CTA 連結', default: '#products' },
+                    backgroundImage: { type: 'image', label: '背景圖片', default: 'images/hero-bg.jpg' },
+                    displayMode: { 
+                        type: 'select', 
+                        label: '顯示模式', 
+                        options: ['全螢幕', '標準高度', '精簡版'],
+                        default: '全螢幕'
+                    }
+                }
+            },
+            products: {
+                name: '產品系列',
+                icon: 'fa-box',
+                color: 'green',
+                required: true,
+                fields: {
+                    title: { type: 'text', label: '區塊標題', default: '我們的產品系列' },
+                    subtitle: { type: 'textarea', label: '副標題', default: '精心挑選的產品，滿足毛孩各種需求' },
+                    displayMode: { 
+                        type: 'select', 
+                        label: '顯示方式', 
+                        options: ['輪播展示', '網格展示', '列表展示'],
+                        default: '輪播展示'
+                    },
+                    showSnacks: { type: 'checkbox', label: '顯示零食系列', default: true },
+                    showToys: { type: 'checkbox', label: '顯示玩具系列', default: true },
+                    showSubscription: { type: 'checkbox', label: '顯示訂閱系列', default: true },
+                    itemsPerRow: { type: 'number', label: '每行顯示數量', default: 3, min: 2, max: 4 }
+                }
+            },
+            quiz: {
+                name: '智能測驗',
+                icon: 'fa-brain',
+                color: 'purple',
+                required: false,
+                fields: {
+                    title: { type: 'text', label: '區塊標題', default: '找到最適合的產品' },
+                    subtitle: { type: 'textarea', label: '副標題', default: '透過專業測驗，為您的毛孩推薦最適合的產品' },
+                    showNutritionQuiz: { type: 'checkbox', label: '顯示營養測驗', default: true },
+                    showToyQuiz: { type: 'checkbox', label: '顯示玩具測驗', default: true },
+                    ctaText: { type: 'text', label: '按鈕文字', default: '立即測驗' },
+                    layout: {
+                        type: 'select',
+                        label: '佈局方式',
+                        options: ['並排顯示', '上下排列', '卡片樣式'],
+                        default: '並排顯示'
+                    }
+                }
+            },
+            subscription: {
+                name: '訂閱服務',
+                icon: 'fa-sync',
+                color: 'orange',
+                required: false,
+                fields: {
+                    title: { type: 'text', label: '區塊標題', default: '訂閱服務' },
+                    subtitle: { type: 'textarea', label: '副標題', default: '定期配送新鮮營養罐，讓毛孩健康成長' },
+                    showBasic: { type: 'checkbox', label: '顯示基礎方案', default: true },
+                    showAdvanced: { type: 'checkbox', label: '顯示進階方案', default: true },
+                    showPremium: { type: 'checkbox', label: '顯示尊享方案', default: true },
+                    recommendedPlan: {
+                        type: 'select',
+                        label: '推薦方案',
+                        options: ['basic', 'advanced', 'premium'],
+                        default: 'advanced'
+                    },
+                    displayStyle: {
+                        type: 'select',
+                        label: '顯示樣式',
+                        options: ['卡片式', '列表式', '比較表'],
+                        default: '卡片式'
+                    }
+                }
+            },
+            crowdfunding: {
+                name: '集資項目',
+                icon: 'fa-rocket',
+                color: 'red',
+                required: false,
+                fields: {
+                    projectName: { type: 'text', label: '項目名稱', default: '益智玩具防老系列' },
+                    description: { type: 'textarea', label: '項目描述', default: '創新益智玩具，延緩毛孩老化，讓牠們活力十足' },
+                    zeczecLink: { type: 'text', label: '嘖嘖嘖連結', default: 'https://www.zeczec.com/projects/jiangchong' },
+                    coverImage: { type: 'image', label: '封面圖片', default: 'images/crowdfunding-cover.jpg' },
+                    goalAmount: { type: 'number', label: '目標金額', default: 500000 },
+                    currentAmount: { type: 'number', label: '當前金額', default: 285000 },
+                    supporters: { type: 'number', label: '支持人數', default: 156 },
+                    daysLeft: { type: 'number', label: '剩餘天數', default: 45 },
+                    showProgress: { type: 'checkbox', label: '顯示進度條', default: true },
+                    showStats: { type: 'checkbox', label: '顯示統計數據', default: true }
+                }
+            },
+            jarExchange: {
+                name: '換罐計畫',
+                icon: 'fa-exchange-alt',
+                color: 'teal',
+                required: false,
+                fields: {
+                    title: { type: 'text', label: '區塊標題', default: '換罐計畫', icon: 'fa-heading' },
+                    subtitle: { type: 'textarea', label: '副標題', default: '環保愛地球，回饋愛毛孩', icon: 'fa-font' },
+                    description: { type: 'textarea', label: '描述文字', default: '將玻璃罐帶回店內，享受專屬優惠', icon: 'fa-align-left' },
+                    benefits: { type: 'benefits-list', label: '優惠項目', default: [] },
+                    image: { type: 'image', label: '主圖片 URL', default: 'https://www.genspark.ai/api/files/s/P5s2ZTfx', icon: 'fa-image' },
+                    ctaPrimaryText: { type: 'text', label: '主要 CTA 文字', default: '了解更多換購計畫' },
+                    ctaPrimaryLink: { type: 'text', label: '主要 CTA 連結', default: '#jar-exchange' },
+                    ctaSecondaryText: { type: 'text', label: '次要 CTA 文字', default: '查看合作店家' },
+                    ctaSecondaryLink: { type: 'text', label: '次要 CTA 連結', default: '#stores' }
+                }
+            },
+            about: {
+                name: '關於我們',
+                icon: 'fa-heart',
+                color: 'pink',
+                required: false,
+                fields: {
+                    title: { type: 'text', label: '區塊標題', default: '關於匠寵' },
+                    description: { type: 'textarea', label: '品牌故事', default: '我們致力於為毛孩提供最優質的產品與服務' },
+                    showTeam: { type: 'checkbox', label: '顯示團隊介紹', default: true },
+                    showMission: { type: 'checkbox', label: '顯示使命願景', default: true },
+                    showValues: { type: 'checkbox', label: '顯示核心價值', default: true },
+                    layout: {
+                        type: 'select',
+                        label: '佈局方式',
+                        options: ['左右排列', '上下排列', '圖文交錯'],
+                        default: '左右排列'
+                    }
+                }
+            }
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSections();
+            updateLastUpdateTime();
+        });
+
+        // 載入所有區塊
+        function loadSections() {
+            const config = window.HomepageConfig?.getHomepageConfig() || getDefaultConfig();
+            const container = document.getElementById('sections-container');
+            container.innerHTML = '';
+
+            // 處理不同的配置結構
+            let sections = [];
+            if (Array.isArray(config.sections)) {
+                sections = config.sections.map((s, idx) => [s.id || s.type, s]);
+            } else if (typeof config.sections === 'object') {
+                sections = Object.entries(config.sections);
+            }
+
+            // 按順序排序
+            const sortedSections = sections.sort((a, b) => {
+                const orderA = a[1].order || 999;
+                const orderB = b[1].order || 999;
+                return orderA - orderB;
+            });
+
+            sortedSections.forEach(([id, section]) => {
+                // 處理不同的 ID 格式
+                const normalizedId = id === 'jar-exchange' ? 'jarExchange' : id;
+                const sectionConfig = SECTION_CONFIGS[normalizedId];
+                if (!sectionConfig) return;
+
+                const sectionEl = createSectionElement(normalizedId, section, sectionConfig);
+                container.appendChild(sectionEl);
+            });
+
+            initializeDragAndDrop();
+        }
+
+        // 獲取默認配置（如果 HomepageConfig 不存在）
+        function getDefaultConfig() {
+            return {
+                sections: {
+                    hero: { enabled: true, order: 1, content: {} },
+                    products: { enabled: true, order: 2, content: {} },
+                    quiz: { enabled: true, order: 3, content: {} },
+                    subscription: { enabled: true, order: 4, content: {} },
+                    crowdfunding: { enabled: false, order: 5, content: {} },
+                    jarExchange: { enabled: false, order: 6, content: {} },
+                    about: { enabled: true, order: 7, content: {} }
+                }
+            };
+        }
+
+        // 創建區塊元素
+        function createSectionElement(id, section, config) {
+            const div = document.createElement('div');
+            div.className = 'bg-white rounded-lg shadow-md p-6 cursor-move';
+            div.draggable = true;
+            div.dataset.sectionId = id;
+
+            const colorClasses = {
+                blue: 'bg-blue-100 text-blue-600',
+                green: 'bg-green-100 text-green-600',
+                purple: 'bg-purple-100 text-purple-600',
+                orange: 'bg-orange-100 text-orange-600',
+                red: 'bg-red-100 text-red-600',
+                teal: 'bg-teal-100 text-teal-600',
+                pink: 'bg-pink-100 text-pink-600'
+            };
+
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="cursor-move">
+                            <i class="fas fa-grip-vertical text-gray-400 text-xl"></i>
+                        </div>
+                        <div class="w-12 h-12 ${colorClasses[config.color]} rounded-lg flex items-center justify-center">
+                            <i class="fas ${config.icon} text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">${config.name}</h3>
+                            <p class="text-sm text-gray-500">
+                                排序：${section.order || 999} | 
+                                ${config.required ? '<span class="text-red-500">必要區塊</span>' : '可選區塊'}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" ${section.enabled ? 'checked' : ''} 
+                                   onchange="toggleSection('${id}')" 
+                                   ${config.required ? 'disabled' : ''}
+                                   class="w-5 h-5 text-green-500 rounded focus:ring-2 focus:ring-green-400">
+                            <span class="ml-2 text-sm font-medium ${section.enabled ? 'text-green-600' : 'text-gray-400'}">
+                                ${section.enabled ? '已啟用' : '已停用'}
+                            </span>
+                        </label>
+                        <button onclick="editSection('${id}')" 
+                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                            <i class="fas fa-edit mr-2"></i>編輯
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // 編輯區塊
+        function editSection(sectionId) {
+            currentEditingBlock = sectionId;
+            const config = SECTION_CONFIGS[sectionId];
+            if (!config) return;
+
+            // 獲取當前數據
+            const homepageConfig = window.HomepageConfig?.getHomepageConfig() || getDefaultConfig();
+            let currentData = { content: {} };
+            
+            if (Array.isArray(homepageConfig.sections)) {
+                const section = homepageConfig.sections.find(s => (s.id || s.type) === sectionId || (s.id || s.type) === 'jar-exchange');
+                if (section) currentData = section;
+            } else if (homepageConfig.sections && homepageConfig.sections[sectionId]) {
+                currentData = homepageConfig.sections[sectionId];
+            } else if (homepageConfig.sections && homepageConfig.sections['jar-exchange'] && sectionId === 'jarExchange') {
+                currentData = homepageConfig.sections['jar-exchange'];
+            }
+
+            document.getElementById('modal-title').textContent = `編輯 - ${config.name}`;
+            const modalContent = document.getElementById('modal-content');
+            
+            let html = '<div class="space-y-6">';
+            
+            Object.entries(config.fields).forEach(([fieldName, fieldConfig]) => {
+                let value = currentData.content?.[fieldName];
+                
+                // 處理特殊情況
+                if (fieldName === 'benefits' && sectionId === 'jarExchange') {
+                    value = value || currentData.content?.benefits || benefitsData;
+                    if (Array.isArray(value)) {
+                        benefitsData = [...value];
+                    }
+                } else if (fieldName === 'ctaPrimaryText' && sectionId === 'jarExchange') {
+                    value = value || currentData.content?.ctaPrimary?.text || currentData.content?.cta1Text || fieldConfig.default;
+                } else if (fieldName === 'ctaPrimaryLink' && sectionId === 'jarExchange') {
+                    value = value || currentData.content?.ctaPrimary?.link || fieldConfig.default;
+                } else if (fieldName === 'ctaSecondaryText' && sectionId === 'jarExchange') {
+                    value = value || currentData.content?.ctaSecondary?.text || currentData.content?.cta2Text || fieldConfig.default;
+                } else if (fieldName === 'ctaSecondaryLink' && sectionId === 'jarExchange') {
+                    value = value || currentData.content?.ctaSecondary?.link || fieldConfig.default;
+                } else if (fieldName === 'image' && sectionId === 'jarExchange') {
+                    value = value || currentData.content?.image || currentData.content?.mainImage || fieldConfig.default;
+                } else {
+                    value = value ?? fieldConfig.default;
+                }
+                
+                html += createFieldHTML(fieldName, fieldConfig, value, sectionId);
+            });
+            
+            html += '</div>';
+            modalContent.innerHTML = html;
+            
+            // 如果是換罐計畫，初始化優惠項目列表
+            if (sectionId === 'jarExchange') {
+                setTimeout(() => {
+                    renderBenefitsList();
+                }, 100);
+            }
+            
+            document.getElementById('editModal').classList.remove('hidden');
+            document.getElementById('editModal').classList.add('flex');
+        }
+
+        // 創建表單欄位
+        function createFieldHTML(fieldName, config, value, sectionId) {
+            let inputHTML = '';
+            const iconHTML = config.icon ? `<i class="fas ${config.icon} mr-2 text-red-500"></i>` : '';
+            
+            switch(config.type) {
+                case 'text':
+                    inputHTML = `
+                        <input type="text" id="field-${fieldName}" value="${(value || '').replace(/"/g, '&quot;')}" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                    `;
+                    break;
+                case 'textarea':
+                    inputHTML = `
+                        <textarea id="field-${fieldName}" rows="3" 
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">${(value || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                    `;
+                    break;
+                case 'number':
+                    inputHTML = `
+                        <input type="number" id="field-${fieldName}" value="${value || ''}" 
+                               ${config.min !== undefined ? `min="${config.min}"` : ''} 
+                               ${config.max !== undefined ? `max="${config.max}"` : ''}
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                    `;
+                    break;
+                case 'checkbox':
+                    inputHTML = `
+                        <input type="checkbox" id="field-${fieldName}" ${value ? 'checked' : ''} 
+                               class="w-5 h-5 text-red-500 rounded focus:ring-2 focus:ring-red-400">
+                    `;
+                    break;
+                case 'select':
+                    inputHTML = `
+                        <select id="field-${fieldName}" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                    `;
+                    config.options.forEach(option => {
+                        inputHTML += `<option value="${option}" ${option === value ? 'selected' : ''}>${option}</option>`;
+                    });
+                    inputHTML += '</select>';
+                    break;
+                case 'image':
+                    inputHTML = `
+                        <div class="space-y-2">
+                            <input type="url" id="field-${fieldName}" value="${(value || '').replace(/"/g, '&quot;')}" placeholder="圖片 URL"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                            <input type="file" accept="image/*" onchange="handleImageUpload(this, '${fieldName}')"
+                                   class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700">
+                            ${value ? `<img src="${value}" class="mt-2 w-32 h-32 object-cover rounded-lg" onerror="this.style.display='none'">` : ''}
+                        </div>
+                    `;
+                    break;
+                case 'benefits-list':
+                    inputHTML = `
+                        <div>
+                            <div id="benefitsList" class="space-y-2 mb-3"></div>
+                            <button type="button" onclick="addBenefitItem()" 
+                                    class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm">
+                                <i class="fas fa-plus mr-2"></i>新增優惠項目
+                            </button>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            return `
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                        ${iconHTML}${config.label}
+                    </label>
+                    ${inputHTML}
+                </div>
+            `;
+        }
+
+        // ==================== 換罐計畫優惠項目管理函數 ====================
+        function renderBenefitsList() {
+            const container = document.getElementById('benefitsList');
+            if (!container) return;
+            
+            container.innerHTML = benefitsData.map((benefit, index) => `
+                <div class="flex items-center gap-2">
+                    <input 
+                        type="text" 
+                        value="${(benefit || '').replace(/"/g, '&quot;')}" 
+                        onchange="benefitsData[${index}] = this.value"
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    >
+                    <button 
+                        type="button" 
+                        onclick="removeBenefit(${index})" 
+                        class="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function addBenefitItem() {
+            benefitsData.push('新優惠項目');
+            renderBenefitsList();
+        }
+
+        function removeBenefit(index) {
+            if (confirm('確定刪除？')) {
+                benefitsData.splice(index, 1);
+                renderBenefitsList();
+            }
+        }
+
+        // 將函數暴露到全局作用域
+        window.renderBenefitsList = renderBenefitsList;
+        window.addBenefitItem = addBenefitItem;
+        window.removeBenefit = removeBenefit;
+
+        // 儲存變更
+        function saveChanges() {
+            const config = SECTION_CONFIGS[currentEditingBlock];
+            if (!config) return;
+            
+            const newContent = {};
+            
+            // 特殊處理換罐計畫
+            if (currentEditingBlock === 'jarExchange') {
+                newContent.title = document.getElementById('field-title')?.value || '';
+                newContent.subtitle = document.getElementById('field-subtitle')?.value || '';
+                newContent.description = document.getElementById('field-description')?.value || '';
+                newContent.benefits = [...benefitsData];
+                newContent.image = document.getElementById('field-image')?.value || '';
+                newContent.ctaPrimary = {
+                    text: document.getElementById('field-ctaPrimaryText')?.value || '',
+                    link: document.getElementById('field-ctaPrimaryLink')?.value || ''
+                };
+                newContent.ctaSecondary = {
+                    text: document.getElementById('field-ctaSecondaryText')?.value || '',
+                    link: document.getElementById('field-ctaSecondaryLink')?.value || ''
+                };
+            } else {
+                // 其他區塊的標準處理
+                Object.keys(config.fields).forEach(fieldName => {
+                    const input = document.getElementById(`field-${fieldName}`);
+                    if (!input) return;
+                    
+                    if (input.type === 'checkbox') {
+                        newContent[fieldName] = input.checked;
+                    } else if (input.type === 'number') {
+                        newContent[fieldName] = parseFloat(input.value) || 0;
+                    } else {
+                        newContent[fieldName] = input.value;
+                    }
+                });
+            }
+            
+            // 保存配置
+            if (window.HomepageConfig) {
+                // 處理不同的 ID 格式
+                const sectionId = currentEditingBlock === 'jarExchange' ? 'jar-exchange' : currentEditingBlock;
+                window.HomepageConfig.updateSectionConfig(sectionId, { content: newContent });
+            } else {
+                // 如果 HomepageConfig 不存在，使用 localStorage
+                const currentConfig = JSON.parse(localStorage.getItem('jiangchong_homepage_config') || '{}');
+                if (!currentConfig.sections) currentConfig.sections = {};
+                
+                const sectionId = currentEditingBlock === 'jarExchange' ? 'jar-exchange' : currentEditingBlock;
+                if (!currentConfig.sections[sectionId]) {
+                    currentConfig.sections[sectionId] = { enabled: true, order: 1, content: {} };
+                }
+                currentConfig.sections[sectionId].content = newContent;
+                localStorage.setItem('jiangchong_homepage_config', JSON.stringify(currentConfig));
+            }
+            
+            closeEditModal();
+            loadSections();
+            updateLastUpdateTime();
+            
+            showNotification('變更已儲存！請點擊「發布更新」讓前台生效。', 'success');
+        }
+
+        // 切換區塊啟用狀態
+        function toggleSection(sectionId) {
+            if (window.HomepageConfig) {
+                // 處理不同的 ID 格式
+                const normalizedId = sectionId === 'jarExchange' ? 'jar-exchange' : sectionId;
+                window.HomepageConfig.toggleSection(normalizedId);
+            } else {
+                const config = JSON.parse(localStorage.getItem('jiangchong_homepage_config') || '{}');
+                if (config.sections) {
+                    const normalizedId = sectionId === 'jarExchange' ? 'jar-exchange' : sectionId;
+                    if (config.sections[normalizedId]) {
+                        config.sections[normalizedId].enabled = !config.sections[normalizedId].enabled;
+                        localStorage.setItem('jiangchong_homepage_config', JSON.stringify(config));
+                    }
+                }
+            }
+            loadSections();
+            updateLastUpdateTime();
+        }
+
+        // 拖拽功能
+        function initializeDragAndDrop() {
+            const sections = document.querySelectorAll('[data-section-id]');
+            
+            sections.forEach(section => {
+                section.addEventListener('dragstart', handleDragStart);
+                section.addEventListener('dragover', handleDragOver);
+                section.addEventListener('drop', handleDrop);
+                section.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = e.currentTarget;
+            e.currentTarget.classList.add('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(e.currentTarget.parentElement, e.clientY);
+            if (afterElement == null) {
+                e.currentTarget.parentElement.appendChild(draggedElement);
+            } else {
+                e.currentTarget.parentElement.insertBefore(draggedElement, afterElement);
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            updateSectionOrder();
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('[data-section-id]:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function updateSectionOrder() {
+            const sections = document.querySelectorAll('[data-section-id]');
+            const newOrder = {};
+            
+            sections.forEach((section, index) => {
+                const sectionId = section.dataset.sectionId;
+                const normalizedId = sectionId === 'jarExchange' ? 'jar-exchange' : sectionId;
+                newOrder[normalizedId] = index + 1;
+            });
+            
+            if (window.HomepageConfig) {
+                window.HomepageConfig.reorderSections(newOrder);
+            } else {
+                const config = JSON.parse(localStorage.getItem('jiangchong_homepage_config') || '{}');
+                if (config.sections) {
+                    Object.keys(newOrder).forEach(id => {
+                        if (config.sections[id]) {
+                            config.sections[id].order = newOrder[id];
+                        }
+                    });
+                    localStorage.setItem('jiangchong_homepage_config', JSON.stringify(config));
+                }
+            }
+            
+            updateLastUpdateTime();
+            showNotification('區塊順序已更新！', 'success');
+        }
+
+        // 發布變更
+        function publishChanges() {
+            if (confirm('確定要發布變更到前台嗎？')) {
+                if (window.HomepageConfig) {
+                    window.HomepageConfig.publishHomepageChanges();
+                }
+                showNotification('已成功發布到前台！', 'success');
+                updateLastUpdateTime();
+            }
+        }
+
+        // 預覽變更
+        function previewChanges() {
+            if (window.HomepageConfig) {
+                window.HomepageConfig.previewHomepageChanges();
+            }
+            window.open('index.html', '_blank');
+        }
+
+        // 恢復預設
+        function resetToDefault() {
+            if (confirm('確定要恢復為預設配置嗎？所有自訂內容將會遺失！')) {
+                if (window.HomepageConfig) {
+                    window.HomepageConfig.resetToDefaultConfig();
+                } else {
+                    localStorage.removeItem('jiangchong_homepage_config');
+                }
+                loadSections();
+                updateLastUpdateTime();
+                showNotification('已恢復為預設配置！', 'info');
+            }
+        }
+
+        // 新增區塊
+        function addNewSection() {
+            alert('此功能即將推出！\n\n可新增的區塊類型：\n- 客戶評價\n- 部落格文章\n- 影片展示\n- 常見問題\n- 聯絡表單');
+        }
+
+        // 關閉 Modal
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            document.getElementById('editModal').classList.remove('flex');
+            currentEditingBlock = null;
+        }
+
+        // 圖片上傳處理
+        function handleImageUpload(input, fieldName) {
+            if (input.files && input.files[0]) {
+                // 實際應用中應該上傳到伺服器
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // 這裡可以顯示預覽，但實際應該上傳到伺服器
+                    const urlInput = document.getElementById(`field-${fieldName}`);
+                    if (urlInput) {
+                        // 如果是小圖片，可以使用 base64
+                        if (input.files[0].size < 2 * 1024 * 1024) {
+                            urlInput.value = e.target.result;
+                        } else {
+                            alert('圖片太大，請上傳到伺服器後將 URL 貼入上方欄位');
+                        }
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 更新最後更新時間
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            const timeEl = document.getElementById('last-update-time');
+            if (timeEl) {
+                timeEl.textContent = timeString;
+            }
+        }
+
+        // 通知提示
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // 點擊外部關閉 Modal
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+    </script>
+</body>
+</html>
+
+

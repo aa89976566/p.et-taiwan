@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="匠寵營養健康測驗 - 3分鐘找到最適合你毛孩的飲食方案">
+    <title>營養健康測驗 - 匠寵</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - 可愛圓體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Breed Data -->
+    <script src="js/breed-data.js"></script>
+    
+    <!-- 數據管理系統 -->
+    <script src="js/data-store.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/quiz-system.js"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B6B',
+                        secondary: '#4ECDC4',
+                        accent: '#FFD93D',
+                        dark: '#2C3E50',
+                        light: '#F7F9FC'
+                    },
+                    fontFamily: {
+                        'sans': ['Zen Maru Gothic', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans bg-light">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white shadow-md z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-primary text-3xl"></i>
+                    <span class="text-2xl font-bold text-dark">匠寵</span>
+                </a>
+                <a href="index.html" class="text-gray-600 hover:text-primary transition">
+                    <i class="fas fa-times text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="pt-24 pb-16">
+        <div class="container mx-auto px-4 max-w-4xl">
+            
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-gray-600" id="progress-text">步驟 1 / 10</span>
+                    <span class="text-sm text-gray-500" id="progress-percentage">10%</span>
+                </div>
+                <div class="quiz-progress">
+                    <div class="quiz-progress-bar" id="progress-bar" style="width: 10%"></div>
+                </div>
+            </div>
+            
+            <!-- Quiz Container -->
+            <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12" id="quiz-container">
+                
+                <!-- Welcome Screen -->
+                <div id="welcome-screen" class="text-center">
+                    <div class="relative w-32 h-32 mx-auto mb-6">
+                        <div class="absolute inset-0 bg-gradient-to-r from-secondary to-teal-400 rounded-full animate-pulse opacity-20"></div>
+                        <div class="relative w-32 h-32 bg-gradient-to-br from-secondary to-teal-400 rounded-full flex items-center justify-center shadow-xl">
+                            <i class="fas fa-utensils text-white text-5xl"></i>
+                        </div>
+                    </div>
+                    <div class="inline-block bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-bold mb-3">
+                        <i class="fas fa-sparkles mr-1"></i>智能飲食分析
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-3">🍖 找到最適合的飲食方案</h1>
+                    <p class="text-xl text-gray-600 mb-2"><strong>3 分鐘</strong> 簡單問答，AI 智能分析</p>
+                    <p class="text-lg text-secondary font-semibold mb-6">
+                        <i class="fas fa-gift mr-1"></i>完成後送 <span class="text-primary">15% 折扣碼</span>
+                    </p>
+                    
+                    <div class="bg-light rounded-2xl p-6 mb-8 text-left max-w-2xl mx-auto">
+                        <h3 class="font-bold text-lg mb-4 flex items-center">
+                            <i class="fas fa-clipboard-list text-secondary mr-2"></i>
+                            測驗包含
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-secondary mr-3 mt-1"></i>
+                                <span>基本資訊（年齡、體重、品種、性別）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-secondary mr-3 mt-1"></i>
+                                <span>健康狀況評估（過敏、疾病、用藥情況）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-secondary mr-3 mt-1"></i>
+                                <span>生活型態分析（活動量、飲食習慣）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-secondary mr-3 mt-1"></i>
+                                <span>個人化產品推薦</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex items-center justify-center gap-4 mb-8">
+                        <div class="flex items-center">
+                            <i class="fas fa-clock text-secondary mr-2"></i>
+                            <span class="text-sm text-gray-600">約 3 分鐘</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-shield-alt text-secondary mr-2"></i>
+                            <span class="text-sm text-gray-600">資料保密</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-gift text-secondary mr-2"></i>
+                            <span class="text-sm text-gray-600">完成送優惠</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="startQuiz()" class="bg-gradient-to-r from-secondary to-teal-500 text-white px-12 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition transform hover:scale-105 relative overflow-hidden group">
+                        <span class="relative z-10">🚀 立即開始 <i class="fas fa-arrow-right ml-2"></i></span>
+                        <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition"></div>
+                    </button>
+                    <p class="text-xs text-gray-500 mt-4"><i class="fas fa-users mr-1"></i>已有 <strong>2,847</strong> 位毛爸媽完成測驗</p>
+                </div>
+                
+                <!-- Question Screens (Hidden by default) -->
+                <div id="question-screen" class="hidden">
+                    <!-- Question will be dynamically inserted here -->
+                </div>
+                
+                <!-- Loading Screen -->
+                <div id="loading-screen" class="hidden text-center py-12">
+                    <div class="spinner mx-auto mb-6"></div>
+                    <h3 class="text-2xl font-bold mb-2">正在分析您的資料...</h3>
+                    <p class="text-gray-600">請稍候，我們正在為您量身打造營養方案</p>
+                </div>
+                
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-8" id="nav-buttons" style="display: none;">
+                <button onclick="previousQuestion()" id="prev-btn" class="bg-gray-200 text-dark px-8 py-3 rounded-full font-semibold hover:bg-gray-300 transition">
+                    <i class="fas fa-arrow-left mr-2"></i>上一題
+                </button>
+                <button onclick="nextQuestion()" id="next-btn" class="bg-secondary text-white px-8 py-3 rounded-full font-semibold hover:bg-teal-600 transition">
+                    下一題 <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+            
+        </div>
+    </main>
+    
+    <!-- Quiz Data & Logic -->
+    <script>
+        // Quiz Questions Data
+        const quizData = [
+            {
+                id: 1,
+                category: 'basic',
+                question: '你的毛孩叫什麼名字？',
+                type: 'text',
+                placeholder: '請輸入寵物名字',
+                icon: 'fa-dog',
+                required: true
+            },
+            {
+                id: 2,
+                category: 'basic',
+                question: '你的毛孩是？',
+                type: 'choice',
+                icon: 'fa-paw',
+                options: [
+                    { value: 'dog', label: '狗狗 🐕', icon: 'fa-dog' },
+                    { value: 'cat', label: '貓咪 🐱', icon: 'fa-cat' }
+                ]
+            },
+            {
+                id: 3,
+                category: 'basic',
+                question: '你的毛孩幾歲了？',
+                type: 'choice',
+                icon: 'fa-birthday-cake',
+                options: [
+                    { value: 'puppy', label: '幼年期（0-1歲）', desc: '成長發育階段' },
+                    { value: 'adult', label: '成年期（1-7歲）', desc: '活力充沛階段' },
+                    { value: 'senior', label: '熟齡期（7歲以上）', desc: '需要特殊照護' }
+                ]
+            },
+            {
+                id: 4,
+                category: 'basic',
+                question: '你的毛孩的體重？',
+                type: 'number',
+                icon: 'fa-weight',
+                placeholder: '請輸入體重（公斤）',
+                unit: 'kg',
+                min: 0.5,
+                max: 100
+            },
+            {
+                id: 5,
+                category: 'basic',
+                question: '你的毛孩的品種？',
+                type: 'text',
+                icon: 'fa-dog',
+                placeholder: '例如：柴犬、黃金獵犬、米克斯...',
+                required: false,
+                hint: '如果不確定品種，可以填寫「米克斯」或「不確定」'
+            },
+            {
+                id: 6,
+                category: 'health',
+                question: '你的毛孩有沒有以下健康問題？',
+                type: 'multi-choice',
+                icon: 'fa-heartbeat',
+                options: [
+                    { value: 'none', label: '沒有特殊健康問題' },
+                    { value: 'allergy', label: '食物過敏' },
+                    { value: 'digestive', label: '消化問題（腹瀉、便秘）' },
+                    { value: 'skin', label: '皮膚問題' },
+                    { value: 'joint', label: '關節問題' },
+                    { value: 'kidney', label: '腎臟問題' },
+                    { value: 'heart', label: '心臟問題' },
+                    { value: 'diabetes', label: '糖尿病' },
+                    { value: 'other', label: '其他（請備註）' }
+                ]
+            },
+            {
+                id: 7,
+                category: 'health',
+                question: '你的毛孩目前的體態？',
+                type: 'choice',
+                icon: 'fa-balance-scale',
+                options: [
+                    { value: 'underweight', label: '過瘦', desc: '肋骨明顯可見，缺乏脂肪層' },
+                    { value: 'ideal', label: '標準', desc: '可摸到肋骨，有適當脂肪層' },
+                    { value: 'overweight', label: '過重', desc: '肋骨不易摸到，腰線不明顯' }
+                ]
+            },
+            {
+                id: 8,
+                category: 'lifestyle',
+                question: '你的毛孩每天的活動量？',
+                type: 'choice',
+                icon: 'fa-running',
+                options: [
+                    { value: 'low', label: '低活動量', desc: '每天散步 < 30 分鐘' },
+                    { value: 'medium', label: '中等活動量', desc: '每天散步 30-60 分鐘' },
+                    { value: 'high', label: '高活動量', desc: '每天散步 > 60 分鐘或激烈運動' }
+                ]
+            },
+            {
+                id: 9,
+                category: 'lifestyle',
+                question: '你的毛孩目前的飲食方式？',
+                type: 'choice',
+                icon: 'fa-utensils',
+                options: [
+                    { value: 'kibble', label: '乾飼料為主', desc: '主要餵食乾糧' },
+                    { value: 'wet', label: '濕食/罐頭為主', desc: '主要餵食罐頭或鮮食' },
+                    { value: 'mixed', label: '混合餵食', desc: '乾濕糧混合' },
+                    { value: 'raw', label: '生食/鮮食', desc: '自製鮮食或生食' }
+                ]
+            },
+            {
+                id: 10,
+                category: 'preference',
+                question: '你最在意的是？（可複選）',
+                type: 'multi-choice',
+                icon: 'fa-heart',
+                options: [
+                    { value: 'nutrition', label: '營養均衡' },
+                    { value: 'natural', label: '天然無添加' },
+                    { value: 'local', label: '台灣在地食材' },
+                    { value: 'eco', label: '環保永續' },
+                    { value: 'convenient', label: '方便餵食' },
+                    { value: 'price', label: '價格實惠' }
+                ]
+            }
+        ];
+        
+        // Quiz State
+        let currentQuestion = 0;
+        let answers = {};
+        let quizStarted = false;
+        
+        // Start Quiz
+        function startQuiz() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('question-screen').style.display = 'block';
+            document.getElementById('nav-buttons').style.display = 'flex';
+            quizStarted = true;
+            showQuestion(0);
+        }
+        
+        // Show Question
+        function showQuestion(index) {
+            const question = quizData[index];
+            const questionScreen = document.getElementById('question-screen');
+            
+            let optionsHTML = '';
+            
+            if (question.type === 'text' || question.type === 'number') {
+                optionsHTML = `
+                    <input 
+                        type="${question.type}" 
+                        id="answer-input"
+                        class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl text-lg focus:border-secondary focus:outline-none transition"
+                        placeholder="${question.placeholder}"
+                        ${question.min ? `min="${question.min}"` : ''}
+                        ${question.max ? `max="${question.max}"` : ''}
+                        value="${answers[question.id] || ''}"
+                        onkeypress="if(event.key === 'Enter') nextQuestion()"
+                    >
+                    ${question.hint ? `<p class="text-sm text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i>${question.hint}</p>` : ''}
+                    ${question.unit ? `<span class="text-gray-500 mt-2 inline-block">${question.unit}</span>` : ''}
+                `;
+            } else if (question.type === 'choice') {
+                optionsHTML = question.options.map(option => `
+                    <div class="answer-option ${answers[question.id] === option.value ? 'selected' : ''}" 
+                         onclick="selectOption('${option.value}')">
+                        <div class="flex items-center">
+                            ${option.icon ? `<i class="fas ${option.icon} text-2xl text-secondary mr-4"></i>` : ''}
+                            <div class="flex-1">
+                                <div class="font-semibold text-lg">${option.label}</div>
+                                ${option.desc ? `<div class="text-sm text-gray-600 mt-1">${option.desc}</div>` : ''}
+                            </div>
+                            <i class="fas fa-check-circle text-2xl text-secondary ${answers[question.id] === option.value ? '' : 'opacity-0'}"></i>
+                        </div>
+                    </div>
+                `).join('');
+            } else if (question.type === 'multi-choice') {
+                optionsHTML = question.options.map(option => `
+                    <div class="answer-option ${(answers[question.id] || []).includes(option.value) ? 'selected' : ''}" 
+                         onclick="toggleMultiOption('${option.value}')">
+                        <div class="flex items-center">
+                            <div class="flex-1">
+                                <div class="font-semibold">${option.label}</div>
+                            </div>
+                            <input type="checkbox" 
+                                   class="custom-checkbox" 
+                                   ${(answers[question.id] || []).includes(option.value) ? 'checked' : ''}
+                                   onchange="event.stopPropagation()">
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            questionScreen.innerHTML = `
+                <div class="mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas ${question.icon} text-secondary text-xl"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-500">問題 ${index + 1} / ${quizData.length}</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold mb-2">${question.question}</h2>
+                    ${question.required === false ? '<p class="text-sm text-gray-500">（選填）</p>' : ''}
+                </div>
+                <div class="space-y-3">
+                    ${optionsHTML}
+                </div>
+            `;
+            
+            // Update progress
+            updateProgress(index);
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').style.display = index === 0 ? 'none' : 'block';
+            document.getElementById('next-btn').textContent = index === quizData.length - 1 ? '查看結果' : '下一題';
+            
+            // Auto-focus input
+            if (question.type === 'text' || question.type === 'number') {
+                setTimeout(() => document.getElementById('answer-input')?.focus(), 100);
+            }
+        }
+        
+        // Update Progress
+        function updateProgress(index) {
+            const progress = ((index + 1) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = `步驟 ${index + 1} / ${quizData.length}`;
+            document.getElementById('progress-percentage').textContent = Math.round(progress) + '%';
+        }
+        
+        // Select Option (Single Choice)
+        function selectOption(value) {
+            const question = quizData[currentQuestion];
+            answers[question.id] = value;
+            showQuestion(currentQuestion);
+            
+            // Auto-advance after selection
+            setTimeout(() => nextQuestion(), 300);
+        }
+        
+        // Toggle Multi Option (Multiple Choice)
+        function toggleMultiOption(value) {
+            const question = quizData[currentQuestion];
+            if (!answers[question.id]) {
+                answers[question.id] = [];
+            }
+            
+            const index = answers[question.id].indexOf(value);
+            if (index > -1) {
+                answers[question.id].splice(index, 1);
+            } else {
+                // Handle "none" option
+                if (value === 'none') {
+                    answers[question.id] = ['none'];
+                } else {
+                    // Remove "none" if selecting other options
+                    const noneIndex = answers[question.id].indexOf('none');
+                    if (noneIndex > -1) {
+                        answers[question.id].splice(noneIndex, 1);
+                    }
+                    answers[question.id].push(value);
+                }
+            }
+            
+            showQuestion(currentQuestion);
+        }
+        
+        // 驗證答案
+        function validateAnswer(question, answer) {
+            // 驗證年紀（問題 3 - 年齡組選擇）
+            if (question.id === 3) {
+                // 如果是選擇題，已經通過選擇驗證
+                // 這裡主要驗證數字輸入的年紀
+                return { valid: true };
+            }
+            
+            // 驗證體重（問題 4）
+            if (question.id === 4) {
+                const weight = parseFloat(answer);
+                if (isNaN(weight) || weight <= 0) {
+                    return { valid: false, message: '請輸入有效的體重（公斤）' };
+                }
+                if (weight > 60) {
+                    return { valid: false, message: '體重不能超過 60 公斤，請確認輸入是否正確' };
+                }
+                if (weight < 0.5) {
+                    return { valid: false, message: '體重過輕，請確認輸入是否正確' };
+                }
+                return { valid: true };
+            }
+            
+            // 驗證品種（問題 5）
+            if (question.id === 5 && answer && answer.trim()) {
+                const breed = answer.trim();
+                // 檢查是否包含中文字符
+                const hasChinese = /[\u4e00-\u9fa5]/.test(breed);
+                if (!hasChinese) {
+                    return { valid: false, message: '品種必須填入中文，例如：柴犬、黃金獵犬、米克斯等' };
+                }
+                return { valid: true };
+            }
+            
+            return { valid: true };
+        }
+        
+        // Next Question
+        function nextQuestion() {
+            const question = quizData[currentQuestion];
+            let answerValue = null;
+            
+            // Validate answer
+            if (question.type === 'text' || question.type === 'number') {
+                const input = document.getElementById('answer-input');
+                if (input && input.value.trim()) {
+                    answerValue = input.value.trim();
+                    answers[question.id] = answerValue;
+                } else if (question.required !== false) {
+                    alert('請填寫答案');
+                    return;
+                } else {
+                    // 選填題，允許空白
+                    answers[question.id] = '';
+                }
+            } else if (!answers[question.id] && question.required !== false) {
+                alert('請選擇答案');
+                return;
+            } else {
+                answerValue = answers[question.id];
+            }
+            
+            // 執行驗證
+            if (answerValue !== null && answerValue !== '') {
+                const validation = validateAnswer(question, answerValue);
+                if (!validation.valid) {
+                    alert(validation.message);
+                    return;
+                }
+            }
+            
+            // Move to next question or finish
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        // Previous Question
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+        
+        // Finish Quiz
+        function finishQuiz() {
+            // Hide question screen and nav buttons
+            document.getElementById('question-screen').style.display = 'none';
+            document.getElementById('nav-buttons').style.display = 'none';
+            
+            // Show loading screen
+            document.getElementById('loading-screen').style.display = 'block';
+            
+            // Store answers in localStorage
+            localStorage.setItem('nutritionQuizAnswers', JSON.stringify(answers));
+            
+            // 保存測驗結果到數據系統
+            setTimeout(() => {
+                if (window.saveQuizResult) {
+                    const quizData = {
+                        quizType: 'nutrition',
+                        petInfo: {
+                            species: answers.species,
+                            age: answers.age
+                        },
+                        answers: answers,
+                        result: {
+                            category: 'nutrition_quiz',
+                            completedAt: new Date().toISOString()
+                        }
+                    };
+                    window.saveQuizResult(quizData);
+                    console.log('✅ 營養測驗結果已保存');
+                }
+                
+                // Redirect to results
+                window.location.href = 'quiz-result.html?type=nutrition';
+            }, 3000);
+        }
+        
+        // Prevent accidental page leave
+        window.addEventListener('beforeunload', function(e) {
+            if (quizStarted && currentQuestion < quizData.length - 1) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+    
+</body>
+</html>

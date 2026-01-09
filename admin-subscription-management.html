@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂閱管理 - 匠寵後台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .tab-button.active {
+            background-color: #FF6B6B;
+            color: white;
+        }
+        #detail-modal {
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- 後台導航 -->
+    <nav class="bg-gray-900 text-white p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">匠寵後台管理系統</h1>
+            <div class="flex gap-4">
+                <a href="admin-dashboard.html" class="hover:text-gray-300">儀表板</a>
+                <a href="admin-subscription-management.html" class="text-yellow-400">訂閱管理</a>
+                <a href="admin-users.html" class="hover:text-gray-300">會員管理</a>
+                <a href="admin-orders.html" class="hover:text-gray-300">訂單管理</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- 頁面標題 -->
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h2 class="text-3xl font-black mb-2">訂閱管理</h2>
+                <p class="text-gray-600">管理所有會員訂閱資料</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="refreshData()" class="bg-gray-500 text-white px-6 py-3 rounded font-bold hover:bg-gray-600">
+                    🔄 重新載入
+                </button>
+                <button onclick="exportData('csv')" class="bg-green-500 text-white px-6 py-3 rounded font-bold hover:bg-green-600">
+                    📥 匯出 CSV
+                </button>
+                <button onclick="exportData('excel')" class="bg-blue-500 text-white px-6 py-3 rounded font-bold hover:bg-blue-600">
+                    📥 匯出 Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- 統計卡片 -->
+        <div class="grid grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-gray-500 text-sm mb-2">活躍訂閱</div>
+                <div class="text-3xl font-black text-green-600" id="stat-active">0</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-gray-500 text-sm mb-2">暫停訂閱</div>
+                <div class="text-3xl font-black text-yellow-600" id="stat-paused">0</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-gray-500 text-sm mb-2">已取消</div>
+                <div class="text-3xl font-black text-red-600" id="stat-cancelled">0</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-gray-500 text-sm mb-2">總訂閱數</div>
+                <div class="text-3xl font-black text-blue-600" id="stat-total">0</div>
+            </div>
+        </div>
+
+        <!-- 篩選器 -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="grid grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">訂閱狀態</label>
+                    <select id="filter-status" class="w-full border-2 border-gray-200 rounded px-4 py-2" onchange="filterSubscriptions()">
+                        <option value="">全部</option>
+                        <option value="active">進行中</option>
+                        <option value="paused">已暫停</option>
+                        <option value="cancelled">已取消</option>
+                        <option value="pending">待付款</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">訂閱方案</label>
+                    <select id="filter-plan" class="w-full border-2 border-gray-200 rounded px-4 py-2" onchange="filterSubscriptions()">
+                        <option value="">全部</option>
+                        <option value="small">小食組</option>
+                        <option value="standard">標準組</option>
+                        <option value="premium">豪華組</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">搜尋</label>
+                    <input type="text" id="search-input" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="會員姓名或Email" oninput="filterSubscriptions()">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="resetFilters()" class="w-full bg-gray-200 text-gray-700 px-4 py-2 rounded font-bold hover:bg-gray-300">
+                        重置篩選
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 訂閱列表 -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b-2">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">訂單編號</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">會員</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">方案</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">蛋白質</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">蔬果</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">凍乾粉</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">狀態</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">下次配送</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscription-list">
+                        <!-- 動態載入 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分頁 -->
+            <div class="px-6 py-4 border-t flex justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    顯示 <span id="showing-start">1</span> 到 <span id="showing-end">10</span>，共 <span id="total-count">0</span> 筆
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="previousPage()" class="px-4 py-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="prev-btn">上一頁</button>
+                    <button onclick="nextPage()" class="px-4 py-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="next-btn">下一頁</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 訂閱詳情 Modal -->
+    <div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center" style="z-index: 1000;">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white">
+                <h3 class="text-2xl font-black">訂閱詳情</h3>
+                <button onclick="closeDetailModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div id="detail-content" class="p-6">
+                <!-- 動態載入 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模擬數據（實際應從API讀取）
+        let subscriptionsData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let filteredData = [];
+
+        // 初始化範例數據
+        function initSampleData() {
+            // 從 localStorage 讀取訂閱資料（由前台訂閱頁面提交）
+            const savedSubscriptions = localStorage.getItem('subscriptions');
+            if (savedSubscriptions) {
+                try {
+                    subscriptionsData = JSON.parse(savedSubscriptions);
+                    console.log('✅ 從 localStorage 載入訂閱資料:', subscriptionsData.length, '筆');
+                } catch (e) {
+                    console.error('讀取訂閱資料失敗:', e);
+                    subscriptionsData = [];
+                }
+            } else {
+                console.log('ℹ️ localStorage 中沒有訂閱資料');
+            }
+
+            // 如果沒有資料，生成範例數據（僅供測試）
+            if (subscriptionsData.length === 0) {
+                console.log('ℹ️ 使用範例資料（僅供測試）');
+                const plans = ['small', 'standard', 'premium'];
+                const planNames = { small: '小食組', standard: '標準組', premium: '豪華組' };
+                const statuses = ['active', 'paused', 'cancelled'];
+                const statusNames = { active: '進行中', paused: '已暫停', cancelled: '已取消' };
+                const proteins = ['牛肉系列', '雞肉系列', '鴨肉系列', '小魚乾'];
+                const veggies = ['節瓜凍乾', '南瓜凍乾', '地瓜凍乾', '胡蘿蔔凍乾'];
+                const powders = ['牛腱肉凍乾粉', '雞肉雞肝凍乾粉', '鴨肉凍乾粉'];
+
+                // 生成20筆範例數據
+                for (let i = 1; i <= 20; i++) {
+                    const plan = plans[Math.floor(Math.random() * plans.length)];
+                    const status = statuses[Math.floor(Math.random() * statuses.length)];
+                    
+                    subscriptionsData.push({
+                        id: `SUB${String(i).padStart(6, '0')}`,
+                        user: {
+                            id: `USER${String(i).padStart(6, '0')}`,
+                            name: `會員${i}`,
+                            email: `user${i}@example.com`,
+                            phone: `0912-345-${String(i).padStart(3, '0')}`
+                        },
+                        plan: plan,
+                        planName: planNames[plan],
+                        protein: proteins[Math.floor(Math.random() * proteins.length)],
+                        veggie: veggies[Math.floor(Math.random() * veggies.length)],
+                        powder: powders[Math.floor(Math.random() * powders.length)],
+                        status: status,
+                        statusName: statusNames[status],
+                        startDate: new Date(2024, 0, i).toISOString().split('T')[0],
+                        nextDeliveryDate: new Date(2024, 11, i + 10).toISOString().split('T')[0],
+                        createdAt: new Date(2024, 0, i).toISOString()
+                    });
+                }
+            }
+
+            filteredData = [...subscriptionsData];
+        }
+
+        // 更新統計數據
+        function updateStats() {
+            const active = subscriptionsData.filter(s => s.status === 'active').length;
+            const paused = subscriptionsData.filter(s => s.status === 'paused').length;
+            const cancelled = subscriptionsData.filter(s => s.status === 'cancelled').length;
+            
+            document.getElementById('stat-active').textContent = active;
+            document.getElementById('stat-paused').textContent = paused;
+            document.getElementById('stat-cancelled').textContent = cancelled;
+            document.getElementById('stat-total').textContent = subscriptionsData.length;
+        }
+
+        // 渲染訂閱列表
+        function renderSubscriptions() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = filteredData.slice(start, end);
+
+            const tbody = document.getElementById('subscription-list');
+            tbody.innerHTML = '';
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+                            沒有找到訂閱資料
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            pageData.forEach((sub, index) => {
+                const statusColor = {
+                    'active': 'bg-green-100 text-green-800',
+                    'paused': 'bg-yellow-100 text-yellow-800',
+                    'cancelled': 'bg-red-100 text-red-800',
+                    'pending': 'bg-gray-100 text-gray-800'
+                };
+
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                
+                // 使用 data 屬性儲存訂閱資料，避免 onclick 中的 JSON 問題
+                const subDataId = `sub-${start + index}`;
+                window[`subscriptionData_${subDataId}`] = sub;
+                
+                // 安全取得資料（處理可能的嵌套結構）
+                const userName = sub.user?.name || '-';
+                const userEmail = sub.user?.email || '-';
+                const planName = sub.planName || sub.subscription?.planName || '-';
+                const protein = sub.protein || sub.subscription?.proteinName || '-';
+                const veggie = sub.veggie || sub.subscription?.veggieName || '-';
+                const powder = sub.powder || sub.subscription?.powderName || '-';
+                const status = sub.status || 'pending';
+                const statusName = sub.statusName || (status === 'pending' ? '待付款' : status);
+                
+                // 取得訂單編號（優先使用 orderId，否則使用 id）
+                const orderId = sub.orderId || sub.id || '-';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm font-mono font-bold">${orderId}</td>
+                    <td class="px-6 py-4">
+                        <div class="font-medium">${userName}</div>
+                        <div class="text-sm text-gray-500">${userEmail}</div>
+                    </td>
+                    <td class="px-6 py-4 font-medium">${planName}</td>
+                    <td class="px-6 py-4 text-sm">${protein}</td>
+                    <td class="px-6 py-4 text-sm">${veggie}</td>
+                    <td class="px-6 py-4 text-sm">${powder}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${statusColor[status] || 'bg-gray-100 text-gray-800'}">
+                            ${statusName}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm">${sub.nextDeliveryDate || '-'}</td>
+                    <td class="px-6 py-4">
+                        <button onclick='viewDetailByDataId("${subDataId}")' class="text-blue-600 hover:text-blue-800 font-medium">
+                            查看
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 更新分頁資訊
+            document.getElementById('showing-start').textContent = filteredData.length > 0 ? start + 1 : 0;
+            document.getElementById('showing-end').textContent = Math.min(end, filteredData.length);
+            document.getElementById('total-count').textContent = filteredData.length;
+
+            // 更新按鈕狀態
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = end >= filteredData.length;
+            
+            if (prevBtn.disabled) {
+                prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            if (nextBtn.disabled) {
+                nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // 透過 data ID 查看詳情
+        function viewDetailByDataId(dataId) {
+            const subscription = window[`subscriptionData_${dataId}`];
+            if (subscription) {
+                viewDetail(subscription);
+            }
+        }
+
+        // 篩選訂閱
+        function filterSubscriptions() {
+            const status = document.getElementById('filter-status').value;
+            const plan = document.getElementById('filter-plan').value;
+            const search = document.getElementById('search-input').value.toLowerCase();
+
+            filteredData = subscriptionsData.filter(sub => {
+                const matchStatus = !status || sub.status === status;
+                const matchPlan = !plan || sub.plan === plan;
+                const matchSearch = !search || 
+                    (sub.user && (
+                        (sub.user.name && sub.user.name.toLowerCase().includes(search)) ||
+                        (sub.user.email && sub.user.email.toLowerCase().includes(search))
+                    ));
+                
+                return matchStatus && matchPlan && matchSearch;
+            });
+
+            currentPage = 1;
+            renderSubscriptions();
+        }
+
+        // 重置篩選
+        function resetFilters() {
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-plan').value = '';
+            document.getElementById('search-input').value = '';
+            filterSubscriptions();
+        }
+
+        // 分頁
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderSubscriptions();
+            }
+        }
+
+        function nextPage() {
+            const maxPage = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < maxPage) {
+                currentPage++;
+                renderSubscriptions();
+            }
+        }
+
+        // 查看詳情
+        function viewDetail(subscription) {
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('detail-content');
+            
+            // 處理配送資訊顯示
+            let deliveryInfoHTML = '';
+            if (subscription.delivery) {
+                const delivery = subscription.delivery;
+                if (delivery.method === 'home') {
+                    // 宅配到府
+                    deliveryInfoHTML = `
+                        <div class="border-t pt-6">
+                            <h4 class="text-lg font-bold mb-4">🏠 配送資訊（宅配到府）</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-sm text-gray-500">收件人</div>
+                                    <div class="font-medium">${delivery.recipientName || '-'}</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">聯絡電話</div>
+                                    <div class="font-medium">${delivery.phone || '-'}</div>
+                                </div>
+                                <div class="col-span-2">
+                                    <div class="text-sm text-gray-500">配送地址</div>
+                                    <div class="font-medium">
+                                        ${delivery.postalCode || ''} ${delivery.city || ''} ${delivery.district || ''} ${delivery.address || ''}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">運費</div>
+                                    <div class="font-medium text-orange-600">$${delivery.shippingFee || 0}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (delivery.method === '711') {
+                    // 7-11 超商取貨
+                    deliveryInfoHTML = `
+                        <div class="border-t pt-6">
+                            <h4 class="text-lg font-bold mb-4">🏪 配送資訊（7-11 超商取貨）</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-sm text-gray-500">收件人</div>
+                                    <div class="font-medium">${delivery.recipientName || '-'}</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">聯絡電話</div>
+                                    <div class="font-medium">${delivery.phone || '-'}</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">門市名稱</div>
+                                    <div class="font-medium">${delivery.storeName || '-'}</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">門市代號</div>
+                                    <div class="font-medium">${delivery.storeCode || '-'}</div>
+                                </div>
+                                <div class="col-span-2">
+                                    <div class="text-sm text-gray-500">門市地址</div>
+                                    <div class="font-medium">
+                                        ${delivery.storeCity || ''} ${delivery.storeDistrict || ''} ${delivery.storeAddress || ''}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">運費</div>
+                                    <div class="font-medium text-green-600">免運費</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            const userInfo = subscription.user || {};
+            const subscriptionInfo = subscription.subscription || {};
+            
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-lg font-bold mb-4">基本資訊</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-sm text-gray-500">訂單編號</div>
+                                <div class="font-medium font-mono font-bold">${subscription.orderId || subscription.id || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">訂閱狀態</div>
+                                <div class="font-medium">${subscription.statusName || subscription.status || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">訂閱方案</div>
+                                <div class="font-medium">${subscription.planName || subscriptionInfo.planName || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">開始日期</div>
+                                <div class="font-medium">${subscription.startDate || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">下次配送</div>
+                                <div class="font-medium">${subscription.nextDeliveryDate || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">建立時間</div>
+                                <div class="font-medium">${subscription.createdAt ? new Date(subscription.createdAt).toLocaleString('zh-TW') : '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <h4 class="text-lg font-bold mb-4">會員資訊</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-sm text-gray-500">會員姓名</div>
+                                <div class="font-medium">${userInfo.name || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">Email</div>
+                                <div class="font-medium">${userInfo.email || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">電話</div>
+                                <div class="font-medium">${userInfo.phone || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">會員ID</div>
+                                <div class="font-medium">${userInfo.id || userInfo.userId || '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <h4 class="text-lg font-bold mb-4">訂閱內容</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">蛋白質：</span>
+                                <span class="font-medium">${subscription.protein || subscriptionInfo.proteinName || '-'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">蔬果凍乾：</span>
+                                <span class="font-medium">${subscription.veggie || subscriptionInfo.veggieName || '-'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">凍乾粉：</span>
+                                <span class="font-medium">${subscription.powder || subscriptionInfo.powderName || '-'}</span>
+                            </div>
+                            ${subscription.pricing ? `
+                            <div class="border-t pt-3 mt-3">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-600">訂閱金額：</span>
+                                    <span class="font-medium">$${subscription.pricing.subtotal || subscriptionInfo.price || 0}</span>
+                                </div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-600">運費：</span>
+                                    <span class="font-medium">$${subscription.pricing.shippingFee || 0}</span>
+                                </div>
+                                <div class="flex justify-between text-lg font-bold border-t pt-2">
+                                    <span>總計：</span>
+                                    <span class="text-red-600">$${subscription.pricing.total || 0}</span>
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    ${deliveryInfoHTML}
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // 點擊背景關閉 Modal
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('detail-modal');
+            if (e.target === modal) {
+                closeDetailModal();
+            }
+        });
+
+        // 匯出數據
+        function exportData(format) {
+            if (format === 'csv') {
+                exportCSV();
+            } else if (format === 'excel') {
+                exportExcel();
+            }
+        }
+
+        function exportCSV() {
+            const headers = [
+                '訂單編號', '會員姓名', 'Email', '電話', '方案名稱', 
+                '蛋白質', '蔬果凍乾', '凍乾粉', '狀態', 
+                '配送方式', '配送地址/門市名稱', '門市代號', '運費',
+                '開始日期', '下次配送', '建立時間'
+            ];
+            
+            const rows = filteredData.map(sub => {
+                // 處理配送資訊
+                let shippingMethod = '-';
+                let shippingAddress = '';
+                let storeCode = '';
+                let shippingFee = 0;
+
+                if (sub.delivery) {
+                    shippingMethod = sub.delivery.method === 'home' ? '宅配到府' : '7-11超商取貨';
+                    shippingFee = sub.delivery.shippingFee || 0;
+
+                    if (sub.delivery.method === 'home') {
+                        // 宅配地址
+                        shippingAddress = `${sub.delivery.city || ''} ${sub.delivery.district || ''} ${sub.delivery.address || ''}`;
+                    } else if (sub.delivery.method === '711') {
+                        // 超商門市
+                        shippingAddress = sub.delivery.storeName || '';
+                        storeCode = sub.delivery.storeCode || '';
+                    }
+                }
+
+                return [
+                    sub.id || '-',
+                    sub.user?.name || '-',
+                    sub.user?.email || '-',
+                    sub.user?.phone || '-',
+                    sub.planName || '-',
+                    sub.protein || '-',
+                    sub.veggie || '-',
+                    sub.powder || '-',
+                    sub.statusName || sub.status || '-',
+                    shippingMethod,
+                    shippingAddress,
+                    storeCode,
+                    `$${shippingFee}`,
+                    sub.startDate || '-',
+                    sub.nextDeliveryDate || '-',
+                    sub.createdAt ? new Date(sub.createdAt).toLocaleString('zh-TW') : '-'
+                ];
+            });
+
+            let csv = '\uFEFF' + headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `訂閱資料_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+
+            alert('CSV 檔案已下載！');
+        }
+
+        function exportExcel() {
+            // 實際應用中可使用 xlsx.js 庫
+            alert('Excel 匯出功能需要整合 xlsx.js 庫\n\n目前請使用 CSV 匯出功能');
+        }
+
+        // 重新載入資料
+        function refreshData() {
+            console.log('🔄 重新載入訂閱資料...');
+            initSampleData();
+            updateStats();
+            filterSubscriptions(); // 使用 filterSubscriptions 來保持當前的篩選條件
+        }
+
+        // 監聽 localStorage 變化（跨分頁同步）
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'subscriptions') {
+                console.log('📥 檢測到訂閱資料更新，自動重新載入...');
+                refreshData();
+            }
+        });
+
+        // 定期檢查資料更新（每5秒）
+        setInterval(() => {
+            const currentData = localStorage.getItem('subscriptions');
+            if (currentData) {
+                try {
+                    const parsed = JSON.parse(currentData);
+                    if (parsed.length !== subscriptionsData.length) {
+                        console.log('📊 訂閱數量變化，自動更新...');
+                        refreshData();
+                    }
+                } catch (e) {
+                    // 忽略解析錯誤
+                }
+            }
+        }, 5000);
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 訂閱管理頁面已載入');
+            initSampleData();
+            updateStats();
+            renderSubscriptions();
+        });
+    </script>
+</body>
+</html>

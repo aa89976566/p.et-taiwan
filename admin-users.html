@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用戶管理 - 匠寵後台管理系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(230, 57, 70, 0.1);
+            border-left: 4px solid #E63946;
+        }
+        
+        .sidebar-item.active {
+            background: rgba(230, 57, 70, 0.15);
+            border-left: 4px solid #E63946;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #DEF7EC;
+            color: #03543F;
+        }
+        
+        .status-inactive {
+            background: #FDE8E8;
+            color: #9B1C1C;
+        }
+        
+        .table-row:hover {
+            background: #F9FAFB;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+    </style>
+    
+    <!-- 引入數據管理系統 -->
+    <script src="js/data-store.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/admin-users.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- 頂部導航欄 -->
+    <nav class="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-400 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-paw text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">匠寵後台</h1>
+                        <p class="text-xs text-gray-500">用戶管理</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button class="relative text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                </button>
+
+                <div class="flex items-center space-x-3 border-l pl-4">
+                    <div class="hidden md:block text-right">
+                        <p class="text-sm font-semibold text-gray-800" id="adminName">超級管理員</p>
+                        <p class="text-xs text-gray-500" id="adminRole">Super Admin</p>
+                    </div>
+                    <button onclick="showUserMenu()" class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">A</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 側邊欄 -->
+    <aside class="fixed left-0 top-16 bottom-0 w-64 bg-white shadow-lg overflow-y-auto z-40">
+        <div class="p-4">
+            <nav class="space-y-2">
+                <a href="admin-dashboard.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-chart-line text-lg w-6"></i>
+                    <span>儀表板</span>
+                </a>
+
+                <div class="sidebar-section">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">用戶管理</p>
+                    <a href="admin-users.html" class="sidebar-item active flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-users text-lg w-6"></i>
+                        <span>用戶列表</span>
+                    </a>
+
+                </div>
+
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">商品管理</p>
+                    <a href="admin-products.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-box text-lg w-6"></i>
+                        <span>產品列表</span>
+                    </a>
+                    <a href="admin-orders.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-shopping-cart text-lg w-6"></i>
+                        <span>訂單管理</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">物流管理</p>
+                    <a href="admin-shipping.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-shipping-fast text-lg w-6"></i>
+                        <span>物流設定</span>
+                    </a>
+                    <a href="checkout.html" target="_blank" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-truck text-lg w-6"></i>
+                        <span>測試結帳流程</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">測驗系統</p>
+                    <a href="admin-quizzes.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-clipboard-list text-lg w-6"></i>
+                        <span>測驗列表</span>
+                    </a>
+                    <a href="admin-quiz-stats.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-chart-pie text-lg w-6"></i>
+                        <span>測驗統計</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">訂閱服務</p>
+                    <a href="admin-subscriptions.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-sync-alt text-lg w-6"></i>
+                        <span>訂閱列表</span>
+                    </a>
+                    <a href="admin-jar-program.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-recycle text-lg w-6"></i>
+                        <span>換罐計畫</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">數據分析</p>
+                    <a href="admin-analytics.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-chart-bar text-lg w-6"></i>
+                        <span>營收報表</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">系統設定</p>
+                    <a href="admin-settings.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-cog text-lg w-6"></i>
+                        <span>系統設定</span>
+                    </a>
+                    <a href="#" onclick="logout()" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-red-500">
+                        <i class="fas fa-sign-out-alt text-lg w-6"></i>
+                        <span>登出</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- 主要內容區 -->
+    <main class="ml-64 mt-16 p-6">
+        <!-- 頁面標題與操作 -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">用戶管理</h2>
+                <p class="text-gray-600 mt-1">管理所有註冊用戶與會員資料</p>
+            </div>
+            <button onclick="openAddUserModal()" class="bg-gradient-to-r from-red-500 to-orange-400 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">
+                <i class="fas fa-plus mr-2"></i>新增用戶
+            </button>
+        </div>
+
+        <!-- 統計卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-2xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-shadow" onclick="showAllUsers()">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">總用戶數</p>
+                        <p class="text-3xl font-bold text-gray-800">1,247</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-users text-white text-xl"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-green-600 mt-2">
+                    <i class="fas fa-arrow-up"></i> 較上月增加 12.5%
+                </p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-shadow" onclick="showNewUsers()">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">本月新增</p>
+                        <p class="text-3xl font-bold text-gray-800">156</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user-plus text-white text-xl"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-green-600 mt-2">
+                    <i class="fas fa-arrow-up"></i> 較上月增加 8.3%
+                </p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-shadow" onclick="showActiveUsers()">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">活躍用戶</p>
+                        <p class="text-3xl font-bold text-gray-800">892</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">30天內登入過</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 cursor-pointer hover:shadow-xl transition-shadow" onclick="showDeactivatedUsers()">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">停用帳號</p>
+                        <p class="text-3xl font-bold text-gray-800">23</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user-slash text-white text-xl"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">需要處理</p>
+            </div>
+        </div>
+
+        <!-- 搜尋與篩選 -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">搜尋用戶</label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="searchInput"
+                            placeholder="輸入姓名、Email 或電話..." 
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        >
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">狀態</label>
+                    <select id="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                        <option value="">全部狀態</option>
+                        <option value="active">啟用</option>
+                        <option value="inactive">停用</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">註冊時間</label>
+                    <select id="dateFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                        <option value="">全部時間</option>
+                        <option value="today">今天</option>
+                        <option value="week">本週</option>
+                        <option value="month">本月</option>
+                        <option value="year">今年</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-4">
+                <button onclick="resetFilters()" class="text-sm text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-redo mr-1"></i>重置篩選
+                </button>
+                <button onclick="applyFilters()" class="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition">
+                    <i class="fas fa-filter mr-2"></i>套用篩選
+                </button>
+            </div>
+        </div>
+
+        <!-- 用戶列表 -->
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                <input type="checkbox" class="w-4 h-4 text-red-500 border-gray-300 rounded">
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">用戶</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">電話</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">註冊時間</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">狀態</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody" class="divide-y divide-gray-200">
+                        <!-- 用戶資料 (動態生成) -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分頁 -->
+            <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
+                <div class="text-sm text-gray-600">
+                    顯示 <span class="font-semibold">1-20</span> / 共 <span class="font-semibold">1,247</span> 筆
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium">1</button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">2</button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">3</button>
+                    <span class="px-2 text-gray-500">...</span>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">63</button>
+                    <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 新增/編輯用戶 Modal -->
+    <div id="userModal" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-2xl font-bold text-gray-800" id="modalTitle">新增用戶</h3>
+                <button onclick="closeUserModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <form id="userForm" class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">姓名 *</label>
+                        <input type="text" id="userName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="請輸入姓名">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                        <input type="email" id="userEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="example@email.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">電話</label>
+                        <input type="tel" id="userPhone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="09XX-XXX-XXX">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">生日</label>
+                        <input type="date" id="userBirthday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">性別</label>
+                        <select id="userGender" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                            <option value="">請選擇</option>
+                            <option value="male">男性</option>
+                            <option value="female">女性</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">狀態</label>
+                        <select id="userStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                            <option value="active">啟用</option>
+                            <option value="inactive">停用</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">地址</label>
+                    <input type="text" id="userAddress" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="請輸入完整地址">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">備註</label>
+                    <textarea id="userNotes" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="其他備註資訊..."></textarea>
+                </div>
+
+                <div class="flex items-center justify-end space-x-4 pt-4 border-t">
+                    <button type="button" onclick="closeUserModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition">
+                        取消
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-gradient-to-r from-red-500 to-orange-400 text-white rounded-lg font-semibold hover:shadow-lg transition">
+                        <i class="fas fa-save mr-2"></i>儲存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 用戶詳情 Modal -->
+    <div id="userDetailModal" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-2xl font-bold text-gray-800">用戶詳情</h3>
+                <button onclick="closeUserDetailModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- 基本資訊 -->
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-3xl font-bold" id="detailAvatar">W</div>
+                        <div>
+                            <h4 class="text-2xl font-bold text-gray-800" id="detailName">王小明</h4>
+                            <p class="text-gray-600" id="detailEmail">wang@example.com</p>
+                            <p class="text-gray-600" id="detailPhone">0912-345-678</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+
+                        <div class="bg-white p-3 rounded-lg text-center">
+                            <p class="text-sm text-gray-600">總消費</p>
+                            <p class="text-2xl font-bold text-green-600" id="detailTotal">NT$ 12,580</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg text-center">
+                            <p class="text-sm text-gray-600">訂單數</p>
+                            <p class="text-2xl font-bold text-orange-600" id="detailOrders">8</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 購買紀錄 -->
+                <div id="ordersTab" class="tab-content">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">訂單編號</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">訂單時間</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">商品</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">金額</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">狀態</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userOrdersList" class="divide-y divide-gray-200">
+                                <!-- 訂單列表將動態生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模擬用戶資料
+        const mockUsers = [
+            { id: 1, name: '王小明', email: 'wang@example.com', phone: '0912-345-678', registered: '2024-01-15', status: 'active', avatar: 'W' },
+            { id: 2, name: '李美麗', email: 'li@example.com', phone: '0923-456-789', registered: '2024-02-20', status: 'active', avatar: 'L' },
+            { id: 3, name: '張大偉', email: 'zhang@example.com', phone: '0934-567-890', registered: '2024-03-10', status: 'active', avatar: 'Z' },
+            { id: 4, name: '陳小華', email: 'chen@example.com', phone: '0945-678-901', registered: '2024-04-05', status: 'inactive', avatar: 'C' },
+            { id: 5, name: '林雅婷', email: 'lin@example.com', phone: '0956-789-012', registered: '2024-05-18', status: 'active', avatar: 'L' },
+            { id: 6, name: '黃志明', email: 'huang@example.com', phone: '0967-890-123', registered: '2024-06-22', status: 'active', avatar: 'H' },
+            { id: 7, name: '吳佳玲', email: 'wu@example.com', phone: '0978-901-234', registered: '2024-07-30', status: 'active', avatar: 'W' },
+            { id: 8, name: '周建國', email: 'zhou@example.com', phone: '0989-012-345', registered: '2024-08-12', status: 'active', avatar: 'Z' },
+            { id: 9, name: '鄭雅文', email: 'zheng@example.com', phone: '0912-123-456', registered: '2024-09-05', status: 'inactive', avatar: 'Z' },
+            { id: 10, name: '劉建宏', email: 'liu@example.com', phone: '0923-234-567', registered: '2024-10-08', status: 'active', avatar: 'L' },
+            { id: 11, name: '蔡依林', email: 'cai@example.com', phone: '0934-345-678', registered: '2024-11-15', status: 'active', avatar: 'C' },
+            { id: 12, name: '許志豪', email: 'xu@example.com', phone: '0945-456-789', registered: '2024-12-01', status: 'active', avatar: 'X' },
+        ];
+
+        // 渲染用戶列表
+        function renderUsers(users = mockUsers) {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = users.map(user => `
+                <tr class="table-row">
+                    <td class="px-6 py-4">
+                        <input type="checkbox" class="w-4 h-4 text-red-500 border-gray-300 rounded">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                ${user.avatar}
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">${user.name}</p>
+                                <p class="text-xs text-gray-500">ID: ${user.id}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">${user.email}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600">${user.phone}</td>
+
+                    <td class="px-6 py-4 text-sm text-gray-600">${user.registered}</td>
+                    <td class="px-6 py-4">
+                        <span class="status-badge status-${user.status}">
+                            ${user.status === 'active' ? '啟用' : '停用'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-2">
+                            <button onclick='viewUserDetail(${JSON.stringify(user)})' class="text-blue-600 hover:text-blue-800" title="查看詳情">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button onclick="editUser(${user.id})" class="text-green-600 hover:text-green-800" title="編輯">
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            <button onclick="viewUserOrders(${user.id})" class="text-orange-600 hover:text-orange-800" title="購買紀錄">
+                                <i class="fas fa-shopping-bag"></i>
+                            </button>
+                            <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-800" title="刪除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Modal 操作
+        function openAddUserModal() {
+            document.getElementById('modalTitle').textContent = '新增用戶';
+            document.getElementById('userForm').reset();
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        function viewUser(id) {
+            alert(`查看用戶 ID: ${id}`);
+        }
+
+        // 查看用戶詳情
+        function viewUserDetail(user) {
+            // 設定基本資訊
+            document.getElementById('detailAvatar').textContent = user.avatar;
+            document.getElementById('detailName').textContent = user.name;
+            document.getElementById('detailEmail').textContent = user.email;
+            document.getElementById('detailPhone').textContent = user.phone;
+            
+            // 模擬總消費和訂單數
+            const totalSpent = (Math.random() * 20000 + 5000).toFixed(0);
+            const orderCount = Math.floor(Math.random() * 15) + 3;
+            document.getElementById('detailTotal').textContent = `NT$ ${parseInt(totalSpent).toLocaleString()}`;
+            document.getElementById('detailOrders').textContent = orderCount;
+            
+            // 載入訂單
+            loadUserOrders(user.id);
+            
+            // 顯示 Modal
+            document.getElementById('userDetailModal').classList.add('active');
+        }
+
+        // 關閉用戶詳情 Modal
+        function closeUserDetailModal() {
+            document.getElementById('userDetailModal').classList.remove('active');
+        }
+
+        // Tab 切換
+        function switchTab(tab) {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active', 'border-red-500', 'text-red-600', 'font-semibold');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            
+            tabContents.forEach(content => content.classList.add('hidden'));
+            
+            if (tab === 'pets') {
+                document.getElementById('tabPets').classList.add('active', 'border-red-500', 'text-red-600', 'font-semibold');
+                document.getElementById('tabPets').classList.remove('border-transparent', 'text-gray-500');
+                document.getElementById('petsTab').classList.remove('hidden');
+            } else if (tab === 'orders') {
+                document.getElementById('tabOrders').classList.add('active', 'border-red-500', 'text-red-600', 'font-semibold');
+                document.getElementById('tabOrders').classList.remove('border-transparent', 'text-gray-500');
+                document.getElementById('ordersTab').classList.remove('hidden');
+            }
+        }
+
+        // 載入用戶訂單
+        function loadUserOrders(userId) {
+            // 模擬訂單資料
+            const orders = [
+                { id: '#2024120015', date: '2024-12-21 14:30', items: '雞肉脆片 x2', amount: 600, status: 'delivered' },
+                { id: '#2024120008', date: '2024-12-18 10:20', items: '營養主餐罐 x4', amount: 2396, status: 'delivered' },
+                { id: '#2024120003', date: '2024-12-15 15:45', items: '地瓜餅乾 x3', amount: 840, status: 'delivered' },
+                { id: '#2024110025', date: '2024-11-28 09:30', items: '益智玩具 x1', amount: 699, status: 'delivered' },
+                { id: '#2024110012', date: '2024-11-10 16:20', items: '雞肉脆片 x5', amount: 1500, status: 'delivered' }
+            ];
+            
+            const randomOrders = orders.slice(0, Math.floor(Math.random() * 5) + 3);
+            const ordersList = document.getElementById('userOrdersList');
+            
+            ordersList.innerHTML = randomOrders.map(order => {
+                const statusMap = {
+                    'delivered': { text: '已送達', class: 'bg-green-100 text-green-800' },
+                    'shipping': { text: '配送中', class: 'bg-blue-100 text-blue-800' },
+                    'preparing': { text: '待出貨', class: 'bg-yellow-100 text-yellow-800' }
+                };
+                const status = statusMap[order.status] || statusMap['delivered'];
+                
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 font-semibold text-blue-600">${order.id}</td>
+                        <td class="px-4 py-3 text-gray-700">${order.date}</td>
+                        <td class="px-4 py-3 text-gray-700">${order.items}</td>
+                        <td class="px-4 py-3 font-semibold text-gray-800">NT$ ${order.amount}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium ${status.class}">
+                                ${status.text}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 查看用戶訂單
+        function viewUserOrders(userId) {
+            const user = mockUsers.find(u => u.id === userId);
+            if (user) {
+                viewUserDetail(user);
+            }
+        }
+
+        function editUser(id) {
+            document.getElementById('modalTitle').textContent = '編輯用戶';
+            document.getElementById('userModal').classList.add('active');
+            // 這裡應該載入用戶資料到表單
+        }
+
+        function deleteUser(id) {
+            if (confirm('確定要刪除此用戶嗎？')) {
+                alert(`已刪除用戶 ID: ${id}`);
+                renderUsers();
+            }
+        }
+
+        // 篩選功能
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            
+            let filtered = mockUsers;
+            
+            if (searchTerm) {
+                filtered = filtered.filter(user => 
+                    user.name.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm) ||
+                    user.phone.includes(searchTerm)
+                );
+            }
+            
+            if (status) {
+                filtered = filtered.filter(user => user.status === status);
+            }
+            
+            renderUsers(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            renderUsers(mockUsers);
+        }
+
+        // 表單提交
+        document.getElementById('userForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('用戶資料已儲存！');
+            closeUserModal();
+            renderUsers();
+        });
+
+        // 登出
+        function logout() {
+            if (confirm('確定要登出嗎？')) {
+                localStorage.removeItem('adminUser');
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        function showUserMenu() {
+            alert('用戶選單功能');
+        }
+
+        // 檢查登入狀態
+        window.addEventListener('DOMContentLoaded', () => {
+            const adminUser = localStorage.getItem('adminUser');
+            if (!adminUser) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            const user = JSON.parse(adminUser);
+            document.getElementById('adminName').textContent = user.name;
+            document.getElementById('adminRole').textContent = user.role === 'super_admin' ? 'Super Admin' : 'Admin';
+            
+            renderUsers();
+        });
+
+        // 統計卡片點擊功能
+        function showAllUsers() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('roleFilter').value = '';
+            alert('👥 總用戶數詳情\n\n總計: 1,247 位用戶\n較上月增加 12.5%\n\n• 一般會員: 856 位\n• VIP會員: 234 位\n• 訂閱會員: 157 位\n\n所有用戶已顯示在下方列表');
+            renderUsers();
+        }
+
+        function showNewUsers() {
+            alert('🆕 本月新增用戶\n\n共 156 位新用戶\n較上月增加 8.3%\n\n• 一般註冊: 98 位\n• 社群登入: 45 位\n• 活動推薦: 13 位\n\n已篩選本月註冊用戶');
+            // 篩選本月用戶
+            const thisMonth = new Date().getMonth();
+            const newUsers = mockUsers.filter(u => {
+                const userMonth = new Date(u.joinDate).getMonth();
+                return userMonth === thisMonth;
+            });
+            document.getElementById('userTableBody').innerHTML = renderUserRows(newUsers);
+        }
+
+        function showActiveUsers() {
+            alert('📈 活躍用戶詳情\n\n共 892 位活躍用戶\n(30天內登入過)\n\n• 每日登入: 342 位\n• 每週登入: 385 位\n• 每月登入: 165 位\n\n已篩選活躍用戶');
+            // 篩選活躍用戶
+            const activeUsers = mockUsers.filter(u => u.status === 'active');
+            document.getElementById('userTableBody').innerHTML = renderUserRows(activeUsers);
+        }
+
+        function showDeactivatedUsers() {
+            document.getElementById('statusFilter').value = 'inactive';
+            alert('⚠️ 停用帳號列表\n\n共 23 個停用帳號\n\n• 用戶自行停用: 15 個\n• 管理員停用: 5 個\n• 違規停用: 3 個\n\n需要處理的帳號已顯示');
+            // 篩選停用用戶
+            const inactiveUsers = mockUsers.filter(u => u.status === 'inactive');
+            document.getElementById('userTableBody').innerHTML = renderUserRows(inactiveUsers);
+        }
+
+        function renderUserRows(users) {
+            return users.map(user => `
+                <tr class="table-row">
+                    <td class="px-6 py-4"><input type="checkbox" class="w-4 h-4 text-red-500 border-gray-300 rounded"></td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-3">
+                            <img src="${user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name)}" alt="${user.name}" class="w-10 h-10 rounded-full">
+                            <div>
+                                <p class="font-semibold text-gray-800">${user.name}</p>
+                                <p class="text-xs text-gray-500">${user.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">${user.phone}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${user.role === 'vip' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}">
+                            ${user.role === 'vip' ? 'VIP會員' : user.role === 'subscription' ? '訂閱會員' : '一般會員'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">${user.joinDate}</td>
+                    <td class="px-6 py-4 text-sm font-semibold text-gray-800">NT$ ${user.totalSpent?.toLocaleString() || 0}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                            ${user.status === 'active' ? '正常' : '停用'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="viewUser(${user.id})" class="text-blue-600 hover:text-blue-800" title="查看">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button onclick="editUser(${user.id})" class="text-green-600 hover:text-green-800" title="編輯">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="toggleUserStatus(${user.id})" class="text-orange-600 hover:text-orange-800" title="${user.status === 'active' ? '停用' : '啟用'}">
+                                <i class="fas fa-${user.status === 'active' ? 'ban' : 'check-circle'}"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
