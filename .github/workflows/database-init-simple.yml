@@ -1,0 +1,32 @@
+name: Database Init (Simple)
+
+on:
+  workflow_dispatch:  # 手動觸發
+  push:
+    branches: [main, master]
+    paths:
+      - 'backend/config/database.js'
+      - 'backend/scripts/**'
+
+jobs:
+  init-db:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Init DB
+        working-directory: ./backend
+        run: npm run init-db || node scripts/setup-railway-db.js
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_TYPE: postgresql

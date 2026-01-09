@@ -1,0 +1,47 @@
+name: Database Setup (On Demand)
+
+on:
+  workflow_dispatch:  # 只允許手動觸發
+  repository_dispatch:  # 允許外部觸發（如 Railway webhook）
+
+jobs:
+  setup-database:
+    name: Setup PostgreSQL Database
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Test database connection
+        working-directory: ./backend
+        run: npm run test-db
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_TYPE: postgresql
+          NODE_ENV: production
+
+      - name: Initialize database
+        working-directory: ./backend
+        run: npm run setup-db
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_TYPE: postgresql
+          NODE_ENV: production
+
+      - name: Show completion message
+        if: success()
+        run: |
+          echo "✅ 資料庫設置完成！"
+          echo "📊 所有資料表已建立"
