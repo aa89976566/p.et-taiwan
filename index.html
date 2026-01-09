@@ -5,12 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="匠寵 - 從台灣夜市到健康餐桌，手作零食 × 循環經濟 × 健康訂閱，為你的毛孩提供最好的生活品質">
     <title>匠寵 - 寵物手作零食 × 循環經濟 × 智能訂閱</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <!-- 開發環境：強制禁用緩存 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (開發環境 - 生產環境請使用本地構建) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // 開發環境：隱藏 Tailwind CDN 警告
+        if (window.tailwind && window.tailwind.config) {
+            // 保持原有的 tailwind.config
+        }
+        // 隱藏控制台警告（僅開發環境）
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) {
+                // 隱藏這個警告
+                return;
+            }
+            originalWarn.apply(console, args);
+        };
+    </script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,47 +60,75 @@
     <!-- Local Cart System -->
     <script src="js/local-cart.js" defer></script>
     
-    <!-- Logo 強制顯示腳本 + 移除所有腳掌圖標 -->
+    <!-- 移除所有 logo 和腳掌圖標 -->
     <script>
-        // 確保 logo 正確顯示（清除緩存影響）
         document.addEventListener('DOMContentLoaded', function() {
-            // 強制顯示新 logo
-            const logo = document.querySelector('#main-logo svg');
-            if (logo) {
-                logo.style.display = 'block';
-                logo.style.visibility = 'visible';
-                logo.style.opacity = '1';
-                logo.setAttribute('data-loaded', 'true');
-                console.log('✅ Logo 已強制顯示');
+            // 移除整個 logo 區域（包括文字）
+            const mainLogo = document.querySelector('#main-logo');
+            if (mainLogo) {
+                mainLogo.remove();
             }
             
-            // 移除所有腳掌圖標（fa-paw）
-            const pawIcons = document.querySelectorAll('.fa-paw, i.fa-paw, [class*="fa-paw"]');
-            pawIcons.forEach(function(icon) {
-                icon.style.display = 'none';
-                icon.style.visibility = 'hidden';
-                icon.style.opacity = '0';
-                icon.style.width = '0';
-                icon.style.height = '0';
-                if (icon.parentElement && icon.parentElement.classList.contains('inline-flex')) {
-                    // 如果是在按鈕或容器中，可能需要移除整個容器
-                    const parent = icon.parentElement;
-                    if (parent.querySelectorAll('.fa-paw').length === parent.children.length) {
-                        parent.style.display = 'none';
-                    }
+            // 移除所有包含「匠寵」文字的 logo 連結
+            const logoLinks = document.querySelectorAll('nav a[href="index.html"], a#main-logo, .logo, [class*="logo"]');
+            logoLinks.forEach(function(link) {
+                const text = link.textContent || link.innerText || '';
+                if (text.includes('匠寵') || link.id === 'main-logo' || link.classList.contains('logo')) {
+                    link.remove();
                 }
-                icon.remove(); // 完全移除元素
             });
             
-            // 持續監控，防止動態添加的腳掌圖標
+            // 移除所有 logo SVG、圖片和元素
+            const logoSvgs = document.querySelectorAll('#main-logo, .logo, [class*="logo"], nav svg, nav img[src*="logo"], nav a:has(span)');
+            logoSvgs.forEach(function(element) {
+                if (element.closest('#main-logo') || element.closest('.logo') || 
+                    (element.getAttribute && element.getAttribute('src') && element.getAttribute('src').includes('logo')) ||
+                    (element.textContent && element.textContent.includes('匠寵') && element.tagName === 'A')) {
+                    element.remove();
+                }
+            });
+            
+            // 移除所有腳掌圖標
+            const pawIcons = document.querySelectorAll('.fa-paw, i.fa-paw, [class*="fa-paw"], [class*="paw"]');
+            pawIcons.forEach(function(icon) {
+                icon.remove();
+            });
+            
+            // 移除包含腳掌圖標的容器
+            const pawContainers = document.querySelectorAll('div, span');
+            pawContainers.forEach(function(container) {
+                if (container.querySelector && container.querySelector('.fa-paw, i.fa-paw')) {
+                    const paw = container.querySelector('.fa-paw, i.fa-paw');
+                    if (paw && container.children.length === 1) {
+                        container.remove();
+                    } else if (paw) {
+                        paw.remove();
+                    }
+                }
+            });
+            
+            // 持續監控，防止動態添加的 logo 和腳掌圖標
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     mutation.addedNodes.forEach(function(node) {
                         if (node.nodeType === 1) { // Element node
-                            const paws = node.querySelectorAll ? node.querySelectorAll('.fa-paw, i.fa-paw, [class*="fa-paw"]') : [];
-                            if (node.classList && (node.classList.contains('fa-paw') || node.classList.contains('fa-paw'))) {
+                            // 移除 logo 元素
+                            if (node.id === 'main-logo' || node.classList.contains('logo') || 
+                                (node.textContent && node.textContent.includes('匠寵') && node.tagName === 'A')) {
                                 node.remove();
                             }
+                            // 移除 logo SVG 和圖片
+                            if (node.tagName === 'SVG' && (node.closest('#main-logo') || node.closest('.logo'))) {
+                                node.remove();
+                            }
+                            if (node.tagName === 'IMG' && node.getAttribute('src') && node.getAttribute('src').includes('logo')) {
+                                node.remove();
+                            }
+                            // 移除腳掌圖標
+                            if (node.classList && (node.classList.contains('fa-paw') || Array.from(node.classList).some(c => c.includes('paw')))) {
+                                node.remove();
+                            }
+                            const paws = node.querySelectorAll ? node.querySelectorAll('.fa-paw, i.fa-paw, [class*="fa-paw"], [class*="paw"], #main-logo, .logo') : [];
                             paws.forEach(function(paw) {
                                 paw.remove();
                             });
@@ -97,7 +142,7 @@
                 subtree: true
             });
             
-            console.log('✅ 已移除所有腳掌圖標，並啟動監控');
+            console.log('✅ 已完全移除所有 logo 和腳掌圖標');
         });
     </script>
     
@@ -127,38 +172,6 @@
     <nav class="fixed top-0 w-full bg-white shadow-md z-50 transition-all duration-300" id="navbar">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <!-- Logo - 黑白狗頭伸出粉紅色舌頭 -->
-                <a href="index.html" class="flex items-center space-x-2" id="main-logo">
-                    <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 flex-shrink-0" style="display: block !important;">
-                        <!-- 皇家藍色背景 -->
-                        <rect width="120" height="120" fill="#1E3A8A" rx="20"/>
-                        <!-- 白色額頭條紋 -->
-                        <ellipse cx="60" cy="40" rx="18" ry="10" fill="#FFFFFF"/>
-                        <!-- 白色臉部區域 -->
-                        <ellipse cx="60" cy="48" rx="28" ry="22" fill="#FFFFFF"/>
-                        <!-- 黑色頭部主體 -->
-                        <ellipse cx="60" cy="50" rx="35" ry="30" fill="#1F2937"/>
-                        <!-- 白色條紋（從額頭到鼻子） -->
-                        <ellipse cx="60" cy="45" rx="20" ry="8" fill="#FFFFFF"/>
-                        <!-- 棕色眼睛（帶亮點） -->
-                        <circle cx="52" cy="48" r="4" fill="#8B4513"/>
-                        <circle cx="68" cy="48" r="4" fill="#8B4513"/>
-                        <circle cx="52" cy="48" r="1.5" fill="#FFFFFF"/>
-                        <circle cx="68" cy="48" r="1.5" fill="#FFFFFF"/>
-                        <!-- 黑色鼻子（濕潤感） -->
-                        <ellipse cx="60" cy="55" rx="5" ry="4" fill="#1F2937"/>
-                        <!-- 粉紅色舌頭（向上伸出） -->
-                        <ellipse cx="60" cy="68" rx="7" ry="10" fill="#EC4899"/>
-                        <ellipse cx="60" cy="68" rx="5" ry="8" fill="#F472B6"/>
-                        <!-- 白色鬍鬚 -->
-                        <line x1="45" y1="58" x2="40" y2="58" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-                        <line x1="45" y1="62" x2="40" y2="62" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-                        <line x1="75" y1="58" x2="80" y2="58" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-                        <line x1="75" y1="62" x2="80" y2="62" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                    <span class="text-2xl font-bold text-dark">匠寵</span>
-                </a>
-                
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="products.html" class="text-dark hover:text-primary transition">產品系列</a>

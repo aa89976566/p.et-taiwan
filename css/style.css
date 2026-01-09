@@ -98,16 +98,47 @@ body {
     }
 }
 
-/* Logo 樣式 - 確保顯示 */
+/* Logo 樣式 - 完全隱藏所有 logo（圖片、SVG、文字） */
+#main-logo,
+nav a[href="index.html"]:has(span),
 #main-logo svg,
 nav a[href="index.html"] svg,
-.logo svg {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 48px !important;
-    height: 48px !important;
-    flex-shrink: 0;
+nav a[href="index.html"] img,
+.logo,
+.logo svg,
+.logo img,
+[class*="logo"],
+[class*="logo"] svg,
+[class*="logo"] img,
+img[src*="logo"],
+img[alt*="Logo"],
+img[alt*="logo"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* 移除所有偽元素中的 logo 和腳掌圖標 */
+#main-logo::before,
+#main-logo::after,
+nav a[href="index.html"]::before,
+nav a[href="index.html"]::after,
+[class*="logo"]::before,
+[class*="logo"]::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* 移除所有可能顯示腳掌的背景圖片 */
+#main-logo,
+nav a[href="index.html"],
+[class*="logo"] {
+    background-image: none !important;
+    background: none !important;
 }
 
 /* 隱藏所有 fa-paw 圖標和腳掌相關元素 */
@@ -121,12 +152,16 @@ i.fa-paw,
 svg[class*="paw"],
 img[src*="paw"],
 img[alt*="腳掌"],
-img[alt*="爪"] {
+img[alt*="爪"],
+/* 隱藏所有可能顯示腳掌的容器 */
+.inline-flex:has(.fa-paw),
+div:has(.fa-paw) {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     width: 0 !important;
     height: 0 !important;
+    content: none !important;
 }
 
 .btn-pulse {

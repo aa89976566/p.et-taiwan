@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Styles for 匠寵 Website */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+}
+
+/* 保留現有的自定義樣式 */
+@import './style.css';
