@@ -110,11 +110,23 @@ nav a[href="index.html"] svg,
     flex-shrink: 0;
 }
 
-/* 隱藏所有 fa-paw 圖標 */
+/* 隱藏所有 fa-paw 圖標和腳掌相關元素 */
 .fa-paw,
 i.fa-paw,
-[class*="fa-paw"] {
+[class*="fa-paw"],
+[class*="paw"],
+.fas.fa-paw,
+.far.fa-paw,
+.fal.fa-paw,
+svg[class*="paw"],
+img[src*="paw"],
+img[alt*="腳掌"],
+img[alt*="爪"] {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
 .btn-pulse {

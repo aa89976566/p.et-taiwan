@@ -56,12 +56,13 @@ if (dbType === 'postgresql') {
         });
     }
 
-    // 測試連接
+    // 測試連接（非阻塞，僅記錄日誌）
     pool.query('SELECT NOW()', (err) => {
         if (err) {
-            console.error('❌ PostgreSQL 連接失敗:', err.message);
+            console.error('⚠️  PostgreSQL 連線測試失敗:', err.message);
+            console.error('   注意：這可能是暫時性的，初始化時會重試');
         } else {
-            console.log('✅ 已連接到 PostgreSQL 資料庫');
+            console.log('✅ PostgreSQL 連接池已建立');
         }
     });
 
@@ -93,17 +94,26 @@ if (dbType === 'postgresql') {
         },
         
         // 執行更新/插入/刪除
-        run: (query, params, callback) => {
+        run: function(query, params, callback) {
             const convertedQuery = convertQuery(query);
+            const self = this;
             pool.query(convertedQuery, params || [], (err, result) => {
                 if (callback) {
                     if (err) {
                         callback(err);
                     } else {
-                        callback(null, { 
-                            lastID: result.insertId || null, 
-                            changes: result.rowCount || 0 
-                        });
+                        // PostgreSQL 使用 RETURNING id 來獲取 lastID
+                        const lastID = result.rows && result.rows[0] && result.rows[0].id ? result.rows[0].id : null;
+                        const resultObj = { 
+                            lastID: lastID,
+                            changes: result.rowCount || 0
+                        };
+                        // 為了保持與 SQLite 兼容，將 lastID 也添加到 this
+                        if (lastID) {
+                            self.lastID = lastID;
+                        }
+                        self.changes = result.rowCount || 0;
+                        callback(null, resultObj);
                     }
                 }
             });
@@ -180,16 +190,31 @@ function convertCreateTable(sql) {
  */
 function initDatabase() {
     return new Promise((resolve, reject) => {
+        console.log(`📊 資料庫類型: ${dbType}`);
         if (dbType === 'postgresql') {
             // PostgreSQL 初始化
+            console.log('🔍 使用 PostgreSQL 資料庫...');
             initPostgreSQL()
-                .then(() => resolve())
-                .catch(err => reject(err));
+                .then(() => {
+                    console.log('✅ PostgreSQL 資料庫初始化完成');
+                    resolve();
+                })
+                .catch(err => {
+                    console.error('❌ PostgreSQL 初始化失敗:', err);
+                    reject(err);
+                });
         } else {
             // SQLite 初始化
+            console.log('🔍 使用 SQLite 資料庫...');
             initSQLite()
-                .then(() => resolve())
-                .catch(err => reject(err));
+                .then(() => {
+                    console.log('✅ SQLite 資料庫初始化完成');
+                    resolve();
+                })
+                .catch(err => {
+                    console.error('❌ SQLite 初始化失敗:', err);
+                    reject(err);
+                });
         }
     });
 }
@@ -202,9 +227,14 @@ async function initPostgreSQL() {
         throw new Error('PostgreSQL 連接池未初始化');
     }
     
+    console.log('📊 開始建立 PostgreSQL 資料表...');
     const client = await pool.connect();
     
     try {
+        // 先測試連線
+        await client.query('SELECT 1');
+        console.log('✅ PostgreSQL 連線測試成功');
+        
         const tables = [
             // 用戶表
             convertCreateTable(`
@@ -433,11 +463,34 @@ async function initPostgreSQL() {
         ];
         
         // 執行所有 CREATE TABLE 語句
-        for (const tableSQL of tables) {
-            await client.query(tableSQL);
+        console.log(`準備建立 ${tables.length} 個資料表...\n`);
+        const tableNames = [
+            'users', 'products', 'product_variants', 'orders', 'order_items',
+            'quiz_results', 'subscriptions', 'cart_items', 'settings',
+            'coupons', 'coupon_usage'
+        ];
+        
+        for (let i = 0; i < tables.length; i++) {
+            const tableSQL = tables[i];
+            const tableName = tableNames[i] || `表 ${i + 1}`;
+            try {
+                await client.query(tableSQL);
+                console.log(`   ✅ ${tableName} 建立成功`);
+            } catch (error) {
+                // 如果是「已存在」的錯誤，這是正常的
+                if (error.message.includes('already exists') || error.code === '42P07') {
+                    console.log(`   ℹ️  ${tableName} 已存在（跳過）`);
+                } else {
+                    console.error(`   ❌ ${tableName} 建立失敗:`, error.message);
+                    throw error; // 重新拋出錯誤，讓調用者知道
+                }
+            }
         }
         
-        console.log('✅ PostgreSQL 資料庫表結構初始化完成');
+        console.log(`\n✅ PostgreSQL 資料庫表結構初始化完成（共 ${tables.length} 個資料表）`);
+    } catch (error) {
+        console.error('❌ PostgreSQL 初始化過程中發生錯誤:', error.message);
+        throw error;
     } finally {
         client.release();
     }

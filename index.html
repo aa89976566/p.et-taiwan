@@ -43,10 +43,11 @@
     <!-- Local Cart System -->
     <script src="js/local-cart.js" defer></script>
     
-    <!-- Logo 強制顯示腳本 -->
+    <!-- Logo 強制顯示腳本 + 移除所有腳掌圖標 -->
     <script>
         // 確保 logo 正確顯示（清除緩存影響）
         document.addEventListener('DOMContentLoaded', function() {
+            // 強制顯示新 logo
             const logo = document.querySelector('#main-logo svg');
             if (logo) {
                 logo.style.display = 'block';
@@ -55,6 +56,48 @@
                 logo.setAttribute('data-loaded', 'true');
                 console.log('✅ Logo 已強制顯示');
             }
+            
+            // 移除所有腳掌圖標（fa-paw）
+            const pawIcons = document.querySelectorAll('.fa-paw, i.fa-paw, [class*="fa-paw"]');
+            pawIcons.forEach(function(icon) {
+                icon.style.display = 'none';
+                icon.style.visibility = 'hidden';
+                icon.style.opacity = '0';
+                icon.style.width = '0';
+                icon.style.height = '0';
+                if (icon.parentElement && icon.parentElement.classList.contains('inline-flex')) {
+                    // 如果是在按鈕或容器中，可能需要移除整個容器
+                    const parent = icon.parentElement;
+                    if (parent.querySelectorAll('.fa-paw').length === parent.children.length) {
+                        parent.style.display = 'none';
+                    }
+                }
+                icon.remove(); // 完全移除元素
+            });
+            
+            // 持續監控，防止動態添加的腳掌圖標
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1) { // Element node
+                            const paws = node.querySelectorAll ? node.querySelectorAll('.fa-paw, i.fa-paw, [class*="fa-paw"]') : [];
+                            if (node.classList && (node.classList.contains('fa-paw') || node.classList.contains('fa-paw'))) {
+                                node.remove();
+                            }
+                            paws.forEach(function(paw) {
+                                paw.remove();
+                            });
+                        }
+                    });
+                });
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+            
+            console.log('✅ 已移除所有腳掌圖標，並啟動監控');
         });
     </script>
     
@@ -236,7 +279,7 @@
                     <!-- Right: Content -->
                     <div>
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4" style="color: #FF8C42;">
-                            🧠 給毛孩的益智挑戰
+                            給毛孩的益智挑戰
                         </h1>
                         <p class="text-2xl md:text-3xl text-gray-800 font-semibold mb-4">
                             不只防老，更能防拆家
@@ -600,7 +643,7 @@
             <!-- Product Tabs -->
             <div class="flex flex-wrap justify-center gap-4 mb-12">
                 <button class="product-tab active px-8 py-3 rounded-full font-semibold transition" data-tab="toys">
-                    🧠 益智玩具防老系列
+                    益智玩具防老系列
                 </button>
                 <button class="product-tab px-8 py-3 rounded-full font-semibold transition" data-tab="snacks">
                     台灣夜市手作零食
@@ -623,7 +666,7 @@
                         <!-- Right: Content -->
                         <div>
                             <h3 class="text-3xl font-bold mb-4" style="color: #FF8C42;">
-                                🧠 益智玩具防老系列
+                                益智玩具防老系列
                             </h3>
                             <p class="text-lg text-gray-700 mb-6">
                                 讓毛孩動腦動手，延緩認知退化！

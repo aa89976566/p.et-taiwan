@@ -43,45 +43,73 @@
                 <p class="text-gray-600">管理所有會員訂閱資料</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="refreshData()" class="bg-gray-500 text-white px-6 py-3 rounded font-bold hover:bg-gray-600">
-                    🔄 重新載入
+                <button onclick="refreshData()" class="bg-gray-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-gray-700 transition-colors shadow-sm">
+                    <i class="fas fa-sync-alt mr-2"></i>重新載入
                 </button>
-                <button onclick="exportData('csv')" class="bg-green-500 text-white px-6 py-3 rounded font-bold hover:bg-green-600">
-                    📥 匯出 CSV
+                <button onclick="exportData('csv')" class="bg-green-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors shadow-sm">
+                    <i class="fas fa-file-csv mr-2"></i>匯出 CSV
                 </button>
-                <button onclick="exportData('excel')" class="bg-blue-500 text-white px-6 py-3 rounded font-bold hover:bg-blue-600">
-                    📥 匯出 Excel
+                <button onclick="exportData('excel')" class="bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm">
+                    <i class="fas fa-file-excel mr-2"></i>匯出 Excel
                 </button>
             </div>
         </div>
 
-        <!-- 統計卡片 -->
-        <div class="grid grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="text-gray-500 text-sm mb-2">活躍訂閱</div>
-                <div class="text-3xl font-black text-green-600" id="stat-active">0</div>
+        <!-- 統計卡片 - Years.com 風格 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">活躍訂閱</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-active">0</div>
+                    </div>
+                    <div class="w-12 h-12 bg-green-50 border border-green-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="text-gray-500 text-sm mb-2">暫停訂閱</div>
-                <div class="text-3xl font-black text-yellow-600" id="stat-paused">0</div>
+            <div class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">暫停訂閱</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-paused">0</div>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-pause-circle text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="text-gray-500 text-sm mb-2">已取消</div>
-                <div class="text-3xl font-black text-red-600" id="stat-cancelled">0</div>
+            <div class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">已取消</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-cancelled">0</div>
+                    </div>
+                    <div class="w-12 h-12 bg-red-50 border border-red-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-times-circle text-red-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="text-gray-500 text-sm mb-2">總訂閱數</div>
-                <div class="text-3xl font-black text-blue-600" id="stat-total">0</div>
+            <div class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">總訂閱數</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-total">0</div>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-list text-blue-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 篩選器 -->
-        <div class="bg-white rounded-lg shadow p-6 mb-6">
-            <div class="grid grid-cols-4 gap-4">
+        <!-- 篩選器 - Years.com 風格 -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-sm font-medium mb-2">訂閱狀態</label>
-                    <select id="filter-status" class="w-full border-2 border-gray-200 rounded px-4 py-2" onchange="filterSubscriptions()">
-                        <option value="">全部</option>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">訂閱狀態</label>
+                    <select id="filter-status" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="filterSubscriptions()">
+                        <option value="">全部狀態</option>
                         <option value="active">進行中</option>
                         <option value="paused">已暫停</option>
                         <option value="cancelled">已取消</option>
@@ -89,70 +117,76 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2">訂閱方案</label>
-                    <select id="filter-plan" class="w-full border-2 border-gray-200 rounded px-4 py-2" onchange="filterSubscriptions()">
-                        <option value="">全部</option>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">訂閱方案</label>
+                    <select id="filter-plan" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="filterSubscriptions()">
+                        <option value="">全部方案</option>
                         <option value="small">小食組</option>
                         <option value="standard">標準組</option>
                         <option value="premium">豪華組</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-2">搜尋</label>
-                    <input type="text" id="search-input" class="w-full border-2 border-gray-200 rounded px-4 py-2" placeholder="會員姓名或Email" oninput="filterSubscriptions()">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">搜尋會員</label>
+                    <input type="text" id="search-input" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="姓名或 Email" oninput="filterSubscriptions()">
                 </div>
                 <div class="flex items-end">
-                    <button onclick="resetFilters()" class="w-full bg-gray-200 text-gray-700 px-4 py-2 rounded font-bold hover:bg-gray-300">
-                        重置篩選
+                    <button onclick="resetFilters()" class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors border border-gray-300">
+                        <i class="fas fa-undo mr-2"></i>重置
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- 訂閱列表 -->
-        <div class="bg-white rounded-lg shadow">
+        <!-- 訂閱列表 - Years.com 風格 -->
+        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-gray-50 border-b-2">
+                    <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">訂單編號</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">會員</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">方案</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">蛋白質</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">蔬果</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">凍乾粉</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">狀態</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">下次配送</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">操作</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">訂單編號</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">會員</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">方案</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">內容</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">狀態</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">下次配送</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">操作</th>
                         </tr>
                     </thead>
-                    <tbody id="subscription-list">
+                    <tbody id="subscription-list" class="bg-white divide-y divide-gray-200">
                         <!-- 動態載入 -->
                     </tbody>
                 </table>
             </div>
 
-            <!-- 分頁 -->
-            <div class="px-6 py-4 border-t flex justify-between items-center">
+            <!-- 分頁 - Years.com 風格 -->
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="text-sm text-gray-600">
-                    顯示 <span id="showing-start">1</span> 到 <span id="showing-end">10</span>，共 <span id="total-count">0</span> 筆
+                    顯示 <span class="font-semibold text-gray-900" id="showing-start">1</span> 到 <span class="font-semibold text-gray-900" id="showing-end">10</span>，共 <span class="font-semibold text-gray-900" id="total-count">0</span> 筆
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="previousPage()" class="px-4 py-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="prev-btn">上一頁</button>
-                    <button onclick="nextPage()" class="px-4 py-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="next-btn">下一頁</button>
+                    <button onclick="previousPage()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" id="prev-btn">
+                        <i class="fas fa-chevron-left mr-1"></i>上一頁
+                    </button>
+                    <button onclick="nextPage()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" id="next-btn">
+                        下一頁<i class="fas fa-chevron-right ml-1"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 訂閱詳情 Modal -->
-    <div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center" style="z-index: 1000;">
-        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-screen overflow-y-auto">
-            <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white">
-                <h3 class="text-2xl font-black">訂閱詳情</h3>
-                <button onclick="closeDetailModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+    <!-- 訂閱詳情 Modal - Years.com 風格 -->
+    <div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <!-- 標題欄 -->
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white sticky top-0 z-10">
+                <h3 class="text-2xl font-bold text-gray-900">訂閱詳情</h3>
+                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
             </div>
-            <div id="detail-content" class="p-6">
+            <!-- 內容區 -->
+            <div id="detail-content" class="p-6 overflow-y-auto flex-1">
                 <!-- 動態載入 -->
             </div>
         </div>
@@ -255,6 +289,7 @@
             }
 
             pageData.forEach((sub, index) => {
+                // 此處的 statusColor 已不再使用，保留以避免錯誤
                 const statusColor = {
                     'active': 'bg-green-100 text-green-800',
                     'paused': 'bg-yellow-100 text-yellow-800',
@@ -263,11 +298,15 @@
                 };
 
                 const row = document.createElement('tr');
-                row.className = 'border-b hover:bg-gray-50';
+                row.className = 'hover:bg-gray-50 transition-colors';
                 
                 // 使用 data 屬性儲存訂閱資料，避免 onclick 中的 JSON 問題
                 const subDataId = `sub-${start + index}`;
                 window[`subscriptionData_${subDataId}`] = sub;
+                
+                // 整合付款狀態邏輯：統一處理 pending 相關狀態
+                const rawStatus = sub.status || 'pending';
+                const status = (rawStatus === 'pending_verification' || rawStatus === 'pending') ? 'pending' : rawStatus;
                 
                 // 安全取得資料（處理可能的嵌套結構）
                 const userName = sub.user?.name || '-';
@@ -276,31 +315,61 @@
                 const protein = sub.protein || sub.subscription?.proteinName || '-';
                 const veggie = sub.veggie || sub.subscription?.veggieName || '-';
                 const powder = sub.powder || sub.subscription?.powderName || '-';
-                const status = sub.status || 'pending';
-                const statusName = sub.statusName || (status === 'pending' ? '待付款' : status);
+                
+                // 統一狀態名稱顯示：不管原始 statusName 是什麼，根據實際 status 顯示
+                const statusNameMap = {
+                    'pending': '待付款',
+                    'active': '進行中',
+                    'paused': '已暫停',
+                    'cancelled': '已取消'
+                };
+                const statusName = statusNameMap[status] || status;
                 
                 // 取得訂單編號（優先使用 orderId，否則使用 id）
                 const orderId = sub.orderId || sub.id || '-';
                 
+                // 下次配送日期格式化
+                const nextDeliveryStr = sub.nextDeliveryDate ? 
+                    new Date(sub.nextDeliveryDate).toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' }) : '-';
+                
+                // 狀態配色（Years.com 風格）
+                const statusStyles = {
+                    'pending': 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                    'active': 'bg-green-50 text-green-700 border-green-200',
+                    'paused': 'bg-gray-50 text-gray-700 border-gray-200',
+                    'cancelled': 'bg-red-50 text-red-700 border-red-200'
+                };
+                
                 row.innerHTML = `
-                    <td class="px-6 py-4 text-sm font-mono font-bold">${orderId}</td>
-                    <td class="px-6 py-4">
-                        <div class="font-medium">${userName}</div>
-                        <div class="text-sm text-gray-500">${userEmail}</div>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-mono font-semibold text-gray-900">${orderId.slice(-8)}</div>
+                        <div class="text-xs text-gray-500">${sub.createdAt ? new Date(sub.createdAt).toLocaleDateString('zh-TW') : ''}</div>
                     </td>
-                    <td class="px-6 py-4 font-medium">${planName}</td>
-                    <td class="px-6 py-4 text-sm">${protein}</td>
-                    <td class="px-6 py-4 text-sm">${veggie}</td>
-                    <td class="px-6 py-4 text-sm">${powder}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold text-gray-900">${userName}</div>
+                        <div class="text-xs text-gray-500">${userEmail}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold text-gray-900">${planName}</div>
+                    </td>
                     <td class="px-6 py-4">
-                        <span class="px-3 py-1 rounded-full text-xs font-bold ${statusColor[status] || 'bg-gray-100 text-gray-800'}">
+                        <div class="flex flex-wrap gap-1">
+                            <span class="px-2 py-1 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700 font-medium" title="${protein}">${protein.length > 8 ? protein.substring(0, 8) + '...' : protein}</span>
+                            <span class="px-2 py-1 bg-green-50 border border-green-200 rounded text-xs text-green-700 font-medium" title="${veggie}">${veggie.length > 6 ? veggie.substring(0, 6) + '...' : veggie}</span>
+                            <span class="px-2 py-1 bg-purple-50 border border-purple-200 rounded text-xs text-purple-700 font-medium" title="${powder}">${powder.length > 6 ? powder.substring(0, 6) + '...' : powder}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-3 py-1 rounded-lg text-xs font-semibold border ${statusStyles[status] || statusStyles.pending}">
                             ${statusName}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-sm">${sub.nextDeliveryDate || '-'}</td>
-                    <td class="px-6 py-4">
-                        <button onclick='viewDetailByDataId("${subDataId}")' class="text-blue-600 hover:text-blue-800 font-medium">
-                            查看
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        ${nextDeliveryStr}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <button onclick='viewDetailByDataId("${subDataId}")' class="text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors">
+                            <i class="fas fa-eye mr-1"></i>查看詳情
                         </button>
                     </td>
                 `;
@@ -385,73 +454,118 @@
             }
         }
 
-        // 查看詳情
+        // 查看詳情 - Years.com 簡潔風格
         function viewDetail(subscription) {
             const modal = document.getElementById('detail-modal');
             const content = document.getElementById('detail-content');
             
-            // 處理配送資訊顯示
+            // 整合付款狀態邏輯：統一處理 pending 相關狀態
+            const rawStatus = subscription.status || 'pending';
+            const status = (rawStatus === 'pending_verification' || rawStatus === 'pending') ? 'pending' : rawStatus;
+            
+            const statusConfig = {
+                'pending': { 
+                    text: '待付款', 
+                    bgColor: 'bg-yellow-50',
+                    borderColor: 'border-yellow-300',
+                    textColor: 'text-yellow-700',
+                    iconColor: 'text-yellow-600'
+                },
+                'active': { 
+                    text: '進行中', 
+                    bgColor: 'bg-green-50',
+                    borderColor: 'border-green-300',
+                    textColor: 'text-green-700',
+                    iconColor: 'text-green-600'
+                },
+                'paused': { 
+                    text: '已暫停', 
+                    bgColor: 'bg-gray-50',
+                    borderColor: 'border-gray-300',
+                    textColor: 'text-gray-700',
+                    iconColor: 'text-gray-600'
+                },
+                'cancelled': { 
+                    text: '已取消', 
+                    bgColor: 'bg-red-50',
+                    borderColor: 'border-red-300',
+                    textColor: 'text-red-700',
+                    iconColor: 'text-red-600'
+                }
+            };
+            
+            const statusInfo = statusConfig[status] || statusConfig.pending;
+            
+            // 處理配送資訊
             let deliveryInfoHTML = '';
             if (subscription.delivery) {
                 const delivery = subscription.delivery;
                 if (delivery.method === 'home') {
-                    // 宅配到府
                     deliveryInfoHTML = `
-                        <div class="border-t pt-6">
-                            <h4 class="text-lg font-bold mb-4">🏠 配送資訊（宅配到府）</h4>
-                            <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-5 border border-gray-200">
+                            <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <div class="w-8 h-8 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-home text-blue-600 text-sm"></i>
+                                </div>
+                                配送資訊 - 宅配到府
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <div class="text-sm text-gray-500">收件人</div>
-                                    <div class="font-medium">${delivery.recipientName || '-'}</div>
+                                    <div class="text-xs text-gray-500 mb-1">收件人</div>
+                                    <div class="text-sm font-semibold text-gray-900">${delivery.recipientName || '-'}</div>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">聯絡電話</div>
-                                    <div class="font-medium">${delivery.phone || '-'}</div>
+                                    <div class="text-xs text-gray-500 mb-1">聯絡電話</div>
+                                    <div class="text-sm font-semibold text-gray-900">${delivery.phone || '-'}</div>
                                 </div>
-                                <div class="col-span-2">
-                                    <div class="text-sm text-gray-500">配送地址</div>
-                                    <div class="font-medium">
+                                <div class="md:col-span-2">
+                                    <div class="text-xs text-gray-500 mb-1">配送地址</div>
+                                    <div class="text-sm font-semibold text-gray-900">
                                         ${delivery.postalCode || ''} ${delivery.city || ''} ${delivery.district || ''} ${delivery.address || ''}
                                     </div>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">運費</div>
-                                    <div class="font-medium text-orange-600">$${delivery.shippingFee || 0}</div>
+                                    <div class="text-xs text-gray-500 mb-1">運費</div>
+                                    <div class="text-sm font-semibold text-orange-600">NT$ ${delivery.shippingFee || 0}</div>
                                 </div>
                             </div>
                         </div>
                     `;
                 } else if (delivery.method === '711') {
-                    // 7-11 超商取貨
                     deliveryInfoHTML = `
-                        <div class="border-t pt-6">
-                            <h4 class="text-lg font-bold mb-4">🏪 配送資訊（7-11 超商取貨）</h4>
-                            <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-5 border border-gray-200">
+                            <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <div class="w-8 h-8 bg-green-50 border border-green-200 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-store text-green-600 text-sm"></i>
+                                </div>
+                                配送資訊 - 7-11 超商取貨
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <div class="text-sm text-gray-500">收件人</div>
-                                    <div class="font-medium">${delivery.recipientName || '-'}</div>
+                                    <div class="text-xs text-gray-500 mb-1">收件人</div>
+                                    <div class="text-sm font-semibold text-gray-900">${delivery.recipientName || '-'}</div>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">聯絡電話</div>
-                                    <div class="font-medium">${delivery.phone || '-'}</div>
+                                    <div class="text-xs text-gray-500 mb-1">聯絡電話</div>
+                                    <div class="text-sm font-semibold text-gray-900">${delivery.phone || '-'}</div>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">門市名稱</div>
-                                    <div class="font-medium">${delivery.storeName || '-'}</div>
+                                    <div class="text-xs text-gray-500 mb-1">門市名稱</div>
+                                    <div class="text-sm font-semibold text-gray-900">${delivery.storeName || '-'}</div>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">門市代號</div>
-                                    <div class="font-medium">${delivery.storeCode || '-'}</div>
+                                    <div class="text-xs text-gray-500 mb-1">門市代號</div>
+                                    <div class="text-sm font-semibold text-gray-900">${delivery.storeCode || '-'}</div>
                                 </div>
-                                <div class="col-span-2">
-                                    <div class="text-sm text-gray-500">門市地址</div>
-                                    <div class="font-medium">
+                                <div class="md:col-span-2">
+                                    <div class="text-xs text-gray-500 mb-1">門市地址</div>
+                                    <div class="text-sm font-semibold text-gray-900">
                                         ${delivery.storeCity || ''} ${delivery.storeDistrict || ''} ${delivery.storeAddress || ''}
                                     </div>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">運費</div>
-                                    <div class="font-medium text-green-600">免運費</div>
+                                    <div class="text-xs text-gray-500 mb-1">運費</div>
+                                    <div class="text-sm font-semibold text-green-600">免運費</div>
                                 </div>
                             </div>
                         </div>
@@ -461,96 +575,200 @@
             
             const userInfo = subscription.user || {};
             const subscriptionInfo = subscription.subscription || {};
+            const planName = subscription.planName || subscriptionInfo.planName || '-';
+            const orderId = subscription.orderId || subscription.id || '-';
+            
+            // 計算下次配送日期
+            const nextDeliveryDate = subscription.nextDeliveryDate ? 
+                new Date(subscription.nextDeliveryDate).toLocaleDateString('zh-TW', { 
+                    year: 'numeric',
+                    month: 'long', 
+                    day: 'numeric',
+                    weekday: 'short'
+                }) : '-';
+            
+            const startDate = subscription.startDate ? 
+                new Date(subscription.startDate).toLocaleDateString('zh-TW', { 
+                    year: 'numeric',
+                    month: 'long', 
+                    day: 'numeric'
+                }) : '-';
+            
+            const createdAt = subscription.createdAt ? 
+                new Date(subscription.createdAt).toLocaleDateString('zh-TW', { 
+                    year: 'numeric',
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : '-';
+            
+            // 方案內容
+            const proteinInfo = subscription.protein || subscriptionInfo.proteinName || '-';
+            const veggieInfo = subscription.veggie || subscriptionInfo.veggieName || '-';
+            const powderInfo = subscription.powder || subscriptionInfo.powderName || '-';
+            
+            // 付款資訊
+            const pricing = subscription.pricing || {};
+            const total = pricing.total || subscriptionInfo.price || 0;
+            const subtotal = pricing.subtotal || subscriptionInfo.price || 0;
+            const shippingFee = pricing.shippingFee || subscription.delivery?.shippingFee || 0;
+            
+            // 付款方式
+            const paymentType = subscription.paymentType || 'monthly';
+            const paymentTypeText = paymentType === 'halfyear' ? '半年付' : '月付';
             
             content.innerHTML = `
                 <div class="space-y-6">
-                    <div>
-                        <h4 class="text-lg font-bold mb-4">基本資訊</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <div class="text-sm text-gray-500">訂單編號</div>
-                                <div class="font-medium font-mono font-bold">${subscription.orderId || subscription.id || '-'}</div>
+                    <!-- 狀態卡片：一目了然 -->
+                    <div class="bg-white rounded-lg p-6 border-2 ${statusInfo.borderColor}">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 ${statusInfo.bgColor} ${statusInfo.borderColor} border-2 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-${status === 'pending' ? 'clock' : status === 'active' ? 'check-circle' : status === 'paused' ? 'pause-circle' : 'times-circle'} ${statusInfo.iconColor} text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-900 mb-1">${planName}</h3>
+                                    <div class="flex items-center gap-3">
+                                        <span class="px-3 py-1 ${statusInfo.bgColor} ${statusInfo.textColor} border ${statusInfo.borderColor} rounded text-xs font-semibold">
+                                            ${statusInfo.text}
+                                        </span>
+                                        <span class="text-xs text-gray-500 font-mono">#${orderId.slice(-8)}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="text-sm text-gray-500">訂閱狀態</div>
-                                <div class="font-medium">${subscription.statusName || subscription.status || '-'}</div>
+                            <div class="text-right">
+                                <div class="text-3xl font-bold text-gray-900 mb-1">NT$ ${total.toLocaleString()}</div>
+                                <div class="text-sm text-gray-500">${paymentTypeText}</div>
                             </div>
-                            <div>
-                                <div class="text-sm text-gray-500">訂閱方案</div>
-                                <div class="font-medium">${subscription.planName || subscriptionInfo.planName || '-'}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 關鍵資訊：簡潔卡片 -->
+                    ${status === 'active' || status === 'paused' ? `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="text-xs text-blue-600 font-semibold mb-1">下次配送</div>
+                            <div class="text-base font-bold text-gray-900">${nextDeliveryDate}</div>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="text-xs text-green-600 font-semibold mb-1">配送頻率</div>
+                            <div class="text-base font-bold text-gray-900">每月 1 次</div>
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <!-- 方案內容 -->
+                    <div class="bg-white rounded-lg p-5 border border-gray-200">
+                        <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <div class="w-8 h-8 bg-purple-50 border border-purple-200 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-box text-purple-600 text-sm"></i>
                             </div>
-                            <div>
-                                <div class="text-sm text-gray-500">開始日期</div>
-                                <div class="font-medium">${subscription.startDate || '-'}</div>
+                            方案內容
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg flex items-center gap-2">
+                                <i class="fas fa-drumstick-bite text-orange-600"></i>
+                                <span class="text-sm font-medium text-gray-800">${proteinInfo}</span>
                             </div>
-                            <div>
-                                <div class="text-sm text-gray-500">下次配送</div>
-                                <div class="font-medium">${subscription.nextDeliveryDate || '-'}</div>
+                            <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg flex items-center gap-2">
+                                <i class="fas fa-carrot text-green-600"></i>
+                                <span class="text-sm font-medium text-gray-800">${veggieInfo}</span>
                             </div>
-                            <div>
-                                <div class="text-sm text-gray-500">建立時間</div>
-                                <div class="font-medium">${subscription.createdAt ? new Date(subscription.createdAt).toLocaleString('zh-TW') : '-'}</div>
+                            <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg flex items-center gap-2">
+                                <i class="fas fa-cube text-purple-600"></i>
+                                <span class="text-sm font-medium text-gray-800">${powderInfo}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="border-t pt-6">
-                        <h4 class="text-lg font-bold mb-4">會員資訊</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <div class="text-sm text-gray-500">會員姓名</div>
-                                <div class="font-medium">${userInfo.name || '-'}</div>
+                    <!-- 會員資訊 -->
+                    <div class="bg-white rounded-lg p-5 border border-gray-200">
+                        <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <div class="w-8 h-8 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600 text-sm"></i>
                             </div>
+                            會員資訊
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <div class="text-sm text-gray-500">Email</div>
-                                <div class="font-medium">${userInfo.email || '-'}</div>
-                            </div>
-                            <div>
-                                <div class="text-sm text-gray-500">電話</div>
-                                <div class="font-medium">${userInfo.phone || '-'}</div>
+                                <div class="text-xs text-gray-500 mb-1">會員姓名</div>
+                                <div class="text-sm font-semibold text-gray-900">${userInfo.name || '-'}</div>
                             </div>
                             <div>
-                                <div class="text-sm text-gray-500">會員ID</div>
-                                <div class="font-medium">${userInfo.id || userInfo.userId || '-'}</div>
+                                <div class="text-xs text-gray-500 mb-1">Email</div>
+                                <div class="text-sm font-semibold text-gray-900">${userInfo.email || '-'}</div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="border-t pt-6">
-                        <h4 class="text-lg font-bold mb-4">訂閱內容</h4>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">蛋白質：</span>
-                                <span class="font-medium">${subscription.protein || subscriptionInfo.proteinName || '-'}</span>
+                            <div>
+                                <div class="text-xs text-gray-500 mb-1">電話</div>
+                                <div class="text-sm font-semibold text-gray-900">${userInfo.phone || '-'}</div>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">蔬果凍乾：</span>
-                                <span class="font-medium">${subscription.veggie || subscriptionInfo.veggieName || '-'}</span>
+                            <div>
+                                <div class="text-xs text-gray-500 mb-1">會員ID</div>
+                                <div class="text-sm font-semibold text-gray-900 font-mono">${userInfo.id || userInfo.userId || '-'}</div>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">凍乾粉：</span>
-                                <span class="font-medium">${subscription.powder || subscriptionInfo.powderName || '-'}</span>
-                            </div>
-                            ${subscription.pricing ? `
-                            <div class="border-t pt-3 mt-3">
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-gray-600">訂閱金額：</span>
-                                    <span class="font-medium">$${subscription.pricing.subtotal || subscriptionInfo.price || 0}</span>
-                                </div>
-                                <div class="flex justify-between mb-2">
-                                    <span class="text-gray-600">運費：</span>
-                                    <span class="font-medium">$${subscription.pricing.shippingFee || 0}</span>
-                                </div>
-                                <div class="flex justify-between text-lg font-bold border-t pt-2">
-                                    <span>總計：</span>
-                                    <span class="text-red-600">$${subscription.pricing.total || 0}</span>
-                                </div>
-                            </div>
-                            ` : ''}
                         </div>
                     </div>
 
                     ${deliveryInfoHTML}
+
+                    <!-- 付款資訊 -->
+                    <div class="bg-white rounded-lg p-5 border border-gray-200">
+                        <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <div class="w-8 h-8 bg-green-50 border border-green-200 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-credit-card text-green-600 text-sm"></i>
+                            </div>
+                            付款資訊
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">付款方式</span>
+                                <span class="text-sm font-semibold text-gray-900">${paymentTypeText}</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">方案價格</span>
+                                <span class="text-sm font-semibold text-gray-900">NT$ ${subtotal.toLocaleString()}</span>
+                            </div>
+                            ${shippingFee > 0 ? `
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">運費</span>
+                                <span class="text-sm font-semibold text-gray-900">NT$ ${shippingFee.toLocaleString()}</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="text-base font-bold text-gray-900">總金額</span>
+                                <span class="text-xl font-bold text-primary">NT$ ${total.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 訂閱資訊 -->
+                    <div class="bg-white rounded-lg p-5 border border-gray-200">
+                        <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <div class="w-8 h-8 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-info-circle text-gray-600 text-sm"></i>
+                            </div>
+                            訂閱資訊
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">建立時間</span>
+                                <span class="text-sm font-semibold text-gray-900">${createdAt}</span>
+                            </div>
+                            ${startDate !== '-' ? `
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">開始日期</span>
+                                <span class="text-sm font-semibold text-gray-900">${startDate}</span>
+                            </div>
+                            ` : ''}
+                            ${nextDeliveryDate !== '-' && (status === 'active' || status === 'paused') ? `
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-sm text-gray-600">下次配送</span>
+                                <span class="text-sm font-semibold text-blue-600">${nextDeliveryDate}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
                 </div>
             `;
             
