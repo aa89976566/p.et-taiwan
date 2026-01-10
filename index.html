@@ -310,23 +310,26 @@
                     </div>
                 </div>
                 
-                <!-- 右側：視覺元素 -->
+                <!-- 右側：影片視窗 -->
                 <div class="relative">
-                    <div class="relative">
-                        <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800" alt="新鮮寵物食品" class="rounded-3xl shadow-2xl w-full transform hover:scale-105 transition duration-500">
-                        <!-- 浮動卡片 -->
-                        <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl p-6 shadow-2xl border border-green-100">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-truck text-green-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <div class="text-2xl font-black text-gray-900">每月</div>
-                                    <div class="text-sm text-gray-600">新鮮配送</div>
-                                </div>
-                            </div>
+                    <div class="relative rounded-3xl shadow-2xl overflow-hidden">
+                        <video 
+                            id="hero-video"
+                            autoplay 
+                            muted 
+                            loop 
+                            playsinline 
+                            class="w-full h-auto object-cover transform hover:scale-105 transition duration-500"
+                            preload="auto">
+                            <source src="videos/hero-video.mp4" type="video/mp4">
+                            您的瀏覽器不支援影片播放。
+                        </video>
+                        <!-- 備用背景（當影片無法載入時顯示） -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100 hidden items-center justify-center z-20" id="hero-fallback-bg">
+                            <p class="text-gray-500 text-center">影片載入中...</p>
                         </div>
-                        <div class="absolute -top-6 -right-6 bg-green-600 text-white rounded-2xl p-6 shadow-2xl">
+                        <!-- 右上角標籤 -->
+                        <div class="absolute top-6 right-6 bg-green-600 text-white rounded-2xl p-6 shadow-2xl z-10">
                             <div class="text-center">
                                 <div class="text-3xl font-black mb-1">100%</div>
                                 <div class="text-sm opacity-90">天然無添加</div>
@@ -3624,6 +3627,32 @@
         function loadHeroContent() {
             // 新的 Years 風格 Hero Section 使用固定 HTML 內容，不需要動態更新
             console.log('ℹ️ Years 風格 Hero Section 使用固定內容，無需動態更新');
+            
+            // 處理 Hero 影片載入
+            const heroVideo = document.getElementById('hero-video');
+            const fallbackBg = document.getElementById('hero-fallback-bg');
+            
+            if (heroVideo && fallbackBg) {
+                // 影片載入成功時隱藏備用背景
+                heroVideo.addEventListener('loadeddata', function() {
+                    fallbackBg.classList.add('hidden');
+                    fallbackBg.classList.remove('flex');
+                    console.log('✅ Hero 影片載入成功');
+                }, { once: true });
+                
+                // 影片載入失敗時顯示備用背景
+                heroVideo.addEventListener('error', function() {
+                    fallbackBg.classList.remove('hidden');
+                    fallbackBg.classList.add('flex');
+                    console.warn('⚠️ Hero 影片載入失敗，使用備用背景');
+                }, { once: true });
+                
+                // 確保影片自動播放（某些瀏覽器需要）
+                heroVideo.play().catch(function(error) {
+                    console.warn('⚠️ 影片自動播放被阻止:', error);
+                    // 自動播放被阻止不代表載入失敗，不顯示備用背景
+                });
+            }
         }
         
         // 從 IndexedDB 讀取圖片（首頁使用）
