@@ -1,11 +1,7 @@
 {
-  "providers": [],
-  "buildImage": "nixos/nix",
   "phases": {
     "setup": {
-      "nixPkgs": ["nodejs_20", "npm-9_x"],
-      "nixOverlays": [],
-      "nixLibs": []
+      "nixPkgs": ["nodejs_20"]
     },
     "install": {
       "cmds": ["cd backend && npm ci --prefer-offline --no-audit"]
