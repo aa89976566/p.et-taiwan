@@ -203,5 +203,80 @@ router.get('/users', requireAdmin, (req, res) => {
     );
 });
 
+/**
+ * 檢查資料庫資料表（管理員）
+ * 用於驗證資料表是否成功建立
+ */
+router.get('/check-tables', requireAdmin, (req, res) => {
+    // 檢測資料庫類型並使用對應的查詢
+    const dbType = process.env.DB_TYPE || (process.env.DATABASE_URL ? 'postgresql' : 'sqlite');
+    
+    let query;
+    if (dbType === 'postgresql') {
+        // PostgreSQL 查詢
+        query = `
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_type = 'BASE TABLE'
+            ORDER BY table_name
+        `;
+    } else {
+        // SQLite 查詢
+        query = `
+            SELECT name as table_name
+            FROM sqlite_master 
+            WHERE type = 'table' 
+            AND name NOT LIKE 'sqlite_%'
+            ORDER BY name
+        `;
+    }
+
+    db.all(query, [], (err, tables) => {
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: '查詢資料表失敗',
+                error: err.message,
+                dbType: dbType
+            });
+        }
+
+        const expectedTables = [
+            'users',
+            'products',
+            'product_variants',
+            'orders',
+            'order_items',
+            'quiz_results',
+            'subscriptions',
+            'cart_items',
+            'settings',
+            'coupons',
+            'coupon_usage'
+        ];
+
+        const existingTableNames = (tables || []).map(t => 
+            t.table_name || t.name || (typeof t === 'string' ? t : null)
+        ).filter(Boolean);
+        
+        const missingTables = expectedTables.filter(t => !existingTableNames.includes(t));
+        const extraTables = existingTableNames.filter(t => !expectedTables.includes(t));
+
+        res.json({
+            success: true,
+            data: {
+                dbType: dbType,
+                totalTables: existingTableNames.length,
+                expectedTables: expectedTables.length,
+                tables: existingTableNames,
+                missingTables: missingTables,
+                extraTables: extraTables,
+                allTablesExist: missingTables.length === 0
+            }
+        });
+    });
+});
+
 module.exports = router;
 

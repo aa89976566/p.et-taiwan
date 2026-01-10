@@ -1,0 +1,1 @@
+postgresql://postgres:XLYZXrzrzMDLmxJVMncAlHRlVpnhFRfR@turntable.proxy.rlwy.net:36497/railway?sslmode=require

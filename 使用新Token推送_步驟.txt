@@ -1,0 +1,23 @@
+# 使用新 Token 推送 - 完整步驟
+
+## 🚀 步驟 1: 使用新 Token 推送
+
+在終端執行以下命令：
+
+cd /Users/ming/Documents/GitHub/p.et-taiwan
+git push https://aa89976566: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@github.com/aa89976566/p.et-taiwan.git main
+
+## 🚀 步驟 2: 設置 Credential Helper（之後不需要再輸入）
+
+推送成功後，執行：
+
+git config --global credential.helper osxkeychain
+
+之後就可以使用正常的 git push 命令，不需要再輸入 token 了。
+
+## ✅ 步驟 3: 重新執行 GitHub Actions Workflow
+
+推送完成後：
+1. 前往：https://github.com/aa89976566/p.et-taiwan/actions
+2. 選擇 "Database Init (Simple)" workflow
+3. 點擊 "Run workflow" 重新執行

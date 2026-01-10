@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首頁內容管理 - 匠寵後台</title>
+    <!-- 開發環境：強制禁用緩存 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -16,12 +20,17 @@
     
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; }
-        .sidebar-item.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .sidebar-item {
+            transition: all 0.2s ease;
         }
-        .sidebar-item:hover:not(.active) {
-            background: #f3f4f6;
+        .sidebar-item:hover {
+            background: rgba(230, 57, 70, 0.1);
+            border-left: 4px solid #E63946;
+        }
+        .sidebar-item.active {
+            background: rgba(230, 57, 70, 0.15);
+            border-left: 4px solid #E63946;
+            font-weight: 600;
         }
         .content-block {
             border: 2px dashed #e5e7eb;
@@ -162,61 +171,111 @@
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- 頂部導航 -->
-    <nav class="bg-white shadow-md fixed w-full top-0 z-50">
-        <div class="px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <h1 class="text-2xl font-bold bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
-                        匠寵後台
-                    </h1>
-                    <span class="text-gray-400">|</span>
-                    <span class="text-gray-600">首頁內容管理</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button onclick="previewWebsite()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                        <i class="fas fa-eye mr-2"></i>預覽網站
-                    </button>
-                    <button onclick="publishChanges()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
-                        <i class="fas fa-upload mr-2"></i>發布更新
-                    </button>
-                    <div class="flex items-center space-x-2">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=ef4444&color=fff" alt="Admin" class="w-10 h-10 rounded-full">
-                        <span class="text-gray-700 font-semibold" id="adminName">管理員</span>
+    <!-- 頂部導航欄 -->
+    <nav class="bg-white border border-gray-200 fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-400 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-paw text-white"></i>
                     </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">匠寵後台</h1>
+                        <p class="text-xs text-gray-500">首頁內容管理</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="previewWebsite()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-eye mr-2"></i>預覽網站
+                </button>
+                <button onclick="publishChanges()" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors">
+                    <i class="fas fa-upload mr-2"></i>發布更新
+                </button>
+                <button class="relative text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                </button>
+                <div class="flex items-center space-x-3 border-l pl-4">
+                    <div class="hidden md:block text-right">
+                        <p class="text-sm font-semibold text-gray-800" id="adminName">超級管理員</p>
+                        <p class="text-xs text-gray-500" id="adminRole">Super Admin</p>
+                    </div>
+                    <button onclick="showUserMenu()" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">A</button>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- 側邊欄 -->
-    <aside class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg overflow-y-auto">
+    <aside class="fixed left-0 top-16 bottom-0 w-64 bg-white border border-gray-200 overflow-y-auto z-40">
         <div class="p-4">
-            <nav>
-                <div class="space-y-1">
-                    <a href="admin-dashboard.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
-                        <i class="fas fa-home text-lg w-6"></i>
-                        <span>儀表板</span>
+            <nav class="space-y-2">
+                <a href="admin-dashboard.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-chart-line text-lg w-6"></i><span>儀表板</span>
+                </a>
+                <div class="sidebar-section">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">用戶管理</p>
+                    <a href="admin-users.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-users text-lg w-6"></i><span>用戶列表</span>
                     </a>
-                    
-                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase mt-4">網站管理</p>
-                    <a href="admin-homepage.html" class="sidebar-item active flex items-center space-x-3 px-4 py-3 rounded-lg">
-                        <i class="fas fa-edit text-lg w-6"></i>
-                        <span>首頁內容</span>
-                    </a>
-                    <a href="admin-website-settings.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
-                        <i class="fas fa-palette text-lg w-6"></i>
-                        <span>網站佈局</span>
-                    </a>
-                    
-                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase mt-4">商品管理</p>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">商品管理</p>
                     <a href="admin-products.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
-                        <i class="fas fa-box text-lg w-6"></i>
-                        <span>產品列表</span>
+                        <i class="fas fa-box text-lg w-6"></i><span>產品列表</span>
                     </a>
                     <a href="admin-orders.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
-                        <i class="fas fa-shopping-cart text-lg w-6"></i>
-                        <span>訂單管理</span>
+                        <i class="fas fa-shopping-cart text-lg w-6"></i><span>訂單管理</span>
+                        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">15</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">物流管理</p>
+                    <a href="admin-shipping.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-shipping-fast text-lg w-6"></i><span>物流設定</span>
+                    </a>
+                    <a href="checkout.html" target="_blank" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-truck text-lg w-6"></i><span>測試結帳流程</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">測驗系統</p>
+                    <a href="admin-quizzes.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-clipboard-list text-lg w-6"></i><span>測驗列表</span>
+                    </a>
+                    <a href="admin-quiz-stats.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-chart-pie text-lg w-6"></i><span>測驗統計</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">訂閱服務</p>
+                    <a href="admin-subscription-management.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-sync-alt text-lg w-6"></i><span>訂閱管理</span>
+                    </a>
+                    <a href="admin-jar-program.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-recycle text-lg w-6"></i><span>換罐計畫</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">數據分析</p>
+                    <a href="admin-analytics.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-chart-bar text-lg w-6"></i><span>營收報表</span>
+                    </a>
+                </div>
+                <div class="sidebar-section mt-4">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">系統設定</p>
+                    <a href="admin-homepage.html" class="sidebar-item active flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-edit text-lg w-6"></i><span>首頁內容管理</span>
+                    </a>
+                    <a href="admin-website-settings.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-palette text-lg w-6"></i><span>網站佈局</span>
+                    </a>
+                    <a href="admin-settings.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                        <i class="fas fa-cog text-lg w-6"></i><span>系統設定</span>
+                    </a>
+                    <a href="admin-login.html" onclick="logout()" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600">
+                        <i class="fas fa-sign-out-alt text-lg w-6"></i><span>登出</span>
                     </a>
                 </div>
             </nav>
@@ -232,7 +291,7 @@
         </div>
 
         <!-- 快速操作 -->
-        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
                     <button onclick="addNewBlock()" class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-semibold">
@@ -259,7 +318,7 @@
         
         <!-- 隱藏的區塊模板（用於動態渲染） -->
         <template id="blockTemplate">
-            <div class="content-block bg-white rounded-2xl shadow-md p-6 draggable-item" data-block-id="" style="transition: transform 0.2s;">
+            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6 draggable-item" data-block-id="" style="transition: transform 0.2s;">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
                         <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move drag-handle"></i>
@@ -283,7 +342,7 @@
         <!-- 原始區塊（將被動態渲染取代） -->
         <div style="display: none;">
             <!-- Hero 區塊 -->
-            <div class="content-block bg-white rounded-2xl shadow-md p-6" data-block-id="hero">
+            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="hero">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
                         <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
@@ -317,7 +376,7 @@
             </div>
 
             <!-- 產品系列區塊 -->
-            <div class="content-block bg-white rounded-2xl shadow-md p-6" data-block-id="products">
+            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="products">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
                         <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
@@ -351,7 +410,7 @@
             </div>
 
             <!-- 測驗系統區塊 -->
-            <div class="content-block bg-white rounded-2xl shadow-md p-6" data-block-id="quiz">
+            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="quiz">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
                         <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
@@ -385,7 +444,7 @@
             </div>
 
             <!-- 訂閱服務區塊 -->
-            <div class="content-block bg-white rounded-2xl shadow-md p-6" data-block-id="subscription">
+            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="subscription">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
                         <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
@@ -419,7 +478,7 @@
             </div>
 
             <!-- 集資項目區塊 -->
-            <div class="content-block bg-white rounded-2xl shadow-md p-6" data-block-id="crowdfunding">
+            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="crowdfunding">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
                         <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
@@ -1151,7 +1210,7 @@
                                     <p class="text-xs text-gray-500">建議尺寸: 1920x1080px，最大 5MB</p>
                                 </div>
                                 <div id="heroImagePreviewContainer" class="hidden">
-                                    <img id="heroImagePreview" class="max-w-full max-h-64 mx-auto rounded-lg shadow-lg mt-2" />
+                                    <img id="heroImagePreview" class="max-w-full max-h-64 mx-auto rounded-lg border border-gray-200 mt-2" />
                                     <button type="button" onclick="event.stopPropagation(); clearHeroImagePreview();" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm">
                                         <i class="fas fa-times mr-1"></i>清除圖片
                                     </button>
@@ -1321,7 +1380,7 @@
                                         <p class="text-xs text-gray-400 mt-2">支援 JPG, PNG, WebP, GIF</p>
                                     </div>
                                     <div id="heroImagePreviewContainer" class="hidden">
-                                        <img id="heroImagePreview" class="max-w-full max-h-64 mx-auto rounded-lg shadow-lg mt-2" />
+                                        <img id="heroImagePreview" class="max-w-full max-h-64 mx-auto rounded-lg border border-gray-200 mt-2" />
                                         <button type="button" onclick="event.stopPropagation(); clearHeroImagePreview();" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm">
                                             <i class="fas fa-times mr-1"></i>清除圖片
                                         </button>
@@ -2072,6 +2131,97 @@
         window.saveJarExchangeBlock = saveJarExchangeBlock;
         window.handleImageUpload = handleImageUpload;
         
+        // 生成測試假數據
+        function generateTestData() {
+            console.log('🔄 正在生成測試假數據...');
+            
+            const config = window.HomepageConfig ? window.HomepageConfig.getHomepageConfig() : null;
+            if (!config) {
+                console.error('❌ HomepageConfig 未載入');
+                return;
+            }
+            
+            // 更新各個區塊的內容為測試數據
+            config.sections.forEach(section => {
+                if (!section.content) section.content = {};
+                
+                switch(section.id) {
+                    case 'hero':
+                        section.content.title = 'ㄨㄤ、今天吃什麼';
+                        section.content.subtitle = '吃比受更有福';
+                        section.content.ctaText = '立即選購';
+                        section.content.ctaLink = '#products';
+                        section.content.bgImage = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAoADwDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=';
+                        break;
+                        
+                    case 'toys-hero':
+                        section.content.title = '益智玩具 Hero 區塊';
+                        section.content.description = '給毛孩的益智挑戰';
+                        section.content.features = '動畫 + CTA';
+                        section.enabled = false; // 預設關閉，與圖片描述一致
+                        break;
+                        
+                    case 'snacks-hero':
+                        section.content.title = '手作零食 Hero 區塊';
+                        section.content.description = '台灣夜市風味';
+                        section.enabled = false; // 預設關閉，與圖片描述一致
+                        break;
+                        
+                    case 'products':
+                        section.content.title = '產品系列';
+                        section.content.subtitle = '精心挑選的產品，滿足毛孩各種需求';
+                        section.content.displayMode = '輪播展示';
+                        section.content.showSnacks = true;
+                        section.content.showToys = true;
+                        section.content.showSubscription = true;
+                        break;
+                        
+                    case 'quiz':
+                        section.content.title = '找到最適合的產品';
+                        section.content.subtitle = '透過專業測驗，為您的毛孩推薦最適合的產品';
+                        section.content.showNutritionQuiz = true;
+                        section.content.showToyQuiz = true;
+                        section.content.ctaText = '立即測驗';
+                        break;
+                        
+                    case 'subscription':
+                        section.content.title = '訂閱服務';
+                        section.content.subtitle = '定期配送，新鮮直達';
+                        section.content.showBasicPlan = true;
+                        section.content.showPremiumPlan = true;
+                        section.content.showJarProgram = true;
+                        break;
+                        
+                    case 'jar-exchange':
+                        section.content.title = '換罐計畫';
+                        section.content.subtitle = '環保愛地球，回饋愛毛孩';
+                        section.content.description = '將玻璃罐帶回店內，享受專屬優惠';
+                        section.content.benefits = [
+                            '每次兌換可獲得 NT$ 50 折扣券',
+                            '累計10次升級為VIP會員',
+                            '免費參加工作坊和活動'
+                        ];
+                        break;
+                        
+                    case 'about':
+                        section.content.title = '關於匠寵';
+                        section.content.subtitle = '從台灣到世界，為毛孩創造更好的生活';
+                        section.content.description = '我們相信，每一隻毛孩都值得最好的照顧。';
+                        break;
+                }
+            });
+            
+            // 保存配置
+            if (window.HomepageConfig && window.HomepageConfig.saveHomepageConfig) {
+                window.HomepageConfig.saveHomepageConfig(config);
+            } else {
+                localStorage.setItem('homepageConfig', JSON.stringify(config));
+            }
+            
+            console.log('✅ 測試假數據已生成並保存');
+            return config;
+        }
+        
         // 頁面載入時初始化
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ 首頁內容管理系統已載入');
@@ -2079,7 +2229,21 @@
             // 載入配置並渲染區塊列表
             if (window.HomepageConfig) {
                 console.log('✅ HomepageConfig 已載入');
-                const config = window.HomepageConfig.getHomepageConfig();
+                let config = window.HomepageConfig.getHomepageConfig();
+                
+                // 檢查是否為全新配置（沒有自訂內容），如果是則生成測試數據
+                const hasCustomData = config.sections.some(s => {
+                    if (s.id === 'hero') {
+                        return s.content && s.content.title && s.content.title !== '從台灣夜市到健康餐桌';
+                    }
+                    return false;
+                });
+                
+                if (!hasCustomData) {
+                    console.log('📝 檢測到全新配置，正在生成測試假數據...');
+                    config = generateTestData();
+                }
+                
                 console.log('📋 讀取的配置:', config);
                 console.log('📋 Sections 數量:', config.sections.length);
                 renderBlocksFromConfig(config);
@@ -2356,7 +2520,7 @@
                 
                 // 創建區塊元素
                 const block = document.createElement('div');
-                block.className = 'content-block bg-white rounded-2xl shadow-md p-6 draggable-item';
+                block.className = 'content-block bg-white rounded-2xl border border-gray-200 p-6 draggable-item';
                 block.setAttribute('data-block-id', section.id);
                 block.setAttribute('draggable', 'true');
                 block.style.transition = 'transform 0.2s';
