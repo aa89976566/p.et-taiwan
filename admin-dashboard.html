@@ -178,10 +178,7 @@
             </div>
             <div class="sidebar-section mt-4">
                 <p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">系統設定</p>
-                <a href="admin-homepage.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
-                    <i class="fas fa-edit text-lg w-6"></i>
-                    <span>首頁內容管理</span>
-                </a>
+                
                 <a href="admin-website-settings.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
                     <i class="fas fa-palette text-lg w-6"></i>
                     <span>網站佈局</span>
@@ -205,12 +202,27 @@
 
     <!-- 主要內容區 -->
     <main class="ml-64 mt-16 p-6">
-        <!-- 頁面標題 -->
+        <!-- 頁面標題與標籤頁切換 -->
         <div class="mb-6">
-            <h2 class="text-3xl font-bold text-gray-800">儀表板</h2>
-            <p class="text-gray-600 mt-1">歡迎回來，<span id="welcomeName">管理員</span>！</p>
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">儀表板</h2>
+                    <p class="text-gray-600 mt-1">歡迎回來，<span id="welcomeName">管理員</span>！</p>
+                </div>
+                <!-- 標籤頁切換 -->
+                <div class="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+                    <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn px-6 py-2 rounded-md font-semibold transition-colors bg-white text-gray-800 shadow-sm">
+                        <i class="fas fa-chart-line mr-2"></i>數據概覽
+                    </button>
+                    <button onclick="switchTab('content')" id="tab-content" class="tab-btn px-6 py-2 rounded-md font-semibold transition-colors text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-edit mr-2"></i>首頁內容管理
+                    </button>
+                </div>
+            </div>
         </div>
 
+        <!-- 數據概覽標籤頁 -->
+        <div id="overview-tab" class="tab-content">
         <!-- KPI 卡片 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- 今日營收 -->
@@ -403,13 +415,144 @@
                 </div>
             </div>
         </div>
+        </div>
+        <!-- 結束數據概覽標籤頁 -->
+
+        <!-- 首頁內容管理標籤頁 -->
+        <div id="content-tab" class="tab-content hidden">
+            <!-- 快速操作 -->
+            <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button onclick="addNewBlock()" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold">
+                            <i class="fas fa-plus mr-2"></i>新增區塊
+                        </button>
+                        <button onclick="resetToDefault()" class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-undo mr-2"></i>恢復預設
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="previewWebsite()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-eye mr-2"></i>預覽網站
+                        </button>
+                        <button onclick="publishChanges()" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors">
+                            <i class="fas fa-upload mr-2"></i>發布更新
+                        </button>
+                        <div class="text-sm text-gray-600">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            最後更新: <span id="lastUpdate">2024-12-21 14:30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 內容區塊列表 -->
+            <div class="space-y-4" id="contentBlocks">
+                <!-- 區塊將動態載入 -->
+            </div>
+            
+            <!-- 首頁內容管理功能將在此處動態載入 -->
+            <div id="content-management-placeholder" class="text-center py-12">
+                <div class="bg-white rounded-2xl border border-gray-200 p-8 max-w-2xl mx-auto">
+                    <i class="fas fa-edit text-4xl text-gray-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">首頁內容管理</h3>
+                    <p class="text-gray-600 mb-6">管理前台首頁的各個內容區塊</p>
+                    <button onclick="window.location.href='admin-homepage.html'" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold">
+                        <i class="fas fa-external-link-alt mr-2"></i>前往完整功能頁面
+                    </button>
+                    <p class="text-xs text-gray-500 mt-4">提示：完整的區塊編輯功能請在專用頁面使用</p>
+                </div>
+            </div>
+        </div>
+        <!-- 結束首頁內容管理標籤頁 -->
     </main>
 
     <!-- 引入數據管理系統 -->
     <script src="js/data-store.js"></script>
     <script src="js/mock-data.js"></script>
+    
+    <!-- 首頁配置管理系統（僅在需要時載入） -->
+    <script src="js/config.js"></script>
+    <script src="js/homepage-config.js"></script>
 
     <script>
+        // 標籤頁切換功能
+        function switchTab(tabName) {
+            // 隱藏所有標籤頁內容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // 重置所有標籤按鈕樣式
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-gray-800', 'shadow-sm');
+                btn.classList.add('text-gray-600');
+            });
+            
+            // 顯示選中的標籤頁
+            const targetTab = document.getElementById(`${tabName}-tab`);
+            if (targetTab) {
+                targetTab.classList.remove('hidden');
+            }
+            
+            // 設置按鈕樣式
+            const targetBtn = document.getElementById(`tab-${tabName}`);
+            if (targetBtn) {
+                targetBtn.classList.remove('text-gray-600');
+                targetBtn.classList.add('bg-white', 'text-gray-800', 'shadow-sm');
+            }
+            
+            // 如果切換到內容管理，載入功能
+            if (tabName === 'content') {
+                loadContentManagement();
+            }
+        }
+        
+        // 載入首頁內容管理功能
+        function loadContentManagement() {
+            // 檢查是否已經載入
+            if (window.contentManagementLoaded) {
+                return;
+            }
+            
+            // 這裡可以動態載入 admin-homepage.html 的功能
+            // 或者將功能直接嵌入到 dashboard
+            console.log('載入首頁內容管理功能...');
+            
+            // 標記為已載入
+            window.contentManagementLoaded = true;
+            
+            // 如果是第一次載入，初始化內容管理
+            if (window.HomepageConfig && typeof renderBlocksFromConfig === 'function') {
+                const config = window.HomepageConfig.getHomepageConfig();
+                renderBlocksFromConfig(config);
+            }
+        }
+        
+        // 首頁內容管理的快捷函數（重定向到完整頁面）
+        function addNewBlock() {
+            window.location.href = 'admin-homepage.html';
+        }
+        
+        function resetToDefault() {
+            if (confirm('確定要恢復預設配置嗎？')) {
+                window.location.href = 'admin-homepage.html';
+            }
+        }
+        
+        function previewWebsite() {
+            window.open('index.html', '_blank');
+        }
+        
+        function publishChanges() {
+            window.location.href = 'admin-homepage.html';
+        }
+        
+        function loadContentManagement() {
+            // 重定向到完整的首頁內容管理頁面
+            window.location.href = 'admin-homepage.html';
+        }
+        
         // 檢查登入狀態
         window.addEventListener('DOMContentLoaded', () => {
             const adminUser = JSON.parse(localStorage.getItem('adminUser'));

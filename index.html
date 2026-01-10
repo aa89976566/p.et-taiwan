@@ -256,93 +256,27 @@
         </div>
     </nav>
     
-    <!-- Years 風格 Hero Section - 美觀的 Landing Page -->
-    <section id="hero" class="relative min-h-screen flex items-center bg-gradient-to-br from-green-50 via-white to-blue-50 overflow-hidden">
-        <!-- 背景裝飾 -->
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-0 left-0 w-96 h-96 bg-green-400 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
-        </div>
+    <!-- Years 風格 Hero Section - 只有影片 -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
+        <!-- 影片背景 -->
+        <video 
+            id="hero-video"
+            autoplay 
+            muted 
+            loop 
+            playsinline 
+            class="absolute inset-0 w-full h-full object-cover z-0"
+            preload="auto">
+            <source src="videos/hero-video.mp4" type="video/mp4">
+            您的瀏覽器不支援影片播放。
+        </video>
         
-        <div class="container mx-auto px-4 py-20 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- 左側：主要內容 -->
-                <div class="text-center lg:text-left">
-                    <div class="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                        <i class="fas fa-leaf mr-2"></i>100% 新鮮手工製作
-                    </div>
-                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-6 leading-tight">
-                        為您的毛孩<br>
-                        <span class="text-green-600">選擇最健康的</span><br>
-                        飲食方式
-            </h1>
-                    <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-2xl">
-                        手工新鮮製作，無添加防腐劑<br>
-                        定期配送確保新鮮度，就像 Years 一樣用心
-                    </p>
-                    
-                    <!-- CTA 按鈕 -->
-                    <div class="flex flex-col sm:flex-row gap-4 mb-12">
-                        <a href="#subscription" class="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white rounded-full font-bold text-lg hover:bg-green-700 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105">
-                            <i class="fas fa-shopping-cart mr-2"></i>
-                            立即查看訂閱方案
-                        </a>
-                        <a href="quiz-loading.html?type=nutrition" class="inline-flex items-center justify-center px-8 py-4 bg-white text-green-600 border-2 border-green-600 rounded-full font-bold text-lg hover:bg-green-50 transition-all shadow-lg">
-                            <i class="fas fa-clipboard-question mr-2"></i>
-                            開始營養測驗
-                        </a>
-                    </div>
-                    
-                    <!-- 信任指標 -->
-                    <div class="flex flex-wrap gap-6 text-sm text-gray-600">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>無防腐劑保證</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>當月新鮮製作</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>免費配送</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 右側：影片視窗 -->
-                <div class="relative">
-                    <div class="relative rounded-3xl shadow-2xl overflow-hidden">
-                        <video 
-                            id="hero-video"
-                            autoplay 
-                            muted 
-                            loop 
-                            playsinline 
-                            class="w-full h-auto object-cover transform hover:scale-105 transition duration-500"
-                            preload="auto">
-                            <source src="videos/hero-video.mp4" type="video/mp4">
-                            您的瀏覽器不支援影片播放。
-                        </video>
-                        <!-- 備用背景（當影片無法載入時顯示） -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100 hidden items-center justify-center z-20" id="hero-fallback-bg">
-                            <p class="text-gray-500 text-center">影片載入中...</p>
-                        </div>
-                        <!-- 右上角標籤 -->
-                        <div class="absolute top-6 right-6 bg-green-600 text-white rounded-2xl p-6 shadow-2xl z-10">
-                            <div class="text-center">
-                                <div class="text-3xl font-black mb-1">100%</div>
-                                <div class="text-sm opacity-90">天然無添加</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- 備用背景（當影片無法載入時顯示） -->
+        <div class="absolute inset-0 bg-gradient-to-br from-green-50 via-white to-blue-50 hidden z-0" id="hero-fallback-bg"></div>
         
         <!-- 向下滾動指示 -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <i class="fas fa-chevron-down text-gray-400 text-2xl"></i>
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
+            <i class="fas fa-chevron-down text-white text-2xl drop-shadow-lg"></i>
         </div>
     </section>
     
@@ -791,102 +725,7 @@
                 }
             </style>
             
-            <!-- Product Cards -->
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Product 1 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
-                    <div class="relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400" alt="雞肉脆片" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute top-4 right-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
-                            熱賣
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-xl font-bold mb-2">雞肉脆片</h4>
-                        <p class="text-gray-600 text-sm mb-4">低溫烘焙，保留營養</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-primary">NT$ 200</span>
-                            <button onclick="addToCart('snack-chicken-crisp', '雞肉脆片', 200)" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-red-600 transition text-sm">
-                                <i class="fas fa-shopping-cart mr-1"></i>加入購物車
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Product 2 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
-                    <div class="relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=400" alt="地瓜餅乾" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-xl font-bold mb-2">地瓜餅乾</h4>
-                        <p class="text-gray-600 text-sm mb-4">台灣地瓜，香甜健康</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-primary">NT$ 180</span>
-                            <button onclick="addToCart('snack-sweet-potato', '地瓜餅乾', 180)" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-red-600 transition text-sm">
-                                <i class="fas fa-shopping-cart mr-1"></i>加入購物車
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Product 3 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
-                    <div class="relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1560870350-c740e8d9a5b6?w=400" alt="鮭魚小丸子" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute top-4 right-4 bg-accent text-dark px-3 py-1 rounded-full text-sm font-semibold">
-                            新品
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-xl font-bold mb-2">鮭魚小丸子</h4>
-                        <p class="text-gray-600 text-sm mb-4">富含 Omega-3</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-primary">NT$ 250</span>
-                            <button onclick="addToCart('snack-salmon-balls', '鮭魚小丸子', 250)" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-red-600 transition text-sm">
-                                <i class="fas fa-shopping-cart mr-1"></i>加入購物車
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Product 4 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
-                    <div class="relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?w=400" alt="牛肉乾" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-xl font-bold mb-2">牛肉乾</h4>
-                        <p class="text-gray-600 text-sm mb-4">高蛋白質，耐咬好吃</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-primary">NT$ 300</span>
-                            <button onclick="addToCart('snack-beef-jerky', '牛肉乾', 300)" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-red-600 transition text-sm">
-                                <i class="fas fa-shopping-cart mr-1"></i>加入購物車
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Product 5 - 壕大大雞排 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
-                    <div class="relative overflow-hidden">
-                        <img src="https://www.genspark.ai/api/files/s/YgZynI0G" alt="壕大大雞排" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute top-4 right-4 bg-accent text-dark px-3 py-1 rounded-full text-sm font-semibold">
-                            🔥 熱賣
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-xl font-bold mb-2">壕大大雞排</h4>
-                        <p class="text-gray-600 text-sm mb-4">台灣夜市經典，毛孩最愛</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-primary">NT$ 220</span>
-                            <button onclick="addToCart('hao-chicken-steak', '壕大大雞排', 220)" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-red-600 transition text-sm">
-                                <i class="fas fa-shopping-cart mr-1"></i>加入購物車
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Product Cards - 已隱藏，僅保留 Hero 影片 -->
         </div>
     </section>
     
