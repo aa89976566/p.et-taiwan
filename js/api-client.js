@@ -3,7 +3,10 @@
  * 用於連接後端 API
  */
 
-const API_BASE_URL = 'http://localhost:3000/api';
+// API 基礎 URL - 自動檢測環境
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000/api'  // 本地開發環境
+    : 'https://pet-taiwan-production.up.railway.app/api';  // 線上生產環境
 
 class ApiClient {
     constructor() {
