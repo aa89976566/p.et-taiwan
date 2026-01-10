@@ -56,7 +56,7 @@ router.post('/register', async (req, res) => {
 
             // 建立新用戶
             db.run(
-                `INSERT INTO users (id, email, password, name, phone, memberLevel, status, registeredAt, lastLoginAt, createdAt, updatedAt)
+                `INSERT INTO users (id, email, password, name, phone, "memberLevel", status, "registeredAt", "lastLoginAt", "createdAt", "updatedAt")
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [userId, email, hashedPassword, name, phone || '', 'normal', 'active', now, now, now, now],
                 function(err) {
@@ -143,7 +143,7 @@ router.post('/login', (req, res) => {
 
             // 更新最後登入時間
             const now = Date.now();
-            db.run('UPDATE users SET lastLoginAt = ?, updatedAt = ? WHERE id = ?', [now, now, user.id]);
+            db.run('UPDATE users SET "lastLoginAt" = ?, "updatedAt" = ? WHERE id = ?', [now, now, user.id]);
 
             // 生成 Token
             const token = generateToken({
