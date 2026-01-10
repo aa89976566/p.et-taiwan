@@ -1188,32 +1188,737 @@
                 </div>
             </div>
             
-            <!-- Snacks Products -->
+            <!-- Snacks Products - Years 風格 -->
             <div id="tab-snacks" class="product-content hidden">
-                <div class="bg-light rounded-3xl p-8 mb-8">
-                    <h3 class="text-2xl font-bold mb-4 text-primary">台灣夜市手作零食系列</h3>
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <!-- Years 風格產品介紹區塊 - 左側按鈕 + 右側詳情 -->
+                <div class="bg-gradient-to-br from-green-50 via-white to-green-50 rounded-3xl p-8 md:p-12 mb-12 shadow-xl border border-green-100">
+                    <div class="text-center mb-10">
+                        <h3 class="text-4xl md:text-5xl font-black text-gray-900 mb-4">Your dog's delivery will include:</h3>
+                        <p class="text-xl text-gray-600 max-w-2xl mx-auto">我們的產品系列包含新鮮手工製作、營養豐富的寵物零食，就像 Years 一樣用心</p>
+                    </div>
+                    
+                    <!-- Years 風格：左側產品按鈕 + 右側詳情展示 -->
+                    <div class="grid lg:grid-cols-2 gap-8 items-start">
+                        <!-- 左側：產品按鈕列表 -->
+                        <div class="space-y-3">
+                            <!-- 產品按鈕 1: 小魚乾 -->
+                            <button onclick="showProductDetail('small-fish')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 active" data-product="small-fish">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">小魚乾</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Dried Small Fish</p>
+                            </button>
+                            
+                            <!-- 產品按鈕 2: 雞肉南瓜乾 -->
+                            <button onclick="showProductDetail('chicken-pumpkin')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105" data-product="chicken-pumpkin">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">雞肉南瓜乾</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Freeze-dried Chicken & Pumpkin</p>
+                            </button>
+                            
+                            <!-- 產品按鈕 3: 甜品凍乾 -->
+                            <button onclick="showProductDetail('sweet-freeze')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105" data-product="sweet-freeze">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">甜品凍乾</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Freeze-Dried Chicken</p>
+                            </button>
+                            
+                            <!-- 產品按鈕 4: 雞肝凍乾粉 -->
+                            <button onclick="showProductDetail('chicken-liver')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105" data-product="chicken-liver">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">雞肝凍乾粉</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Freeze-dried Chicken Liver</p>
+                            </button>
+                            
+                            <!-- 產品按鈕 5: 南瓜凍乾 -->
+                            <button onclick="showProductDetail('pumpkin')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105" data-product="pumpkin">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">南瓜凍乾</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Freeze-Dried Pumpkin</p>
+                            </button>
+                            
+                            <!-- 產品按鈕 6: 甜肉紅麴凍乾粉 -->
+                            <button onclick="showProductDetail('red-yeast')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105" data-product="red-yeast">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">甜肉紅麴凍乾粉</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Freeze-dried Chicken & Red Yeast Rice</p>
+                            </button>
+                            
+                            <!-- 產品按鈕 7: 狗喃 -->
+                            <button onclick="showProductDetail('duck-neck')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105" data-product="duck-neck">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">狗喃</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Duck Neck</p>
+                            </button>
+                            
+                            <!-- 產品按鈕 8: 牛腱肉凍乾粉 -->
+                            <button onclick="showProductDetail('beef-shank')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105" data-product="beef-shank">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">牛腱肉凍乾粉</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Freeze-Dried Beef Shank Powder</p>
+                            </button>
+                            
+                            <!-- 產品按鈕 9: 醬肺 -->
+                            <button onclick="showProductDetail('duck-lung')" class="product-btn w-full bg-green-600 text-white px-6 py-4 rounded-xl font-bold text-left hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105" data-product="duck-lung">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg">醬肺</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <p class="text-sm text-green-100 mt-1">Duck Lung</p>
+                            </button>
+                        </div>
+                        
+                        <!-- 右側：產品詳細資訊展示區 -->
+                        <div class="bg-white rounded-2xl p-8 shadow-xl border border-green-100 sticky top-8">
+                            <div id="product-detail-content">
+                                <!-- 預設顯示第一個產品 -->
+                                <div class="product-detail" id="detail-small-fish">
+                                    <div class="flex items-center mb-6">
+                                        <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mr-4">
+                                            <i class="fas fa-fish text-white text-3xl"></i>
+                                        </div>
                         <div>
-                            <h4 class="font-semibold mb-2 text-lg">產品特色</h4>
-                            <ul class="space-y-2 text-gray-700">
-                                <li><i class="fas fa-check text-secondary mr-2"></i>手工製作，天然無添加</li>
-                                <li><i class="fas fa-check text-secondary mr-2"></i>台灣在地食材</li>
-                                <li><i class="fas fa-check text-secondary mr-2"></i>夜市風味靈感</li>
-                                <li><i class="fas fa-check text-secondary mr-2"></i>適合訓練獎勵、日常零食</li>
-                            </ul>
+                                            <h4 class="text-2xl font-black text-gray-900 mb-1">小魚乾</h4>
+                                            <p class="text-sm text-gray-500">Dried Small Fish</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-6 pb-6 border-b border-gray-200">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                                <i class="fas fa-heart text-green-600 text-xl"></i>
                         </div>
                         <div>
-                            <img src="https://www.genspark.ai/api/files/s/PNdhm7MY" alt="手作零食包裝" class="rounded-2xl shadow-lg w-full h-64 object-cover">
+                                                <h5 class="text-lg font-bold text-gray-900 mb-1">功效</h5>
+                                                <p class="text-gray-700">補鈣·骨骼保健</p>
+                        </div>
+                    </div>
+                                        <p class="text-gray-600 text-sm mt-3 leading-relaxed">
+                                            小魚乾富含鈣質和優質蛋白質，有助於毛孩骨骼發育和維持骨密度，特別適合成長期的幼犬和需要骨骼保健的老犬。
+                                        </p>
+                </div>
+                
+                                    <div class="mb-6">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                                <i class="fas fa-paw text-green-600 text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="text-lg font-bold text-gray-900 mb-1">適用對象</h5>
+                                                <p class="text-gray-700">幼犬成長期、老犬骨質疏鬆</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-green-50 rounded-xl p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-xs text-gray-500 mb-1">適合自製價格</p>
+                                                <p class="text-3xl font-black text-green-600">2.8 <span class="text-lg text-gray-600">/g</span></p>
+                                            </div>
+                                            <a href="products.html?category=snacks&product=small-fish" class="bg-green-600 text-white px-6 py-3 rounded-full font-bold hover:bg-green-700 transition">
+                                                查看詳情
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="flex items-center mb-6">
+                                        <div class="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mr-4">
+                                            <i class="fas fa-drumstick-bite text-white text-3xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-2xl font-black text-gray-900 mb-1">雞肉南瓜乾</h4>
+                                            <p class="text-sm text-gray-500">Freeze-dried Chicken & Pumpkin</p>
+                                        </div>
+                                    </div>
+                                    <div class="mb-6 pb-6 border-b border-gray-200">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                                <i class="fas fa-heart text-green-600 text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="text-lg font-bold text-gray-900 mb-1">功效</h5>
+                                                <p class="text-gray-700">補雙養 × 顧腸胃 × 好吸收</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-600 text-sm mt-3 leading-relaxed">
+                                            雞肉提供優質蛋白質，南瓜富含纖維和β-胡蘿蔔素，有助於腸胃健康，特別適合腸胃敏感或食物過敏的毛孩。
+                                        </p>
+                                    </div>
+                                    <div class="mb-6">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                                <i class="fas fa-paw text-green-600 text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="text-lg font-bold text-gray-900 mb-1">適用對象</h5>
+                                                <p class="text-gray-700">腸胃敏感、食物過敏犬</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 rounded-xl p-4 mb-6">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-xs text-gray-500 mb-1">適合自製價格</p>
+                                                <p class="text-3xl font-black text-green-600">2.9 <span class="text-lg text-gray-600">/g</span></p>
+                                            </div>
+                                            <a href="products.html?category=snacks&product=chicken-pumpkin" class="bg-green-600 text-white px-6 py-3 rounded-full font-bold hover:bg-green-700 transition">
+                                                查看詳情
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 其他產品詳情將通過 JavaScript 動態生成或切換 -->
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- 動態產品容器 -->
-                <div id="snacksProductsContainer" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <!-- 隱藏的產品詳情模板（用於動態生成） -->
+                <script>
+                    // 產品資料
+                    const productData = {
+                        'small-fish': {
+                            name: '小魚乾',
+                            nameEn: 'Dried Small Fish',
+                            icon: 'fa-fish',
+                            iconColor: 'from-blue-400 to-blue-600',
+                            benefit: '補鈣·骨骼保健',
+                            benefitDesc: '小魚乾富含鈣質和優質蛋白質，有助於毛孩骨骼發育和維持骨密度，特別適合成長期的幼犬和需要骨骼保健的老犬。',
+                            target: '幼犬成長期、老犬骨質疏鬆',
+                            price: '2.8',
+                            link: 'products.html?category=snacks&product=small-fish'
+                        },
+                        'chicken-pumpkin': {
+                            name: '雞肉南瓜乾',
+                            nameEn: 'Freeze-dried Chicken & Pumpkin',
+                            icon: 'fa-drumstick-bite',
+                            iconColor: 'from-orange-400 to-orange-600',
+                            benefit: '補雙養 × 顧腸胃 × 好吸收',
+                            benefitDesc: '雞肉提供優質蛋白質，南瓜富含纖維和β-胡蘿蔔素，有助於腸胃健康，特別適合腸胃敏感或食物過敏的毛孩。',
+                            target: '腸胃敏感、食物過敏犬',
+                            price: '2.9',
+                            link: 'products.html?category=snacks&product=chicken-pumpkin'
+                        },
+                        'sweet-freeze': {
+                            name: '甜品凍乾',
+                            nameEn: 'Freeze-Dried Chicken',
+                            icon: 'fa-ice-cream',
+                            iconColor: 'from-yellow-400 to-yellow-600',
+                            benefit: '咬善食糞·減重',
+                            benefitDesc: '低熱量高蛋白的凍乾產品，有助於控制體重，同時改善食糞行為，讓毛孩更健康。',
+                            target: '有食糞行為、需要減重的毛孩',
+                            price: '2.9',
+                            link: 'products.html?category=snacks&product=sweet-freeze'
+                        },
+                        'chicken-liver': {
+                            name: '雞肝凍乾粉',
+                            nameEn: 'Freeze-dried Chicken Liver',
+                            icon: 'fa-heart',
+                            iconColor: 'from-red-400 to-red-600',
+                            benefit: '明目補血·開胃',
+                            benefitDesc: '雞肝富含維生素A和鐵質，有助於視力保健和補血，同時能增進食慾，適合挑食的毛孩。',
+                            target: '貧血、視力不佳、挑食犬',
+                            price: '2.9',
+                            link: 'products.html?category=snacks&product=chicken-liver'
+                        },
+                        'pumpkin': {
+                            name: '南瓜凍乾',
+                            nameEn: 'Freeze-Dried Pumpkin',
+                            icon: 'fa-seedling',
+                            iconColor: 'from-orange-400 to-orange-600',
+                            benefit: '腸道調理·改善便秘',
+                            benefitDesc: '南瓜富含纖維和水分，有助於腸道蠕動，改善便秘問題，讓毛孩的消化系統更健康。',
+                            target: '腸胃不適、軟便或便秘犬',
+                            price: '2.3',
+                            link: 'products.html?category=snacks&product=pumpkin'
+                        },
+                        'red-yeast': {
+                            name: '甜肉紅麴凍乾粉',
+                            nameEn: 'Freeze-dried Chicken & Red Yeast Rice',
+                            icon: 'fa-heartbeat',
+                            iconColor: 'from-red-400 to-red-600',
+                            benefit: '心血管保健·抗氧化',
+                            benefitDesc: '紅麴含有天然抗氧化物質，有助於心血管健康，特別適合中老年犬和需要提升免疫力的毛孩。',
+                            target: '中老年犬、免疫力提升',
+                            price: '2.8',
+                            link: 'products.html?category=snacks&product=red-yeast'
+                        },
+                        'duck-neck': {
+                            name: '狗喃',
+                            nameEn: 'Duck Neck',
+                            icon: 'fa-bone',
+                            iconColor: 'from-purple-400 to-purple-600',
+                            benefit: '關節保健·磨牙潔齒',
+                            benefitDesc: '鴨脖子富含軟骨素和膠原蛋白，有助於關節健康，同時能有效清潔牙齒，預防牙垢形成。',
+                            target: '關節不佳、需要磨牙的毛孩',
+                            price: '2.8',
+                            link: 'products.html?category=snacks&product=duck-neck'
+                        },
+                        'beef-shank': {
+                            name: '牛腱肉凍乾粉',
+                            nameEn: 'Freeze-Dried Beef Shank Powder',
+                            icon: 'fa-dumbbell',
+                            iconColor: 'from-pink-400 to-pink-600',
+                            benefit: '增肌·術後恢復',
+                            benefitDesc: '牛腱肉富含優質蛋白質和必需胺基酸，有助於肌肉生長和術後恢復，特別適合虛弱或需要增重的毛孩。',
+                            target: '虛弱犬、術後、需增重',
+                            price: '2.9',
+                            link: 'products.html?category=snacks&product=beef-shank'
+                        },
+                        'duck-lung': {
+                            name: '醬肺',
+                            nameEn: 'Duck Lung',
+                            icon: 'fa-leaf',
+                            iconColor: 'from-teal-400 to-teal-600',
+                            benefit: '低脂高蛋白·易消化',
+                            benefitDesc: '鴨肺是低脂肪、高蛋白質的優質食材，易於消化吸收，特別適合需要體重控制、老犬或挑食的毛孩。',
+                            target: '體重控制、老犬、挑食犬',
+                            price: '3.0',
+                            link: 'products.html?category=snacks&product=duck-lung'
+                        }
+                    };
+                    
+                    // 顯示產品詳情
+                    function showProductDetail(productId) {
+                        const product = productData[productId];
+                        if (!product) return;
+                        
+                        // 更新按鈕狀態
+                        document.querySelectorAll('.product-btn').forEach(btn => {
+                            btn.classList.remove('active', 'bg-green-700');
+                            btn.classList.add('bg-green-600');
+                        });
+                        const activeBtn = document.querySelector(`[data-product="${productId}"]`);
+                        if (activeBtn) {
+                            activeBtn.classList.add('active', 'bg-green-700');
+                            activeBtn.classList.remove('bg-green-600');
+                        }
+                        
+                        // 更新詳情內容
+                        const detailContent = document.getElementById('product-detail-content');
+                        detailContent.innerHTML = `
+                            <div class="product-detail">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-20 h-20 bg-gradient-to-br ${product.iconColor} rounded-2xl flex items-center justify-center mr-4">
+                                        <i class="fas ${product.icon} text-white text-3xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-2xl font-black text-gray-900 mb-1">${product.name}</h4>
+                                        <p class="text-sm text-gray-500">${product.nameEn}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6 pb-6 border-b border-gray-200">
+                                    <div class="flex items-center mb-3">
+                                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                            <i class="fas fa-heart text-green-600 text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="text-lg font-bold text-gray-900 mb-1">功效</h5>
+                                            <p class="text-gray-700">${product.benefit}</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 text-sm mt-3 leading-relaxed">
+                                        ${product.benefitDesc}
+                                    </p>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <div class="flex items-center mb-3">
+                                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                            <i class="fas fa-paw text-green-600 text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="text-lg font-bold text-gray-900 mb-1">適用對象</h5>
+                                            <p class="text-gray-700">${product.target}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-green-50 rounded-xl p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-xs text-gray-500 mb-1">適合自製價格</p>
+                                            <p class="text-3xl font-black text-green-600">${product.price} <span class="text-lg text-gray-600">/g</span></p>
+                                        </div>
+                                        <a href="${product.link}" class="bg-green-600 text-white px-6 py-3 rounded-full font-bold hover:bg-green-700 transition">
+                                            查看詳情
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                </script>
+                
+                <!-- 舊的產品卡片（已移除，使用新的按鈕+詳情設計） -->
+                <div style="display: none;">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-fish text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">小魚乾</h4>
+                                    <p class="text-sm text-gray-500">Dried Small Fish</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">補鈣·骨骼保健</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">幼犬成長期、老犬骨質疏鬆</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                        <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">2.8</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                        </div>
+                                <a href="products.html?category=snacks&product=small-fish" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- 產品卡片 2: 雞肉南瓜乾 -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-green-100 group">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-drumstick-bite text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">雞肉南瓜乾</h4>
+                                    <p class="text-sm text-gray-500">Freeze-dried Chicken & Pumpkin</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">補雙養 × 顧腸胃 × 好吸收</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">腸胃敏感、食物過敏犬</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                        <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">2.9</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                        </div>
+                                <a href="products.html?category=snacks&product=chicken-pumpkin" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                    </div>
+                </div>
+                
+                        <!-- 產品卡片 3: 甜品凍乾 -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-green-100 group">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-ice-cream text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">甜品凍乾</h4>
+                                    <p class="text-sm text-gray-500">Freeze-Dried Chicken</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">咬善食糞·減重</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">有食糞行為、需要減重的毛孩</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">2.9</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                                </div>
+                                <a href="products.html?category=snacks&product=sweet-freeze" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- 產品卡片 4: 雞肝凍乾粉 -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-green-100 group">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-heart text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">雞肝凍乾粉</h4>
+                                    <p class="text-sm text-gray-500">Freeze-dried Chicken Liver</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">明目補血·開胃</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">貧血、視力不佳、挑食犬</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">2.9</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                                </div>
+                                <a href="products.html?category=snacks&product=chicken-liver" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- 產品卡片 5: 南瓜凍乾 -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-green-100 group">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-seedling text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">南瓜凍乾</h4>
+                                    <p class="text-sm text-gray-500">Freeze-Dried Pumpkin</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">腸道調理·改善便秘</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">腸胃不適、軟便或便秘犬</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">2.3</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                                </div>
+                                <a href="products.html?category=snacks&product=pumpkin" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- 產品卡片 6: 甜肉紅麴凍乾粉 -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-green-100 group">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-heartbeat text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">甜肉紅麴凍乾粉</h4>
+                                    <p class="text-sm text-gray-500">Freeze-dried Chicken & Red Yeast Rice</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">心血管保健·抗氧化</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">中老年犬、免疫力提升</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">2.8</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                                </div>
+                                <a href="products.html?category=snacks&product=red-yeast" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- 產品卡片 7: 狗喃 -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-green-100 group">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-bone text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">狗喃</h4>
+                                    <p class="text-sm text-gray-500">Duck Neck</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">關節保健·磨牙潔齒</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">關節不佳、需要磨牙的毛孩</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">2.8</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                                </div>
+                                <a href="products.html?category=snacks&product=duck-neck" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- 產品卡片 8: 牛腱肉凍乾粉 -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-green-100 group">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-pink-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-dumbbell text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">牛腱肉凍乾粉</h4>
+                                    <p class="text-sm text-gray-500">Freeze-Dried Beef Shank Powder</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">增肌·術後恢復</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">虛弱犬、術後、需增重</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">2.9</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                                </div>
+                                <a href="products.html?category=snacks&product=beef-shank" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- 產品卡片 9: 醬肺 -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-green-100 group">
+                            <div class="flex items-center mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-leaf text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-xl font-black text-gray-900 mb-1">醬肺</h4>
+                                    <p class="text-sm text-gray-500">Duck Lung</p>
+                                </div>
+                            </div>
+                            <div class="mb-4 pb-4 border-b border-gray-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">功效</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">低脂高蛋白·易消化</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-paw text-green-500 mr-2 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-900">對象</span>
+                                </div>
+                                <p class="text-gray-700 text-sm">體重控制、老犬、挑食犬</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <div>
+                                    <span class="text-xs text-gray-500">適合自製</span>
+                                    <span class="text-2xl font-black text-green-600 ml-2">3.0</span>
+                                    <span class="text-sm text-gray-600">/g</span>
+                                </div>
+                                <a href="products.html?category=snacks&product=duck-lung" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-700 transition">
+                                    了解更多
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CTA 按鈕 - Years 風格 -->
+                <div class="text-center mt-12">
+                    <a href="products.html?category=snacks" class="inline-flex items-center bg-green-600 text-white px-10 py-4 rounded-full text-lg font-black hover:bg-green-700 hover:shadow-2xl transition-all transform hover:scale-105">
+                        <i class="fas fa-shopping-cart mr-3"></i>
+                        查看所有產品
+                        <i class="fas fa-arrow-right ml-3 text-sm"></i>
+                    </a>
+                    <p class="text-sm text-gray-600 mt-4"><i class="fas fa-truck mr-2 text-green-500"></i>全站免運優惠中</p>
+                </div>
+                
+                <!-- 動態產品容器（保留用於後端載入，已隱藏） -->
+                <div id="snacksProductsContainer" class="hidden">
                     <!-- 產品將從 DataStore 動態載入 -->
                 </div>
                 
-                <!-- 靜態產品（備用） - 隱藏 -->
+                <!-- 靜態產品（備用） - 已隱藏（使用 Years 風格產品卡片） -->
                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 hidden">
                     <!-- Product Card 1 -->
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition group">
@@ -2418,12 +3123,13 @@
                                 }
                             }
                             
-                            // 載入零食產品（如果啟用）
-                            if (content.showSnacks !== false) {
-                                if (content.productsSnacks && Array.isArray(content.productsSnacks) && content.productsSnacks.length > 0) {
-                                    await renderProductsFromConfig('snacksProductsContainer', content.productsSnacks);
-                                }
-                            }
+                            // 載入零食產品（如果啟用）- 注意：現在使用 Years 風格靜態卡片，不需要動態載入
+                            // if (content.showSnacks !== false) {
+                            //     if (content.productsSnacks && Array.isArray(content.productsSnacks) && content.productsSnacks.length > 0) {
+                            //         await renderProductsFromConfig('snacksProductsContainer', content.productsSnacks);
+                            //     }
+                            // }
+                            console.log('ℹ️ 零食產品使用 Years 風格靜態展示，跳過動態載入');
                             
                             // 載入訂閱產品（如果啟用）
                             if (content.showSubscription !== false) {
@@ -2733,13 +3439,14 @@
                         renderToysProducts(products);
                         console.log('✅ 從配置載入', products.length, '個玩具產品');
                     } else if (containerId === 'snacksProductsContainer') {
-                        // 使用 FrontProducts 渲染（需要改進為完整卡片）
-                        if (window.FrontProducts && window.FrontProducts.renderProductCards) {
-                            window.FrontProducts.renderProductCards(containerId, 'snacks', products.length);
-                        } else {
-                            renderToysProducts(products); // 暫時使用相同的渲染函數
-                        }
-                        console.log('✅ 從配置載入', products.length, '個零食產品');
+                        // 注意：現在使用 Years 風格靜態產品卡片，不需要動態渲染
+                        // 如果需要動態載入，可以取消下面的註釋
+                        // if (window.FrontProducts && window.FrontProducts.renderProductCards) {
+                        //     window.FrontProducts.renderProductCards(containerId, 'snacks', products.length);
+                        // } else {
+                        //     renderToysProducts(products); // 暫時使用相同的渲染函數
+                        // }
+                        console.log('ℹ️ 零食產品使用 Years 風格靜態展示，跳過動態渲染');
                     } else if (containerId === 'subscriptionProductsContainer') {
                         renderToysProducts(products); // 暫時使用相同的渲染函數
                         console.log('✅ 從配置載入', products.length, '個訂閱產品');

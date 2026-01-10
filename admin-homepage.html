@@ -208,7 +208,7 @@
     </nav>
 
     <!-- 側邊欄 -->
-    <aside class="fixed left-0 top-16 bottom-0 w-64 bg-white border border-gray-200 overflow-y-auto z-40">
+    <aside id="sidebar" class="fixed left-0 top-16 bottom-0 w-64 bg-white border border-gray-200 overflow-y-auto z-40">
         <div class="p-4">
             <nav class="space-y-2">
                 <a href="admin-dashboard.html" class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg">
@@ -294,14 +294,11 @@
         <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <button onclick="addNewBlock()" class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-semibold">
+                    <button onclick="addNewBlock()" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold">
                         <i class="fas fa-plus mr-2"></i>新增區塊
                     </button>
-                    <button onclick="resetToDefault()" class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                    <button onclick="resetToDefault()" class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
                         <i class="fas fa-undo mr-2"></i>恢復預設
-                    </button>
-                    <button onclick="scrollToBlock('products')" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-semibold">
-                        <i class="fas fa-shopping-bag mr-2"></i>快速編輯產品系列
                     </button>
                 </div>
                 <div class="text-sm text-gray-600">
@@ -326,7 +323,7 @@
                         <span class="px-3 py-1 rounded-full text-xs font-semibold block-badge"></span>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button class="edit-btn px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
+                        <button class="edit-btn px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold">
                             <i class="fas fa-edit mr-1"></i>編輯
                         </button>
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -339,178 +336,6 @@
             </div>
         </template>
         
-        <!-- 原始區塊（將被動態渲染取代） -->
-        <div style="display: none;">
-            <!-- Hero 區塊 -->
-            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="hero">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3">
-                        <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
-                        <h3 class="text-xl font-bold text-gray-800">Hero 主視覺區塊</h3>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">必要區塊</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="editBlock('hero')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
-                            <i class="fas fa-edit mr-1"></i>編輯
-                        </button>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" checked class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 text-sm">
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">標題</p>
-                        <p class="font-semibold text-gray-800">從台灣夜市到健康餐桌</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">副標題</p>
-                        <p class="font-semibold text-gray-800">手工製作，天然無添加</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">背景圖片</p>
-                        <p class="font-semibold text-gray-800">hero-bg.jpg</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 產品系列區塊 -->
-            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="products">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3">
-                        <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
-                        <h3 class="text-xl font-bold text-gray-800">產品系列區塊</h3>
-                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">重要區塊</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="editBlock('products')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
-                            <i class="fas fa-edit mr-1"></i>編輯
-                        </button>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" checked class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 text-sm">
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">顯示產品</p>
-                        <p class="font-semibold text-gray-800">3 個系列</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">排序方式</p>
-                        <p class="font-semibold text-gray-800">自訂排序</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">顯示方式</p>
-                        <p class="font-semibold text-gray-800">輪播 + 卡片</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 測驗系統區塊 -->
-            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="quiz">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3">
-                        <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
-                        <h3 class="text-xl font-bold text-gray-800">智能測驗區塊</h3>
-                        <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">特色功能</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="editBlock('quiz')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
-                            <i class="fas fa-edit mr-1"></i>編輯
-                        </button>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" checked class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 text-sm">
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">測驗類型</p>
-                        <p class="font-semibold text-gray-800">營養測驗 + 玩具測驗</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">按鈕文字</p>
-                        <p class="font-semibold text-gray-800">立即測驗</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">顯示方式</p>
-                        <p class="font-semibold text-gray-800">並排顯示</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 訂閱服務區塊 -->
-            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="subscription">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3">
-                        <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
-                        <h3 class="text-xl font-bold text-gray-800">訂閱服務區塊</h3>
-                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">營收重點</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="editBlock('subscription')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
-                            <i class="fas fa-edit mr-1"></i>編輯
-                        </button>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" checked class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 text-sm">
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">方案數量</p>
-                        <p class="font-semibold text-gray-800">3 個方案</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">推薦方案</p>
-                        <p class="font-semibold text-gray-800">進階方案</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">CTA 按鈕</p>
-                        <p class="font-semibold text-gray-800">立即訂閱</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 集資項目區塊 -->
-            <div class="content-block bg-white rounded-2xl border border-gray-200 p-6" data-block-id="crowdfunding">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3">
-                        <i class="fas fa-grip-vertical text-gray-400 text-xl cursor-move"></i>
-                        <h3 class="text-xl font-bold text-gray-800">集資項目區塊</h3>
-                        <span class="px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-xs font-semibold">限時活動</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="editBlock('crowdfunding')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
-                            <i class="fas fa-edit mr-1"></i>編輯
-                        </button>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 text-sm">
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">項目名稱</p>
-                        <p class="font-semibold text-gray-800">益智玩具防老系列</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">平台連結</p>
-                        <p class="font-semibold text-gray-800">嘖嘖嘖</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-lg">
-                        <p class="text-gray-600 mb-1">顯示狀態</p>
-                        <p class="font-semibold text-red-600"><i class="fas fa-circle text-xs mr-1"></i>已關閉</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- 新增區塊說明 -->
         <div class="mt-8 bg-blue-50 border-2 border-blue-200 rounded-2xl p-6">
@@ -2253,249 +2078,138 @@
             }
         });
         
-        // 區塊配置映射（定義每個區塊的顯示資訊）
+        // 統一區塊配置映射（簡化並統一所有區塊的顯示格式）
         const blockConfigMap = {
             hero: {
                 title: 'Hero 主視覺區塊',
                 badge: { text: '必要區塊', class: 'bg-blue-100 text-blue-800' },
-                content: (section) => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">標題</p>
-                            <p class="font-semibold text-gray-800">${section?.content?.title || '從台灣夜市到健康餐桌'}</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">副標題</p>
-                            <p class="font-semibold text-gray-800">${section?.content?.subtitle || '手工製作，天然無添加'}</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">背景圖片</p>
-                            <p class="font-semibold text-gray-800">${section?.content?.bgImage ? (section.content.bgImage.length > 20 ? section.content.bgImage.substring(0, 20) + '...' : section.content.bgImage) : 'hero-bg.jpg'}</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => {
+                    const title = section?.content?.title || '從台灣夜市到健康餐桌';
+                    const subtitle = section?.content?.subtitle || '手工製作，天然無添加';
+                    const hasImage = section?.content?.bgImage ? '是' : '否';
+                    return getUnifiedBlockContent(title, subtitle, hasImage);
+                }
             },
             products: {
                 title: '產品系列區塊',
                 badge: { text: '重要區塊', class: 'bg-green-100 text-green-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">顯示產品</p>
-                            <p class="font-semibold text-gray-800">3 個系列</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">排序方式</p>
-                            <p class="font-semibold text-gray-800">自訂排序</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">顯示方式</p>
-                            <p class="font-semibold text-gray-800">輪播 + 卡片</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => {
+                    const title = section?.content?.title || '產品系列';
+                    const subtitle = section?.content?.subtitle || '精心挑選的產品，滿足毛孩各種需求';
+                    const count = (section?.content?.showSnacks ? 1 : 0) + 
+                                  (section?.content?.showToys ? 1 : 0) + 
+                                  (section?.content?.showSubscription ? 1 : 0);
+                    return getUnifiedBlockContent(title, subtitle, `${count} 個系列`);
+                }
             },
             quiz: {
                 title: '智能測驗區塊',
                 badge: { text: '特色功能', class: 'bg-purple-100 text-purple-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">測驗類型</p>
-                            <p class="font-semibold text-gray-800">營養測驗 + 玩具測驗</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">按鈕文字</p>
-                            <p class="font-semibold text-gray-800">立即測驗</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">顯示方式</p>
-                            <p class="font-semibold text-gray-800">並排顯示</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => {
+                    const title = section?.content?.title || '找到最適合的產品';
+                    const subtitle = section?.content?.subtitle || '透過專業測驗，為您的毛孩推薦最適合的產品';
+                    const types = [];
+                    if (section?.content?.showNutritionQuiz) types.push('營養測驗');
+                    if (section?.content?.showToyQuiz) types.push('玩具測驗');
+                    return getUnifiedBlockContent(title, subtitle, types.join('、') || '未設定');
+                }
             },
             subscription: {
                 title: '訂閱服務區塊',
                 badge: { text: '營收重點', class: 'bg-yellow-100 text-yellow-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">方案數量</p>
-                            <p class="font-semibold text-gray-800">3 個方案</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">推薦方案</p>
-                            <p class="font-semibold text-gray-800">進階方案</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">CTA 按鈕</p>
-                            <p class="font-semibold text-gray-800">立即訂閱</p>
-                        </div>
-                    </div>
-                `
-            },
-            crowdfunding: {
-                title: '集資項目區塊',
-                badge: { text: '限時活動', class: 'bg-pink-100 text-pink-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">項目名稱</p>
-                            <p class="font-semibold text-gray-800">益智玩具防老系列</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">平台連結</p>
-                            <p class="font-semibold text-gray-800">嘖嘖嘖</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">顯示狀態</p>
-                            <p class="font-semibold text-red-600"><i class="fas fa-circle text-xs mr-1"></i>已關閉</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => {
+                    const title = section?.content?.title || '訂閱服務';
+                    const subtitle = section?.content?.subtitle || '定期配送，新鮮直達';
+                    const plans = [];
+                    if (section?.content?.showBasicPlan) plans.push('標準');
+                    if (section?.content?.showPremiumPlan) plans.push('進階');
+                    if (section?.content?.showJarProgram) plans.push('換罐');
+                    return getUnifiedBlockContent(title, subtitle, `${plans.length} 個方案（${plans.join('、')}）`);
+                }
             },
             'jar-exchange': {
                 title: '換罐計畫區塊',
                 badge: { text: '環保計畫', class: 'bg-green-100 text-green-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">計畫狀態</p>
-                            <p class="font-semibold text-gray-800">進行中</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">參與人數</p>
-                            <p class="font-semibold text-gray-800">持續增加</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">環保效益</p>
-                            <p class="font-semibold text-gray-800">節能減碳</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => {
+                    const title = section?.content?.title || '換罐計畫';
+                    const subtitle = section?.content?.subtitle || '環保愛地球，回饋愛毛孩';
+                    const benefits = section?.content?.benefits?.length || 0;
+                    return getUnifiedBlockContent(title, subtitle, `${benefits} 項優惠`);
+                }
             },
             about: {
                 title: '關於我們區塊',
                 badge: { text: '品牌介紹', class: 'bg-indigo-100 text-indigo-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">公司介紹</p>
-                            <p class="font-semibold text-gray-800">品牌故事</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">團隊成員</p>
-                            <p class="font-semibold text-gray-800">專業團隊</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">聯絡方式</p>
-                            <p class="font-semibold text-gray-800">客服專線</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => {
+                    const title = section?.content?.title || '關於匠寵';
+                    const subtitle = section?.content?.subtitle || '從台灣到世界，為毛孩創造更好的生活';
+                    const desc = section?.content?.description || '品牌故事';
+                    return getUnifiedBlockContent(title, subtitle, desc.length > 30 ? desc.substring(0, 30) + '...' : desc);
+                }
             },
             'toys-hero': {
                 title: '益智玩具 Hero 區塊',
                 badge: { text: '產品展示', class: 'bg-orange-100 text-orange-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">區塊類型</p>
-                            <p class="font-semibold text-gray-800">益智玩具 Hero</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">主要內容</p>
-                            <p class="font-semibold text-gray-800">給毛孩的益智挑戰</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">特色</p>
-                            <p class="font-semibold text-gray-800">動畫 + CTA</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => {
+                    const title = section?.content?.title || '益智玩具 Hero 區塊';
+                    const subtitle = section?.content?.description || '給毛孩的益智挑戰';
+                    return getUnifiedBlockContent(title, subtitle, section?.enabled ? '啟用中' : '已停用');
+                }
             },
             'snacks-hero': {
                 title: '手作零食 Hero 區塊',
                 badge: { text: '產品展示', class: 'bg-red-100 text-red-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">區塊類型</p>
-                            <p class="font-semibold text-gray-800">手作零食 Hero</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">主要內容</p>
-                            <p class="font-semibold text-gray-800">在地手工零食</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">特色</p>
-                            <p class="font-semibold text-gray-800">產品展示</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => {
+                    const title = section?.content?.title || '手作零食 Hero 區塊';
+                    const subtitle = section?.content?.description || '台灣夜市風味';
+                    return getUnifiedBlockContent(title, subtitle, section?.enabled ? '啟用中' : '已停用');
+                }
+            },
+            crowdfunding: {
+                title: '集資項目區塊',
+                badge: { text: '限時活動', class: 'bg-orange-100 text-orange-800' },
+                content: (section) => {
+                    const title = section?.content?.projectName || '集資項目';
+                    const subtitle = section?.content?.projectDescription || '創新產品開發中';
+                    return getUnifiedBlockContent(title, subtitle, section?.enabled ? '進行中' : '已關閉');
+                }
             },
             'scientific-evidence': {
                 title: '科學實證區塊',
                 badge: { text: '信任建立', class: 'bg-blue-100 text-blue-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">區塊類型</p>
-                            <p class="font-semibold text-gray-800">科學背書</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">研究數量</p>
-                            <p class="font-semibold text-gray-800">3 項研究</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">功能</p>
-                            <p class="font-semibold text-gray-800">建立信任</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => getUnifiedBlockContent('科學實證區塊', '研究數據與科學背書', section?.enabled ? '啟用中' : '已停用')
             },
             'testimonials': {
                 title: '用戶評價與環保成果區塊',
                 badge: { text: '社會證明', class: 'bg-green-100 text-green-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">區塊類型</p>
-                            <p class="font-semibold text-gray-800">評價 + 成果</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">評價數量</p>
-                            <p class="font-semibold text-gray-800">3 位用戶</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">功能</p>
-                            <p class="font-semibold text-gray-800">社會證明</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => getUnifiedBlockContent('用戶評價與環保成果區塊', '客戶評價與環保成果展示', section?.enabled ? '啟用中' : '已停用')
             },
             'final-cta': {
                 title: '最終行動呼籲區塊',
                 badge: { text: '轉換重點', class: 'bg-red-100 text-red-800' },
-                content: () => `
-                    <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">區塊類型</p>
-                            <p class="font-semibold text-gray-800">CTA 區塊</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">按鈕數量</p>
-                            <p class="font-semibold text-gray-800">3 個按鈕</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-gray-600 mb-1">功能</p>
-                            <p class="font-semibold text-gray-800">引導行動</p>
-                        </div>
-                    </div>
-                `
+                content: (section) => getUnifiedBlockContent('最終行動呼籲區塊', '引導用戶完成轉換', section?.enabled ? '啟用中' : '已停用')
             }
         };
+        
+        // 統一的區塊內容顯示函數（所有區塊使用相同的欄位格式）
+        function getUnifiedBlockContent(field1, field2, field3) {
+            return `
+                <div class="grid grid-cols-3 gap-4 text-sm">
+                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-gray-600 mb-1 text-xs">標題</p>
+                        <p class="font-semibold text-gray-800">${field1 || '未設定'}</p>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-gray-600 mb-1 text-xs">描述</p>
+                        <p class="font-semibold text-gray-800">${field2 || '未設定'}</p>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-gray-600 mb-1 text-xs">狀態</p>
+                        <p class="font-semibold text-gray-800">${field3 || '未設定'}</p>
+                    </div>
+                </div>
+            `;
+        }
         
         // 從配置渲染區塊列表
         function renderBlocksFromConfig(config) {
@@ -2547,7 +2261,7 @@
                                     <i class="fas fa-chevron-down"></i>
                                 </button>
                             </div>
-                            <button onclick="editBlock('${section.id}')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
+                            <button onclick="editBlock('${section.id}')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold">
                                 <i class="fas fa-edit mr-1"></i>編輯
                             </button>
                             <label class="relative inline-flex items-center cursor-pointer">
