@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="匠寵 - 手工零食 × 定期配送 × 循環經濟，為您的毛孩提供最好的生活品質">
+    <title>匠寵 - 寵物手作零食與健康訂閱服務</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Local Scripts -->
+    <script src="js/api-client.js"></script>
+    <script src="js/local-cart.js"></script>
+    
+    <style>
+        * {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        
+        /* Years 風格：極簡白色背景 */
+        body {
+            background: #FAFBFC;
+            color: #2D3748;
+        }
+        
+        /* 平滑滾動 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Years 風格：柔和陰影 */
+        .soft-shadow {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+        
+        .soft-shadow-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .soft-shadow-hover:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+            transform: translateY(-4px);
+        }
+        
+        /* Years 風格：微妙的漸變 */
+        .gradient-bg-hero {
+            background: linear-gradient(135deg, #FAFBFC 0%, #F0F9FF 100%);
+        }
+        
+        .gradient-bg-warm {
+            background: linear-gradient(135deg, #FFFBF5 0%, #FFF8F0 100%);
+        }
+        
+        .gradient-bg-cool {
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+        }
+        
+        .gradient-bg-fresh {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+        }
+        
+        /* Years 風格：柔和按鈕 */
+        .btn-primary {
+            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+        }
+        
+        .btn-secondary {
+            background: white;
+            border: 2px solid #E5E7EB;
+            color: #4B5563;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #2563EB;
+            color: #2563EB;
+            background: #F9FAFB;
+        }
+        
+        /* Years 風格：圖片懸停效果 */
+        .image-wrapper {
+            overflow: hidden;
+            border-radius: 16px;
+        }
+        
+        .image-scale {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .image-wrapper:hover .image-scale {
+            transform: scale(1.08);
+        }
+        
+        /* Years 風格：導航欄 */
+        .nav-shadow {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* 動畫效果 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        
+        /* 影片容器 */
+        .video-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 特色卡片 */
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #F3F4F6;
+        }
+        
+        .feature-card:hover {
+            border-color: #E5E7EB;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white z-50 nav-shadow">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Brand -->
+                <a href="index-new.html" class="text-2xl font-bold text-gray-800 tracking-tight">
+                    匠寵
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index-new.html" class="text-blue-600 font-semibold">首頁</a>
+                    <a href="products-new.html" class="text-gray-600 hover:text-blue-600 transition font-medium">產品系列</a>
+                    <a href="#about" class="text-gray-600 hover:text-blue-600 transition font-medium">關於我們</a>
+                    <a href="#subscription" class="text-gray-600 hover:text-blue-600 transition font-medium">訂閱方案</a>
+                    
+                    <!-- Cart -->
+                    <a href="cart.html" id="cart-button" class="relative inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition font-medium">
+                        <i class="fas fa-shopping-cart mr-2"></i>
+                        購物車
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center" style="display: none;">0</span>
+                    </a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-gray-600 text-2xl" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div class="hidden md:hidden mt-4 pb-4 space-y-3" id="mobile-menu">
+                <a href="index-new.html" class="block py-2 text-blue-600 font-semibold">首頁</a>
+                <a href="products-new.html" class="block py-2 text-gray-600 hover:text-blue-600 transition">產品系列</a>
+                <a href="#about" class="block py-2 text-gray-600 hover:text-blue-600 transition">關於我們</a>
+                <a href="#subscription" class="block py-2 text-gray-600 hover:text-blue-600 transition">訂閱方案</a>
+                <a href="cart.html" class="block py-2 text-gray-600 hover:text-blue-600 transition">
+                    <i class="fas fa-shopping-cart mr-2"></i>購物車
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Spacer -->
+    <div class="h-20"></div>
+
+    <!-- Hero Section - Years Style -->
+    <section class="py-20 gradient-bg-hero">
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <!-- Left: Content -->
+                <div class="space-y-8 fade-in-up">
+                    <div>
+                        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                            為什麼要<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600">寵愛毛孩子</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-gray-600 leading-relaxed">
+                            手工零食，定期送到家的重要性
+                        </p>
+                    </div>
+                    
+                    <!-- Value Props -->
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-heart text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">新鮮食材，天然健康</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    研究證實，新鮮天然的食物能讓毛孩活得更長壽、更健康。我們堅持使用台灣在地食材，手工製作，無添加防腐劑。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-truck text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">定期配送，永不斷糧</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    自動定期配送，確保毛孩總有新鮮零食。每月新鮮製作，直送到家，品質有保障。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-leaf text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">優於罐頭，營養完整</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    不同於高溫高壓製作的罐頭，我們的低溫烘乾工藝保留食材的完整營養素和天然風味，消化更容易，營養吸收更好。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-wrap gap-4">
+                        <a href="subscription-packages.html" class="inline-flex items-center px-8 py-4 btn-primary text-white rounded-full font-semibold text-lg shadow-lg">
+                            立即訂閱
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                        <a href="products-new.html" class="inline-flex items-center px-8 py-4 btn-secondary rounded-full font-semibold text-lg">
+                            瀏覽產品
+                        </a>
+                    </div>
+                    
+                    <!-- Trust Badges -->
+                    <div class="flex flex-wrap items-center gap-6 pt-6 border-t border-gray-200">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-blue-500 text-xl"></i>
+                            <span class="text-gray-600 font-medium">100% 台灣製造</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-blue-500 text-xl"></i>
+                            <span class="text-gray-600 font-medium">無添加防腐劑</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-blue-500 text-xl"></i>
+                            <span class="text-gray-600 font-medium">食材可追溯</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Video -->
+                <div class="relative fade-in-up delay-1">
+                    <div class="video-container">
+                        <video 
+                            autoplay 
+                            muted 
+                            loop 
+                            playsinline 
+                            class="w-full h-auto"
+                            preload="auto">
+                            <source src="videos/shutterstock_1102334551.mp4" type="video/mp4">
+                            您的瀏覽器不支援影片播放。
+                        </video>
+                    </div>
+                    
+                    <!-- Decorative Elements -->
+                    <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-3xl -z-10 opacity-20"></div>
+                    <div class="absolute -top-6 -left-6 w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-3xl -z-10 opacity-20"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section - Years Style -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">為什麼選擇定期配送？</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    就像 Years 一樣，我們相信定期配送是為毛孩提供最健康飲食的最佳方式
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="feature-card text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-calendar-check text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">永不忘記補貨</h3>
+                    <p class="text-gray-600 leading-relaxed">自動定期配送，再也不用擔心毛孩的零食庫存不足</p>
+                </div>
+                
+                <div class="feature-card text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-truck text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">新鮮直送到家</h3>
+                    <p class="text-gray-600 leading-relaxed">每月新鮮製作，直接送到您家門口，確保最佳品質</p>
+                </div>
+                
+                <div class="feature-card text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-heart text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">為健康把關</h3>
+                    <p class="text-gray-600 leading-relaxed">定期追蹤毛孩健康狀況，專業營養師隨時調整配方</p>
+                </div>
+                
+                <div class="feature-card text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-piggy-bank text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">省時又省錢</h3>
+                    <p class="text-gray-600 leading-relaxed">訂閱方案享有專屬優惠價格，免去每次購買的麻煩</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Preview - Years Style -->
+    <section id="products" class="py-20 gradient-bg-cool">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">三大產品系列</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    為您的毛孩挑選最適合的產品
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Toys -->
+                <div class="bg-white rounded-2xl overflow-hidden soft-shadow-hover cursor-pointer" onclick="window.location.href='products-new.html#toys-section'">
+                    <div class="image-wrapper h-64">
+                        <img src="https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=500" alt="益智玩具" class="image-scale w-full h-full object-cover">
+                    </div>
+                    <div class="p-8">
+                        <div class="inline-flex items-center px-4 py-2 bg-orange-50 text-orange-700 rounded-full mb-4 text-sm font-medium">
+                            <i class="fas fa-puzzle-piece mr-2"></i>
+                            益智玩具
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">延緩認知退化</h3>
+                        <p class="text-gray-600 mb-6">維也納大學研究證實，益智刺激可延緩寵物認知退化</p>
+                        <a href="products-new.html#toys-section" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
+                            探索產品
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Snacks -->
+                <div class="bg-white rounded-2xl overflow-hidden soft-shadow-hover cursor-pointer" onclick="window.location.href='products-new.html#snacks-section'">
+                    <div class="image-wrapper h-64">
+                        <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500" alt="手作零食" class="image-scale w-full h-full object-cover">
+                    </div>
+                    <div class="p-8">
+                        <div class="inline-flex items-center px-4 py-2 bg-red-50 text-red-700 rounded-full mb-4 text-sm font-medium">
+                            <i class="fas fa-cookie-bite mr-2"></i>
+                            手作零食
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">台灣夜市風味</h3>
+                        <p class="text-gray-600 mb-6">手工製作，天然無添加，與寵物共享文化傳承的味道</p>
+                        <a href="products-new.html#snacks-section" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
+                            探索產品
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Subscription -->
+                <div class="bg-white rounded-2xl overflow-hidden soft-shadow-hover cursor-pointer" onclick="window.location.href='products-new.html#subscription-section'">
+                    <div class="image-wrapper h-64">
+                        <img src="https://www.genspark.ai/api/files/s/VwgxRxOz" alt="訂閱服務" class="image-scale w-full h-full object-cover">
+                    </div>
+                    <div class="p-8">
+                        <div class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-full mb-4 text-sm font-medium">
+                            <i class="fas fa-box mr-2"></i>
+                            訂閱服務
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">營養罐訂閱</h3>
+                        <p class="text-gray-600 mb-6">科學配方，定期配送，玻璃罐可循環使用</p>
+                        <a href="products-new.html#subscription-section" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
+                            探索產品
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscription Plans - Years Style -->
+    <section id="subscription" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">零食套餐訂閱方案</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    選擇最適合您毛孩的訂閱計畫
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Small Plan -->
+                <div class="bg-white rounded-2xl soft-shadow-hover p-8 border border-gray-200">
+                    <div class="text-center mb-6">
+                        <div class="text-sm text-gray-500 mb-2">輕量嚐鮮首選</div>
+                        <h3 class="text-2xl font-bold mb-4 text-gray-900">小食組</h3>
+                        <div class="text-5xl font-bold mb-1 text-blue-600">$399</div>
+                        <div class="text-sm text-gray-500">每月計費</div>
+                    </div>
+                    <div class="space-y-4 mb-8">
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <div class="text-sm font-semibold text-gray-700 mb-3">每月配送 1 次</div>
+                            <ul class="text-sm text-gray-600 space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>80g 蛋白肉乾</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>30g 凍乾粉</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>綜合蔬果凍乾</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <a href="subscription-packages.html" class="block w-full btn-secondary px-6 py-3 rounded-xl font-semibold text-center">
+                        選擇方案
+                    </a>
+                </div>
+                
+                <!-- Standard Plan (Popular) -->
+                <div class="bg-white rounded-2xl soft-shadow-hover p-8 border-2 border-blue-600 relative transform scale-105">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-6 py-2 text-sm font-bold rounded-full shadow-lg">
+                        最受歡迎
+                    </div>
+                    <div class="text-center mb-6 pt-2">
+                        <div class="text-sm text-gray-500 mb-2">CP值最高選擇</div>
+                        <h3 class="text-2xl font-bold mb-4 text-gray-900">標準組</h3>
+                        <div class="text-5xl font-bold mb-1 text-blue-600">$599</div>
+                        <div class="text-sm text-gray-500">每月計費</div>
+                    </div>
+                    <div class="space-y-4 mb-8">
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                            <div class="text-sm font-semibold text-gray-700 mb-2">每兩週配送</div>
+                            <div class="text-xs text-gray-500 mb-3">(每月 1 號 & 15 號)</div>
+                            <ul class="text-sm text-gray-600 space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>50g 蛋白肉乾</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>30g 凍乾粉</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>綜合蔬果凍乾</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+                            <div class="text-xs font-bold text-amber-700 mb-1">每月額外贈送</div>
+                            <div class="text-sm text-gray-700 font-semibold">驚喜玩具 x1</div>
+                        </div>
+                    </div>
+                    <a href="subscription-packages.html" class="block w-full btn-primary text-white px-6 py-3 rounded-xl font-semibold text-center">
+                        立即訂閱
+                    </a>
+                </div>
+                
+                <!-- Premium Plan -->
+                <div class="bg-white rounded-2xl soft-shadow-hover p-8 border border-gray-200">
+                    <div class="text-center mb-6">
+                        <div class="text-sm text-gray-500 mb-2">頂級寵愛體驗</div>
+                        <h3 class="text-2xl font-bold mb-4 text-gray-900">豪華組</h3>
+                        <div class="text-5xl font-bold mb-1 text-blue-600">$899</div>
+                        <div class="text-sm text-gray-500">每月計費</div>
+                    </div>
+                    <div class="space-y-4 mb-8">
+                        <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                            <div class="text-sm font-semibold text-gray-700 mb-2">每兩週配送</div>
+                            <div class="text-xs text-gray-500 mb-3">(每月 1 號 & 15 號)</div>
+                            <ul class="text-sm text-gray-600 space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>70g 蛋白肉乾</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>50g 凍乾粉</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>綜合蔬果凍乾</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <span>特選凍乾</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+                            <div class="text-xs font-bold text-amber-700 mb-1">每月額外贈送</div>
+                            <div class="text-sm text-gray-700 font-semibold">益智玩具 x1</div>
+                        </div>
+                    </div>
+                    <a href="subscription-packages.html" class="block w-full btn-secondary px-6 py-3 rounded-xl font-semibold text-center">
+                        選擇方案
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Benefits -->
+            <div class="text-center mt-12 space-y-6">
+                <div class="flex flex-wrap justify-center gap-8 text-sm text-gray-600">
+                    <span class="flex items-center">
+                        <i class="fas fa-truck text-blue-500 mr-2 text-lg"></i>
+                        <span class="font-medium">全台免運</span>
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-sync text-blue-500 mr-2 text-lg"></i>
+                        <span class="font-medium">隨時調整配置</span>
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-pause-circle text-blue-500 mr-2 text-lg"></i>
+                        <span class="font-medium">彈性暫停續訂</span>
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-leaf text-blue-500 mr-2 text-lg"></i>
+                        <span class="font-medium">新鮮配送</span>
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm max-w-3xl mx-auto">
+                    所有方案皆可自由選擇蛋白質（牛/雞/鴨/小魚乾）、蔬果凍乾、凍乾粉組合
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section - Years Style -->
+    <section class="py-20 bg-gradient-to-br from-blue-600 to-blue-700">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                準備好開始了嗎？
+            </h2>
+            <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                立即訂閱，讓您的毛孩享受最健康、最新鮮的手工零食
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="subscription-packages.html" class="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-full hover:bg-gray-50 transition font-bold text-lg shadow-lg">
+                    開始訂閱
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+                <a href="products-new.html" class="inline-flex items-center px-8 py-4 bg-blue-500 text-white rounded-full hover:bg-blue-400 transition font-bold text-lg">
+                    瀏覽所有產品
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="text-2xl font-bold text-white mb-4">匠寵</div>
+                    <p class="text-sm">為您的毛孩提供最好的生活品質</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">產品</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="products-new.html#toys-section" class="hover:text-white transition">益智玩具</a></li>
+                        <li><a href="products-new.html#snacks-section" class="hover:text-white transition">手作零食</a></li>
+                        <li><a href="products-new.html#subscription-section" class="hover:text-white transition">訂閱服務</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">關於</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">關於我們</a></li>
+                        <li><a href="#" class="hover:text-white transition">聯絡我們</a></li>
+                        <li><a href="#" class="hover:text-white transition">常見問題</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">聯繫我們</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li>LINE: @902rkfzv</li>
+                        <li>Email: support@jiangchong.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-sm">
+                <p>© 2024 匠寵. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+        
+        // Update cart badge
+        function updateCartBadge() {
+            let count = 0;
+            
+            if (window.localCart && typeof window.localCart.getItemCount === 'function') {
+                count = window.localCart.getItemCount() || 0;
+            } else {
+                try {
+                    const cartData = localStorage.getItem('jiangchong_cart');
+                    if (cartData) {
+                        const cart = JSON.parse(cartData);
+                        count = cart.reduce((total, item) => total + (parseInt(item.quantity) || 1), 0);
+                    }
+                } catch (error) {
+                    console.error('讀取購物車失敗:', error);
+                }
+            }
+            
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                cartCount.textContent = count;
+                cartCount.style.display = count > 0 ? 'flex' : 'none';
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartBadge();
+            
+            // Listen for cart updates
+            window.addEventListener('cartUpdated', updateCartBadge);
+            
+            // Periodic cart check
+            setInterval(updateCartBadge, 1000);
+        });
+    </script>
+</body>
+</html>
