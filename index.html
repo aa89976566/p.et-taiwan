@@ -256,27 +256,131 @@
         </div>
     </nav>
     
-    <!-- Years 風格 Hero Section - 只有影片 -->
-    <section id="hero" class="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
-        <!-- 影片背景 -->
-        <video 
-            id="hero-video"
-            autoplay 
-            muted 
-            loop 
-            playsinline 
-            class="absolute inset-0 w-full h-full object-cover z-0"
-            preload="auto">
-            <source src="videos/hero-video.mp4" type="video/mp4">
-            您的瀏覽器不支援影片播放。
-        </video>
-        
-        <!-- 備用背景（當影片無法載入時顯示） -->
-        <div class="absolute inset-0 bg-gradient-to-br from-green-50 via-white to-blue-50 hidden z-0" id="hero-fallback-bg"></div>
+    <!-- Years 風格 Hero Section - 左文案右影片 -->
+    <section id="hero" class="relative min-h-screen flex items-center bg-gradient-to-br from-white via-green-50 to-blue-50 overflow-hidden">
+        <div class="container mx-auto px-6 py-20">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- 左側：文案內容 -->
+                <div class="space-y-8 fade-in-up">
+                    <!-- 主標題 -->
+                    <div>
+                        <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-6 leading-tight">
+                            為什麼要<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">寵愛毛孩子</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-gray-600 leading-relaxed">
+                            手工零食，定期送到家的重要性
+                        </p>
+                    </div>
+                    
+                    <!-- 核心價值主張 -->
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-heart text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">新鮮食材，天然健康</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    研究證實，新鮮天然的食物能讓毛孩活得更長壽、更健康。我們堅持使用台灣在地食材，手工製作，無添加防腐劑。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-truck text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">定期配送，永不斷糧</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    自動定期配送，確保毛孩總有新鮮零食。每月新鮮製作，直送到家，品質有保障。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-leaf text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">優於罐頭，營養完整</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    不同於高溫高壓製作的罐頭，我們的低溫烘乾工藝保留食材的完整營養素和天然風味，消化更容易，營養吸收更好。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA 按鈕 -->
+                    <div class="flex flex-wrap gap-4">
+                        <a href="subscription-packages.html" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full hover:from-green-600 hover:to-green-700 transition font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            <i class="fas fa-box-heart mr-2"></i>
+                            立即訂閱
+                        </a>
+                        <a href="#subscription-landing" class="inline-flex items-center px-8 py-4 bg-white border-2 border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 hover:border-gray-400 transition font-bold text-lg shadow-lg">
+                            了解更多
+                            <i class="fas fa-arrow-down ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 信任標記 -->
+                    <div class="flex flex-wrap items-center gap-6 pt-6 border-t border-gray-200">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                            <span class="text-gray-600 font-medium">100% 台灣製造</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                            <span class="text-gray-600 font-medium">無添加防腐劑</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                            <span class="text-gray-600 font-medium">食材可追溯</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右側：影片 -->
+                <div class="relative lg:order-last order-first">
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl">
+                        <video 
+                            id="hero-video"
+                            autoplay 
+                            muted 
+                            loop 
+                            playsinline 
+                            class="w-full h-auto rounded-3xl"
+                            preload="auto">
+                            <source src="videos/shutterstock_1102334551.mp4" type="video/mp4">
+                            您的瀏覽器不支援影片播放。
+                        </video>
+                        
+                        <!-- 影片裝飾元素 -->
+                        <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-br from-green-400 to-blue-500 rounded-3xl -z-10"></div>
+                        <div class="absolute -top-6 -left-6 w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-500 rounded-3xl -z-10"></div>
+                    </div>
+                    
+                    <!-- 浮動標籤 -->
+                    <div class="absolute top-8 -left-4 bg-white rounded-2xl shadow-xl p-4 animate-bounce hidden lg:block">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-paw text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">超過</div>
+                                <div class="text-2xl font-bold text-gray-900">1000+</div>
+                                <div class="text-sm text-gray-600">快樂毛孩</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- 向下滾動指示 -->
         <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
-            <i class="fas fa-chevron-down text-white text-2xl drop-shadow-lg"></i>
+            <i class="fas fa-chevron-down text-gray-400 text-2xl"></i>
         </div>
     </section>
     
