@@ -434,14 +434,15 @@
                 </div>
                 
                 <!-- 右側：狗狗無聊影片 -->
-                <div class="relative fade-in-up delay-1 flex items-center">
-                    <div class="video-container video-mask-container">
+                <div class="relative fade-in-up delay-1 flex items-center h-full">
+                    <div class="video-container video-mask-container w-full" style="height: 100%; display: flex; align-items: center;">
                         <video 
                             autoplay 
                             muted 
                             loop 
                             playsinline 
-                            class="w-full h-auto rounded-3xl hero-video-reveal"
+                            class="w-full rounded-3xl hero-video-reveal"
+                            style="max-height: 600px; object-fit: cover;"
                             preload="auto">
                             <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
                             您的瀏覽器不支援影片播放。
