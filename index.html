@@ -114,6 +114,19 @@
             mask-image: radial-gradient(circle at 50% 50%, black 65%, transparent 100%);
         }
         
+        /* 右側主影片 - 滑鼠移動時慢慢顯示 */
+        .hero-video-reveal {
+            -webkit-mask-image: radial-gradient(ellipse 20% 25% at 50% 50%, black 40%, transparent 100%);
+            mask-image: radial-gradient(ellipse 20% 25% at 50% 50%, black 40%, transparent 100%);
+            transition: -webkit-mask-image 5s ease-out, mask-image 5s ease-out;
+        }
+        
+        /* 當 body 添加 mouse-moved class 時，影片完全顯示 */
+        body.mouse-moved .hero-video-reveal {
+            -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 100%, transparent 100%);
+        }
+        
         /* 添加光暈效果 */
         .video-glow {
             filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6));
@@ -396,7 +409,7 @@
                             muted 
                             loop 
                             playsinline 
-                            class="w-full h-auto rounded-3xl video-soft-mask"
+                            class="w-full h-auto rounded-3xl hero-video-reveal"
                             preload="auto">
                             <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
                             您的瀏覽器不支援影片播放。
@@ -914,6 +927,37 @@
             // Periodic cart check
             setInterval(updateCartBadge, 1000);
         });
+    </script>
+    
+    <!-- 右側影片滑鼠移動顯示效果 -->
+    <script>
+        // 監聽滑鼠移動，觸發影片顯示動畫
+        let mouseMovedTriggered = false;
+        
+        function revealHeroVideo() {
+            if (!mouseMovedTriggered) {
+                mouseMovedTriggered = true;
+                document.body.classList.add('mouse-moved');
+                console.log('Hero video reveal animation started!');
+            }
+        }
+        
+        // 滑鼠移動事件
+        document.addEventListener('mousemove', revealHeroVideo, { once: true });
+        
+        // 觸控設備：觸控事件
+        document.addEventListener('touchstart', revealHeroVideo, { once: true });
+        
+        // 滾動事件（作為備用觸發）
+        document.addEventListener('scroll', revealHeroVideo, { once: true });
+        
+        // 如果 3 秒後使用者還沒移動滑鼠，自動顯示
+        setTimeout(function() {
+            if (!mouseMovedTriggered) {
+                console.log('Auto-revealing hero video after 3 seconds');
+                revealHeroVideo();
+            }
+        }, 3000);
     </script>
 </body>
 </html>
