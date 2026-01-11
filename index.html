@@ -24,10 +24,70 @@
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
         }
         
-        /* Years 風格：極簡白色背景 */
+        /* Years 風格：藍色漸層背景 */
         body {
-            background: #FAFBFC;
+            background: linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%);
             color: #2D3748;
+            min-height: 100vh;
+        }
+        
+        /* 波浪形分隔線 - 橘色 */
+        .wave-divider-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+        
+        .wave-divider-top svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 60px;
+        }
+        
+        .wave-divider-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+        
+        .wave-divider-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 60px;
+        }
+        
+        .wave-fill-orange {
+            fill: #FB923C;
+        }
+        
+        .wave-fill-orange-light {
+            fill: #FDBA74;
+        }
+        
+        /* Section 背景顏色 */
+        .section-blue-light {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+        }
+        
+        .section-blue-medium {
+            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+        }
+        
+        .section-blue-dark {
+            background: linear-gradient(135deg, #BFDBFE 0%, #93C5FD 100%);
+        }
+        
+        .section-white {
+            background: #FFFFFF;
         }
         
         /* 平滑滾動 */
@@ -200,7 +260,7 @@
     </nav>
     
     <!-- Hero Section - 狗狗在家無聊到發慌 + 訂閱套餐介紹 -->
-    <section id="hero" class="relative min-h-screen flex items-center gradient-bg-warm overflow-hidden">
+    <section id="hero" class="relative min-h-screen flex items-center section-blue-light overflow-hidden">
         <div class="container mx-auto px-4 py-12 lg:py-16">
             <div class="grid lg:grid-cols-2 gap-12 items-stretch">
                 <!-- 左側：文案介紹訂閱套餐 -->
@@ -319,7 +379,13 @@
     </section>
 
     <!-- Features Section - Hero Background -->
-    <section id="features" class="relative py-32 overflow-hidden">
+    <section id="features" class="relative py-32 overflow-hidden section-blue-medium">
+        <!-- 橘色波浪分隔線 - 頂部 -->
+        <div class="wave-divider-top">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill-orange"></path>
+            </svg>
+        </div>
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
             <img src="images/subscription-hero-bg.jpg" alt="寵物玩具與零食" class="w-full h-full object-cover">
@@ -425,7 +491,13 @@
     </section>
     
     <!-- How It Works - Four Features -->
-    <section id="how-it-works" class="py-20 bg-white">
+    <section id="how-it-works" class="relative py-20 section-white">
+        <!-- 橘色波浪分隔線 - 頂部 -->
+        <div class="wave-divider-top">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="wave-fill-orange-light"></path>
+            </svg>
+        </div>
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">訂閱超簡單，四步驟搞定</h2>
@@ -459,7 +531,13 @@
     </section>
 
     <!-- Products Preview - Years Style -->
-    <section id="products" class="py-20 gradient-bg-cool">
+    <section id="products" class="relative py-20 section-blue-dark">
+        <!-- 橘色波浪分隔線 - 頂部 -->
+        <div class="wave-divider-top">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill-orange"></path>
+            </svg>
+        </div>
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">三大產品系列</h2>
@@ -529,7 +607,13 @@
 
 
     <!-- Subscription Plans - Years Style -->
-    <section id="subscription" class="py-20 bg-white">
+    <section id="subscription" class="relative py-20 section-white">
+        <!-- 橘色波浪分隔線 - 頂部 -->
+        <div class="wave-divider-top">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="wave-fill-orange-light"></path>
+            </svg>
+        </div>
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -682,7 +766,13 @@
     </section>
 
     <!-- CTA Section - Years Style -->
-    <section class="py-20 bg-gradient-to-br from-blue-600 to-blue-700">
+    <section class="relative py-20 bg-gradient-to-br from-blue-600 to-blue-700">
+        <!-- 橘色波浪分隔線 - 頂部 -->
+        <div class="wave-divider-top">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill-orange"></path>
+            </svg>
+        </div>
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
                 準備好開始了嗎？
