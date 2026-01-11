@@ -116,15 +116,37 @@
         
         /* 右側主影片 - 滑鼠移動時慢慢顯示 */
         .hero-video-reveal {
-            -webkit-mask-image: radial-gradient(ellipse 20% 25% at 50% 50%, black 40%, transparent 100%);
-            mask-image: radial-gradient(ellipse 20% 25% at 50% 50%, black 40%, transparent 100%);
-            transition: -webkit-mask-image 5s ease-out, mask-image 5s ease-out;
+            /* 初始狀態：完全不顯示（100% 遮罩）*/
+            -webkit-mask-image: radial-gradient(ellipse 0% 0% at 50% 50%, black 0%, transparent 0%);
+            mask-image: radial-gradient(ellipse 0% 0% at 50% 50%, black 0%, transparent 0%);
+            transition: -webkit-mask-image 5s cubic-bezier(0.4, 0, 0.2, 1), mask-image 5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         /* 當 body 添加 mouse-moved class 時，影片完全顯示 */
+        /* 使用 CSS animation 實現階段性遮罩變化 */
         body.mouse-moved .hero-video-reveal {
-            -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 100%, transparent 100%);
-            mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 100%, transparent 100%);
+            animation: revealVideoMask 5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        /* 定義遮罩動畫關鍵幀 */
+        @keyframes revealVideoMask {
+            /* 0-20%（0-1秒）：完全不顯示 */
+            0%, 20% {
+                -webkit-mask-image: radial-gradient(ellipse 0% 0% at 50% 50%, black 0%, transparent 0%);
+                mask-image: radial-gradient(ellipse 0% 0% at 50% 50%, black 0%, transparent 0%);
+            }
+            
+            /* 60%（3秒）：遮罩 70%（只顯示 30%）*/
+            60% {
+                -webkit-mask-image: radial-gradient(ellipse 30% 35% at 50% 50%, black 50%, transparent 100%);
+                mask-image: radial-gradient(ellipse 30% 35% at 50% 50%, black 50%, transparent 100%);
+            }
+            
+            /* 100%（5秒）：完全顯示（0% 遮罩）*/
+            100% {
+                -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 100%, transparent 100%);
+                mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 100%, transparent 100%);
+            }
         }
         
         /* 添加光暈效果 */
