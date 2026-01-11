@@ -56,7 +56,7 @@ router.post('/register', async (req, res) => {
 
             // 建立新用戶
             db.run(
-                `INSERT INTO users (id, email, password, name, phone, "memberLevel", status, "registeredAt", "lastLoginAt", "createdAt", "updatedAt")
+                `INSERT INTO users (id, email, password, name, phone, memberlevel, status, "registeredAt", "lastLoginAt", "createdAt", "updatedAt")
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [userId, email, hashedPassword, name, phone || '', 'normal', 'active', now, now, now, now],
                 function(err) {
@@ -162,7 +162,7 @@ router.post('/login', (req, res) => {
                         email: user.email,
                         phone: user.phone,
                         avatar: user.avatar,
-                        memberLevel: user.memberLevel,
+                        memberLevel: user.memberlevel,
                         totalOrders: user.totalOrders,
                         totalSpent: user.totalSpent
                     },
@@ -185,7 +185,7 @@ router.post('/login', (req, res) => {
 const { authenticateToken } = require('../middleware/auth');
 
 router.get('/me', authenticateToken, (req, res) => {
-    db.get('SELECT id, email, name, phone, avatar, memberLevel, totalOrders, totalSpent, quizCompleted FROM users WHERE id = ?', 
+    db.get('SELECT id, email, name, phone, avatar, memberlevel, "totalOrders", "totalSpent", "quizCompleted" FROM users WHERE id = ?', 
         [req.user.id], (err, user) => {
             if (err || !user) {
                 return res.status(404).json({
