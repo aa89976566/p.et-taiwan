@@ -362,7 +362,6 @@
                     <!-- 標題區 -->
                     <div class="space-y-6">
                         <div class="inline-flex items-center gap-2 px-4 py-2 bg-orange-100/80 backdrop-blur-sm text-orange-700 rounded-full text-sm font-semibold border border-orange-200">
-                            <span class="text-base">😴</span>
                             狗狗的煩惱
                         </div>
                         <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.1]">
@@ -371,7 +370,7 @@
                         </h1>
                         <p class="text-xl md:text-2xl text-gray-600 leading-relaxed">
                             發呆、睡覺、等你回家...<br>
-                            <span class="font-semibold text-gray-800">無聊的一整天</span> 😢
+                            <span class="font-semibold text-gray-800">無聊的一整天</span>
                         </p>
                     </div>
                     
@@ -380,23 +379,17 @@
                         <div class="space-y-5">
                             <h3 class="text-2xl font-bold text-gray-900">你是否也遇到...</h3>
                             <div class="space-y-4">
-                                <div class="flex items-start gap-3">
-                                    <span class="text-2xl flex-shrink-0">😞</span>
-                                    <div>
-                                        <p class="text-gray-700 font-medium">每天出門都擔心狗狗太無聊</p>
-                                    </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                                    <p class="text-gray-700 font-medium">每天出門都擔心狗狗太無聊</p>
                                 </div>
-                                <div class="flex items-start gap-3">
-                                    <span class="text-2xl flex-shrink-0">😰</span>
-                                    <div>
-                                        <p class="text-gray-700 font-medium">家裡的玩具都玩膩了</p>
-                                    </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+                                    <p class="text-gray-700 font-medium">家裡的玩具都玩膩了</p>
                                 </div>
-                                <div class="flex items-start gap-3">
-                                    <span class="text-2xl flex-shrink-0">😔</span>
-                                    <div>
-                                        <p class="text-gray-700 font-medium">不知道該給什麼零食才健康</p>
-                                    </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-2 h-2 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
+                                    <p class="text-gray-700 font-medium">不知道該給什麼零食才健康</p>
                                 </div>
                             </div>
                         </div>
@@ -406,7 +399,6 @@
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="#features" class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold text-lg shadow-xl transition-all duration-300 hover:scale-105">
                             看看解決方案
-                            <i class="fas fa-arrow-down ml-3"></i>
                         </a>
                     </div>
                 </div>
@@ -463,7 +455,6 @@
             <!-- 標題區 -->
             <div class="text-center mb-16 fade-in-up">
                 <div class="inline-flex items-center gap-2 px-5 py-2 bg-blue-100/80 backdrop-blur-sm text-blue-700 rounded-full text-sm font-semibold mb-6 border border-blue-200">
-                    <span class="text-base">✨</span>
                     匠寵的解決方案
                 </div>
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
@@ -477,73 +468,85 @@
             <!-- 三大特色卡片 -->
             <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
                 <!-- 卡片 1: 新鮮零食 -->
-                <div class="bg-white/90 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-orange-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 fade-in-up delay-1">
-                    <div class="text-5xl mb-4">🥩</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">每兩週新鮮零食</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        台灣職人每天手作，無防腐劑<br>
-                        <span class="font-semibold text-orange-600">周周新鮮製作</span>
-                    </p>
-                    <div class="space-y-2 text-sm text-gray-700">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-orange-500"></i>
-                            <span>每 14 天配送一次</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-orange-500"></i>
-                            <span>當天現做當天出貨</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-orange-500"></i>
-                            <span>所有方案都包含</span>
+                <div class="bg-white/90 backdrop-blur-md rounded-3xl overflow-hidden shadow-xl border border-orange-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 fade-in-up delay-1">
+                    <div class="aspect-[4/3] overflow-hidden">
+                        <img src="images/subscription/snacks.jpg" alt="手工零食" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">每兩週新鮮零食</h3>
+                        <p class="text-gray-600 leading-relaxed mb-4">
+                            台灣職人每天手作，無防腐劑<br>
+                            <span class="font-semibold text-orange-600">周周新鮮製作</span>
+                        </p>
+                        <div class="space-y-2 text-sm text-gray-700">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0"></div>
+                                <span>每 14 天配送一次</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0"></div>
+                                <span>當天現做當天出貨</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0"></div>
+                                <span>所有方案都包含</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- 卡片 2: 益智玩具 -->
-                <div class="bg-white/90 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-blue-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 fade-in-up delay-2">
-                    <div class="text-5xl mb-4">🎾</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">益智玩具陪伴</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        精選互動玩具，讓狗狗動腦放電<br>
-                        <span class="font-semibold text-blue-600">標準組以上專屬</span>
-                    </p>
-                    <div class="space-y-2 text-sm text-gray-700">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-blue-500"></i>
-                            <span>標準組 & 豪華組才有</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-blue-500"></i>
-                            <span>延緩老化消耗精力</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-blue-500"></i>
-                            <span>讓狗狗不再無聊</span>
+                <div class="bg-white/90 backdrop-blur-md rounded-3xl overflow-hidden shadow-xl border border-blue-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 fade-in-up delay-2">
+                    <div class="aspect-[4/3] overflow-hidden">
+                        <img src="images/subscription/toys.jpg" alt="益智玩具" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">益智玩具陪伴</h3>
+                        <p class="text-gray-600 leading-relaxed mb-4">
+                            精選互動玩具，讓狗狗動腦放電<br>
+                            <span class="font-semibold text-blue-600">標準組以上專屬</span>
+                        </p>
+                        <div class="space-y-2 text-sm text-gray-700">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0"></div>
+                                <span>標準組 & 豪華組才有</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0"></div>
+                                <span>延緩老化消耗精力</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0"></div>
+                                <span>讓狗狗不再無聊</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- 卡片 3: 營養補給 -->
-                <div class="bg-white/90 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-green-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 fade-in-up delay-3">
-                    <div class="text-5xl mb-4">💊</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">健康營養補給</h3>
-                    <p class="text-gray-600 leading-relaxed mb-4">
-                        益生菌、ORAC 抗氧化配方<br>
-                        <span class="font-semibold text-green-600">支持狗狗健康</span>
-                    </p>
-                    <div class="space-y-2 text-sm text-gray-700">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>400 百萬 CFU 益生菌</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>凍乾保健粉</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>方案可加購</span>
+                <div class="bg-white/90 backdrop-blur-md rounded-3xl overflow-hidden shadow-xl border border-green-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 fade-in-up delay-3">
+                    <div class="aspect-[4/3] overflow-hidden">
+                        <img src="images/subscription/health.jpg" alt="營養補給" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">健康營養補給</h3>
+                        <p class="text-gray-600 leading-relaxed mb-4">
+                            益生菌、ORAC 抗氧化配方<br>
+                            <span class="font-semibold text-green-600">支持狗狗健康</span>
+                        </p>
+                        <div class="space-y-2 text-sm text-gray-700">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"></div>
+                                <span>400 百萬 CFU 益生菌</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"></div>
+                                <span>凍乾保健粉</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"></div>
+                                <span>方案可加購</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -561,7 +564,6 @@
                 <div class="flex flex-wrap gap-4 justify-center">
                     <a href="#subscription" class="inline-flex items-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold text-lg shadow-xl transition-all duration-300 hover:scale-105">
                         查看訂閱方案
-                        <i class="fas fa-arrow-right ml-3"></i>
                     </a>
                     <a href="#how-it-works" class="inline-flex items-center px-8 py-4 bg-white hover:bg-gray-50 text-gray-700 rounded-full font-semibold text-lg border-2 border-gray-200 transition-all duration-300">
                         了解運作方式
@@ -641,7 +643,7 @@
                         <p class="text-gray-600 mb-6">維也納大學研究證實，益智刺激可延緩寵物認知退化</p>
                         <a href="products-new.html#toys-section" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
                             探索產品
-                            <i class="fas fa-arrow-right ml-2"></i>
+                            
                         </a>
                     </div>
                 </div>
@@ -659,7 +661,7 @@
                         <p class="text-gray-600 mb-6">手工製作，天然無添加，與寵物共享文化傳承的味道</p>
                         <a href="products-new.html#snacks-section" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
                             探索產品
-                            <i class="fas fa-arrow-right ml-2"></i>
+                            
                         </a>
                     </div>
                 </div>
@@ -671,14 +673,14 @@
                     </div>
                     <div class="p-8">
                         <div class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-full mb-4 text-sm font-medium">
-                            <i class="fas fa-box mr-2"></i>
+                            
                             訂閱服務
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900 mb-3">營養罐訂閱</h3>
                         <p class="text-gray-600 mb-6">科學配方，定期配送，玻璃罐可循環使用</p>
                         <a href="products-new.html#subscription-section" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
                             探索產品
-                            <i class="fas fa-arrow-right ml-2"></i>
+                            
                         </a>
                     </div>
                 </div>
@@ -719,15 +721,15 @@
                             <div class="text-sm font-semibold text-gray-700 mb-3">每月配送 1 次</div>
                             <ul class="text-sm text-gray-600 space-y-2">
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>80g 蛋白肉乾</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>30g 凍乾粉</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>綜合蔬果凍乾</span>
                                 </li>
                             </ul>
@@ -755,15 +757,15 @@
                             <div class="text-xs text-gray-500 mb-3">(每月 1 號 & 15 號)</div>
                             <ul class="text-sm text-gray-600 space-y-2">
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>50g 蛋白肉乾</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>30g 凍乾粉</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>綜合蔬果凍乾</span>
                                 </li>
                             </ul>
@@ -792,19 +794,19 @@
                             <div class="text-xs text-gray-500 mb-3">(每月 1 號 & 15 號)</div>
                             <ul class="text-sm text-gray-600 space-y-2">
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>70g 蛋白肉乾</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>50g 凍乾粉</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>綜合蔬果凍乾</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
                                     <span>特選凍乾</span>
                                 </li>
                             </ul>
@@ -827,11 +829,11 @@
                         <span class="font-medium">全台免運</span>
                     </span>
                     <span class="flex items-center">
-                        <i class="fas fa-sync text-blue-500 mr-2 text-lg"></i>
+                        
                         <span class="font-medium">隨時調整配置</span>
                     </span>
                     <span class="flex items-center">
-                        <i class="fas fa-pause-circle text-blue-500 mr-2 text-lg"></i>
+                        
                         <span class="font-medium">彈性暫停續訂</span>
                     </span>
                     <span class="flex items-center">
@@ -864,7 +866,7 @@
             <div class="flex flex-wrap justify-center gap-4">
                 <a href="subscription-packages.html" class="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-full hover:bg-gray-50 transition font-bold text-lg shadow-lg">
                     開始訂閱
-                    <i class="fas fa-arrow-right ml-2"></i>
+                    
                 </a>
                 <a href="products-new.html" class="inline-flex items-center px-8 py-4 bg-blue-500 text-white rounded-full hover:bg-blue-400 transition font-bold text-lg">
                     瀏覽所有產品
