@@ -361,9 +361,8 @@
         </div>
     </nav>
     
-    <!-- Hero Section - 狗狗在家無聊到發慌 + 訂閱套餐介紹 -->
-    <!-- Section 1: 痛點 - 狗狗無聊 -->
-    <section id="hero" class="relative py-16 lg:py-20 overflow-hidden pt-24" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 50%, #FED7AA 100%);">
+    <!-- Hero Section - 創意不對稱設計 -->
+    <section id="hero" class="relative py-12 lg:py-16 overflow-hidden pt-24" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 50%, #FED7AA 100%);">
         <!-- 波浪分隔線 - 底部橘色 -->
         <div class="wave-divider-bottom">
             <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -371,93 +370,105 @@
             </svg>
         </div>
         
-        <!-- 多層背景裝飾 - 活力橘色風格 -->
-        <div class="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-orange-400 to-yellow-300 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-        <div class="absolute bottom-20 left-10 w-64 h-64 bg-gradient-to-br from-blue-400 to-cyan-300 rounded-full blur-3xl opacity-25 animate-pulse" style="animation-delay: 1s;"></div>
-        <div class="absolute top-1/2 right-1/4 w-48 h-48 bg-gradient-to-br from-pink-400 to-orange-300 rounded-full blur-2xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
+        <!-- 簡化背景 -->
+        <div class="absolute top-10 right-10 w-64 h-64 bg-orange-300 rounded-full blur-3xl opacity-20"></div>
+        <div class="absolute bottom-10 left-10 w-48 h-48 bg-blue-300 rounded-full blur-3xl opacity-15"></div>
         
-
-        
-        <div class="container mx-auto px-4 py-8 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- 左側：BarkBox 風格大標題 + 賣點 -->
-                <div class="flex flex-col justify-center space-y-8 fade-in-up">
-                    <!-- 情感化標題 - 參考 Helping felines 風格 -->
-                    <div class="space-y-4">
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight">
-                            當你不在家時<br>
-                            <span class="relative inline-block">
-                                <span class="relative z-10 text-white">牠需要的</span>
-                                <span class="absolute inset-0 bg-orange-600 transform -rotate-1 rounded-2xl"></span>
-                            </span><br>
-                            不只是等待
+        <div class="container mx-auto px-6 py-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                <!-- 左側：創意排版 -->
+                <div class="lg:col-span-7 space-y-6 fade-in-up">
+                    <!-- 標題區 - 不規則排版 -->
+                    <div class="space-y-3">
+                        <div class="inline-block px-4 py-1.5 bg-orange-100 rounded-full border-2 border-orange-400 mb-2">
+                            <span class="text-orange-700 font-bold text-sm">每月一次的小確幸</span>
+                        </div>
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-tight">
+                            牠在等你回家<br>
+                            我們陪牠<span class="text-orange-600">度過</span>
                         </h1>
-                        <p class="text-lg md:text-xl font-bold text-gray-700 leading-relaxed">
-                            每個月精心準備的禮物<br>
-                            讓獨處時光充滿期待
+                        <p class="text-base md:text-lg text-gray-600 leading-relaxed max-w-lg">
+                            台灣手作零食 + 益智玩具，讓狗狗獨處時也能開心玩耍
                         </p>
                     </div>
                     
-                    <!-- CTA 按鈕 - 情感化文案 -->
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="#subscription" class="group relative overflow-hidden px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-full font-black text-lg shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-orange-500/50 text-center">
-                            <span class="relative z-10">查看訂閱方案 →</span>
-                            <div class="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        </a>
-                        <a href="#how-it-works" class="px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 rounded-full font-bold text-lg border-3 border-gray-900 transition-all duration-300 hover:scale-105 text-center">
-                            看看內容
-                        </a>
+                    <!-- 特色標籤 - 不規則排列 -->
+                    <div class="flex flex-wrap gap-3 py-4">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md border-l-4 border-orange-500">
+                            <span class="text-2xl">✨</span>
+                            <div class="text-left">
+                                <div class="text-xs text-gray-500 font-semibold">當天製作</div>
+                                <div class="text-sm font-black text-gray-900">新鮮零食</div>
+                            </div>
+                        </div>
+                        
+                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md border-l-4 border-blue-500">
+                            <span class="text-2xl">🎁</span>
+                            <div class="text-left">
+                                <div class="text-xs text-gray-500 font-semibold">每月不同</div>
+                                <div class="text-sm font-black text-gray-900">驚喜主題</div>
+                            </div>
+                        </div>
+                        
+                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md border-l-4 border-orange-500">
+                            <span class="text-2xl">🧩</span>
+                            <div class="text-left">
+                                <div class="text-xs text-gray-500 font-semibold">標準組+</div>
+                                <div class="text-sm font-black text-gray-900">益智玩具</div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <!-- 三個賣點 - 橢圓形橘底藍紫字 -->
-                    <div class="grid grid-cols-3 gap-4 pt-4">
-                        <!-- 新鮮 - 橢圓形橘底 -->
-                        <div class="bg-orange-500 rounded-full px-6 py-4 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                            <div class="text-3xl font-black text-indigo-700 mb-1">新鮮</div>
-                            <div class="text-xs font-bold text-indigo-600">當天手作</div>
-                        </div>
-                        <!-- 期待 - 橢圓形橘底 -->
-                        <div class="bg-orange-500 rounded-full px-6 py-4 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                            <div class="text-3xl font-black text-indigo-700 mb-1">期待</div>
-                            <div class="text-xs font-bold text-indigo-600">每月驚喜</div>
-                        </div>
-                        <!-- 陪伴 - 橢圓形橘底 -->
-                        <div class="bg-orange-500 rounded-full px-6 py-4 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                            <div class="text-3xl font-black text-indigo-700 mb-1">陪伴</div>
-                            <div class="text-xs font-bold text-indigo-600">玩具零食</div>
-                        </div>
+                    <!-- CTA 按鈕 - 更自然的排列 -->
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <a href="#subscription" class="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold text-base shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
+                            看訂閱方案
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+                        <a href="#features" class="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-50 text-gray-900 rounded-xl font-bold text-base border-2 border-gray-300 transition-all duration-300 hover:border-orange-500">
+                            了解更多
+                        </a>
                     </div>
                 </div>
                 
-                <!-- 右側：狗狗無聊影片 -->
-                <div class="relative fade-in-up delay-1 flex items-center h-full">
-                    <div class="video-container video-mask-container w-full" style="height: 100%; display: flex; align-items: center;">
-                        <video 
-                            autoplay 
-                            muted 
-                            loop 
-                            playsinline 
-                            class="w-full rounded-3xl hero-video-reveal"
-                            style="max-height: 450px; object-fit: cover;"
-                            preload="auto">
-                            <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
-                            您的瀏覽器不支援影片播放。
-                        </video>
+                <!-- 右側：影片 + 浮動元素 -->
+                <div class="lg:col-span-5 relative fade-in-up delay-1">
+                    <div class="relative">
+                        <!-- 主影片 -->
+                        <div class="video-container video-mask-container">
+                            <video 
+                                autoplay 
+                                muted 
+                                loop 
+                                playsinline 
+                                class="w-full rounded-2xl shadow-2xl hero-video-reveal"
+                                style="max-height: 400px; object-fit: cover;"
+                                preload="auto">
+                                <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        
+                        <!-- 浮動標籤 - 創意位置 -->
+                        <div class="absolute -top-4 -left-4 bg-yellow-400 text-gray-900 px-4 py-2 rounded-lg shadow-lg transform -rotate-3 font-black text-sm">
+                            100% 手作
+                        </div>
+                        
+                        <div class="absolute -bottom-4 -right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg transform rotate-2 font-black text-sm">
+                            無防腐劑
+                        </div>
                     </div>
-                    
-                    <!-- Floating Badge -->
-
-                    <!-- Decorative Elements -->
-                    <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br from-orange-400 to-red-600 rounded-3xl -z-10 opacity-20"></div>
-                    <div class="absolute -top-8 -left-8 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-3xl -z-10 opacity-20"></div>
                 </div>
             </div>
         </div>
         
-        <!-- 向下滾動指示 -->
+        <!-- 向下滾動 -->
         <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
-            <a href="#features" class="text-gray-600 hover:text-gray-800 transition-colors">
-                <i class="fas fa-chevron-down text-2xl"></i>
+            <a href="#features" class="text-gray-700 hover:text-gray-900 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
             </a>
         </div>
     </section>
