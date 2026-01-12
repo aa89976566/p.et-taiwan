@@ -413,16 +413,21 @@
                         </div>
                     </div>
                     
-                    <!-- CTA 按鈕 - WebM 動畫箭頭 -->
+                    <!-- CTA 按鈕 - WebM 動畫箭頭（放大、有活力、加粗效果） -->
                     <div class="flex justify-center mt-12">
-                        <a href="#features" class="group block hover:scale-110 transition-all duration-500">
+                        <a href="#features" class="group block hover:scale-125 transition-all duration-300 animate-bounce">
                             <video 
                                 autoplay 
                                 muted 
                                 loop 
                                 playsinline
-                                class="w-20 h-20 object-contain"
-                                style="pointer-events: none;">
+                                class="w-40 h-40 object-contain"
+                                style="pointer-events: none; 
+                                       filter: drop-shadow(0 10px 30px rgba(59, 130, 246, 0.6)) 
+                                               drop-shadow(0 0 3px rgba(59, 130, 246, 0.8)) 
+                                               drop-shadow(0 0 6px rgba(59, 130, 246, 0.6)) 
+                                               drop-shadow(0 0 9px rgba(59, 130, 246, 0.4))
+                                               contrast(1.3) brightness(1.1);">
                                 <source src="Arrow down.webm" type="video/webm">
                             </video>
                         </a>
