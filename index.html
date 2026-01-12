@@ -15,6 +15,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Lottie Player -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    
     <!-- Local Scripts -->
     <script src="js/api-client.js"></script>
     <script src="js/local-cart.js"></script>
@@ -410,12 +413,17 @@
                         </div>
                     </div>
                     
-                    <!-- CTA 按鈕 - 簡約箭頭設計 -->
+                    <!-- CTA 按鈕 - Lottie 動畫箭頭 -->
                     <div class="flex justify-center mt-12">
-                        <a href="#features" class="group flex items-center justify-center w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-700 shadow-xl transition-all duration-500 hover:scale-110 animate-bounce">
-                            <svg class="w-8 h-8 text-white transform group-hover:translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7"/>
-                            </svg>
+                        <a href="#features" class="group block hover:scale-110 transition-all duration-500">
+                            <lottie-player 
+                                src="arrow-down.json"
+                                background="transparent"
+                                speed="1"
+                                style="width: 80px; height: 80px;"
+                                loop
+                                autoplay>
+                            </lottie-player>
                         </a>
                     </div>
                 </div>
