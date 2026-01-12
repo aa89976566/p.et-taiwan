@@ -413,17 +413,18 @@
                         </div>
                     </div>
                     
-                    <!-- CTA 按鈕 - Lottie 動畫箭頭 -->
+                    <!-- CTA 按鈕 - WebM 動畫箭頭 -->
                     <div class="flex justify-center mt-12">
                         <a href="#features" class="group block hover:scale-110 transition-all duration-500">
-                            <lottie-player 
-                                src="arrow-down.json"
-                                background="transparent"
-                                speed="1"
-                                style="width: 80px; height: 80px;"
-                                loop
-                                autoplay>
-                            </lottie-player>
+                            <video 
+                                autoplay 
+                                muted 
+                                loop 
+                                playsinline
+                                class="w-20 h-20 object-contain"
+                                style="pointer-events: none;">
+                                <source src="Arrow down.webm" type="video/webm">
+                            </video>
                         </a>
                     </div>
                 </div>
