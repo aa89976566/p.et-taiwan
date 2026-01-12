@@ -363,7 +363,7 @@
     
     <!-- Hero Section - 狗狗在家無聊到發慌 + 訂閱套餐介紹 -->
     <!-- Section 1: 痛點 - 狗狗無聊 -->
-    <section id="hero" class="relative min-h-screen flex items-center overflow-hidden pt-20" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 50%, #FED7AA 100%);">
+    <section id="hero" class="relative py-16 lg:py-20 overflow-hidden pt-24" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 50%, #FED7AA 100%);">
         <!-- 波浪分隔線 - 底部橘色 -->
         <div class="wave-divider-bottom">
             <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -378,13 +378,13 @@
         
 
         
-        <div class="container mx-auto px-4 py-12 lg:py-20 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="container mx-auto px-4 py-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <!-- 左側：BarkBox 風格大標題 + 賣點 -->
-                <div class="flex flex-col justify-center space-y-12 fade-in-up">
+                <div class="flex flex-col justify-center space-y-8 fade-in-up">
                     <!-- 情感化標題 - 參考 Helping felines 風格 -->
-                    <div class="space-y-6">
-                        <h1 class="text-6xl md:text-7xl lg:text-8xl font-black text-gray-900 leading-[1.05] tracking-tight">
+                    <div class="space-y-4">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight">
                             當你不在家時<br>
                             <span class="relative inline-block">
                                 <span class="relative z-10 text-white">牠需要的</span>
@@ -392,7 +392,7 @@
                             </span><br>
                             不只是等待
                         </h1>
-                        <p class="text-2xl md:text-3xl font-bold text-gray-700 leading-relaxed">
+                        <p class="text-lg md:text-xl font-bold text-gray-700 leading-relaxed">
                             每個月精心準備的禮物<br>
                             讓獨處時光充滿期待
                         </p>
@@ -400,31 +400,31 @@
                     
                     <!-- CTA 按鈕 - 情感化文案 -->
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="#subscription" class="group relative overflow-hidden px-10 py-6 bg-orange-600 hover:bg-orange-700 text-white rounded-full font-black text-2xl shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-orange-500/50 text-center">
+                        <a href="#subscription" class="group relative overflow-hidden px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-full font-black text-lg shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-orange-500/50 text-center">
                             <span class="relative z-10">查看訂閱方案 →</span>
                             <div class="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </a>
-                        <a href="#how-it-works" class="px-10 py-6 bg-white hover:bg-gray-50 text-gray-900 rounded-full font-bold text-2xl border-4 border-gray-900 transition-all duration-300 hover:scale-105 text-center">
+                        <a href="#how-it-works" class="px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 rounded-full font-bold text-lg border-3 border-gray-900 transition-all duration-300 hover:scale-105 text-center">
                             看看內容
                         </a>
                     </div>
                     
                     <!-- 三個賣點 - 彩色框框 highlight -->
-                    <div class="grid grid-cols-3 gap-6 pt-8">
+                    <div class="grid grid-cols-3 gap-4 pt-4">
                         <!-- 新鮮 - 橘色框 -->
-                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 border-4 border-orange-500 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                            <div class="text-4xl font-black text-orange-600 mb-2">新鮮</div>
-                            <div class="text-sm font-bold text-gray-700">當天手作</div>
+                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 border-3 border-orange-500 rounded-xl p-4 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            <div class="text-3xl font-black text-orange-600 mb-1">新鮮</div>
+                            <div class="text-xs font-bold text-gray-700">當天手作</div>
                         </div>
                         <!-- 期待 - 藍色框 -->
-                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-4 border-blue-500 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                            <div class="text-4xl font-black text-blue-600 mb-2">期待</div>
-                            <div class="text-sm font-bold text-gray-700">每月驚喜</div>
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-3 border-blue-500 rounded-xl p-4 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            <div class="text-3xl font-black text-blue-600 mb-1">期待</div>
+                            <div class="text-xs font-bold text-gray-700">每月驚喜</div>
                         </div>
                         <!-- 陪伴 - 橘色框 -->
-                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 border-4 border-orange-500 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                            <div class="text-4xl font-black text-orange-600 mb-2">陪伴</div>
-                            <div class="text-sm font-bold text-gray-700">玩具零食</div>
+                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 border-3 border-orange-500 rounded-xl p-4 text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            <div class="text-3xl font-black text-orange-600 mb-1">陪伴</div>
+                            <div class="text-xs font-bold text-gray-700">玩具零食</div>
                         </div>
                     </div>
                 </div>
@@ -438,7 +438,7 @@
                             loop 
                             playsinline 
                             class="w-full rounded-3xl hero-video-reveal"
-                            style="max-height: 600px; object-fit: cover;"
+                            style="max-height: 450px; object-fit: cover;"
                             preload="auto">
                             <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
                             您的瀏覽器不支援影片播放。
