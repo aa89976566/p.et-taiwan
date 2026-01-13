@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>選擇您的寵物 - 匠寵</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: #000;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+        }
+        
+        /* TikTok 風格全屏容器 */
+        .stories-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 卡片 - 縮小70%尺寸 */
+        .story-card {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            max-width: 420px;
+            max-height: 750px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+        }
+        
+        .story-card.hidden {
+            transform: translate(-50%, 100vh);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .story-card.active {
+            transform: translate(-50%, -50%);
+            opacity: 1;
+            z-index: 10;
+        }
+        
+        .story-card.prev {
+            transform: translate(-50%, -100vh);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* 視頻背景 - 完全填滿 */
+        .story-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* 漸層遮罩 */
+        .story-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.4) 0%,
+                rgba(0,0,0,0) 20%,
+                rgba(0,0,0,0) 60%,
+                rgba(0,0,0,0.8) 100%
+            );
+            pointer-events: none;
+        }
+        
+        /* 內容區域 */
+        .story-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0 24px 120px;
+            z-index: 20;
+            pointer-events: none;
+        }
+        
+        .story-title {
+            font-size: 56px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 
+                0 4px 20px rgba(0,0,0,0.6),
+                0 8px 40px rgba(0,0,0,0.4),
+                0 0 60px rgba(255,255,255,0.2);
+            margin-bottom: 12px;
+            letter-spacing: 3px;
+            animation: titlePulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .story-subtitle {
+            font-size: 22px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .story-desc {
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.75);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        /* 右側互動按鈕區 - 隱藏 */
+        .action-buttons {
+            display: none;
+        }
+        
+        /* 右滑提示箭頭 - 右下角大號 */
+        .swipe-arrow {
+            position: absolute;
+            right: 32px;
+            bottom: 80px;
+            z-index: 30;
+            pointer-events: none;
+            animation: arrowBounce 2s ease-in-out infinite;
+        }
+        
+        .swipe-arrow-circle {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255,255,255,0.5);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .swipe-arrow-circle svg {
+            width: 40px;
+            height: 40px;
+            stroke: #fff;
+            stroke-width: 3;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+        }
+        
+        /* 引導文字 */
+        .swipe-guide-text {
+            position: absolute;
+            bottom: 50%;
+            right: 130px;
+            transform: translateY(50%);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            pointer-events: none;
+            animation: textFloat 2s ease-in-out infinite;
+        }
+        
+        @keyframes textFloat {
+            0%, 100% { 
+                transform: translateY(50%) translateX(0);
+                opacity: 0.9;
+            }
+            50% { 
+                transform: translateY(50%) translateX(-10px);
+                opacity: 1;
+            }
+        }
+        
+        /* 頂部進度條 */
+        .progress-bars {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            z-index: 40;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 3px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: #fff;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-bar.active .progress-bar-fill {
+            width: 100%;
+        }
+        
+        /* 左滑/右滑視覺反饋 */
+        .swipe-feedback {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            z-index: 15;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .swipe-feedback.left {
+            left: 0;
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.3), transparent);
+        }
+        
+        .swipe-feedback.right {
+            right: 0;
+            background: linear-gradient(to left, rgba(34, 197, 94, 0.3), transparent);
+        }
+        
+        .swipe-feedback.active {
+            opacity: 1;
+        }
+        
+        .swipe-feedback-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        .swipe-feedback.active .swipe-feedback-icon {
+            transform: scale(1);
+        }
+        
+        .swipe-feedback-icon svg {
+            width: 48px;
+            height: 48px;
+        }
+        
+        /* 動畫 */
+        @keyframes arrowBounce {
+            0%, 100% { 
+                transform: translateX(0) scale(1);
+                opacity: 0.9;
+            }
+            50% { 
+                transform: translateX(20px) scale(1.1);
+                opacity: 1;
+            }
+        }
+        
+        /* 響應式 */
+        @media (max-width: 480px) {
+            .story-title {
+                font-size: 42px;
+            }
+            
+            .story-subtitle {
+                font-size: 20px;
+            }
+            
+            .story-content {
+                padding: 0 20px 100px;
+            }
+            
+            .swipe-arrow {
+                right: 24px;
+                bottom: 60px;
+            }
+            
+            .swipe-arrow-circle {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .swipe-arrow-circle svg {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .swipe-guide-text {
+                right: 100px;
+                font-size: 16px;
+                padding: 12px 20px;
+            }
+            
+            .story-card {
+                width: 85%;
+                height: 75%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 進度條 -->
+    <div class="progress-bars">
+        <div class="progress-bar" id="progress0"></div>
+        <div class="progress-bar" id="progress1"></div>
+    </div>
+    
+    <!-- Stories 容器 -->
+    <div class="stories-container" id="container">
+        <!-- 狗狗卡片 -->
+        <div class="story-card active" data-index="0" data-pet="dog">
+            <video class="story-video" loop muted playsinline autoplay>
+                <source src="dog-video.mp4" type="video/mp4">
+            </video>
+            <div class="story-overlay"></div>
+            
+            <div class="story-content">
+                <div class="story-title">我養狗狗</div>
+                <div class="story-subtitle">探索狗狗專區</div>
+                <div class="story-desc">為您的毛孩挑選最好的商品</div>
+            </div>
+            
+            <!-- 右側互動按鈕 -->
+            <div class="action-buttons">
+                <div class="action-btn" onclick="selectPet('dog')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- 左滑反饋 -->
+            <div class="swipe-feedback left">
+                <div class="swipe-feedback-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- 右滑反饋 -->
+            <div class="swipe-feedback right">
+                <div class="swipe-feedback-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 貓貓卡片 -->
+        <div class="story-card hidden" data-index="1" data-pet="cat">
+            <video class="story-video" loop muted playsinline>
+                <source src="cat-video.mp4" type="video/mp4">
+            </video>
+            <div class="story-overlay"></div>
+            
+            <div class="story-content">
+                <div class="story-title">我養貓貓</div>
+                <div class="story-subtitle">探索貓貓專區</div>
+                <div class="story-desc">為您的貓主子挑選最好的商品</div>
+            </div>
+            
+            <!-- 右側互動按鈕 -->
+            <div class="action-buttons">
+                <div class="action-btn" onclick="selectPet('cat')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- 左滑反饋 -->
+            <div class="swipe-feedback left">
+                <div class="swipe-feedback-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- 右滑反饋 -->
+            <div class="swipe-feedback right">
+                <div class="swipe-feedback-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 右滑箭頭 + 引導文字 -->
+    <div class="swipe-arrow" id="swipeArrow">
+        <div class="swipe-guide-text">往右滑進入</div>
+        <div class="swipe-arrow-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        console.log('🐾 TikTok 風格寵物選擇頁面');
+        
+        let currentIndex = 0;
+        const cards = document.querySelectorAll('.story-card');
+        const container = document.getElementById('container');
+        const swipeArrow = document.getElementById('swipeArrow');
+        
+        let startY = 0;
+        let startX = 0;
+        let isDragging = false;
+        
+        // 初始化視頻
+        function initVideos() {
+            cards.forEach((card, index) => {
+                const video = card.querySelector('video');
+                if (index === 0) {
+                    video.play().catch(e => console.log('Autoplay prevented'));
+                }
+            });
+        }
+        
+        // 更新進度條
+        function updateProgress() {
+            document.querySelectorAll('.progress-bar').forEach((bar, index) => {
+                if (index < currentIndex) {
+                    bar.classList.add('active');
+                } else if (index === currentIndex) {
+                    bar.classList.add('active');
+                } else {
+                    bar.classList.remove('active');
+                }
+            });
+        }
+        
+        // 切換卡片
+        function switchCard(newIndex) {
+            if (newIndex < 0 || newIndex >= cards.length) return;
+            
+            const oldCard = cards[currentIndex];
+            const newCard = cards[newIndex];
+            
+            // 停止舊視頻
+            oldCard.querySelector('video').pause();
+            
+            // 更新狀態
+            if (newIndex > currentIndex) {
+                oldCard.classList.remove('active');
+                oldCard.classList.add('prev');
+                newCard.classList.remove('hidden');
+                newCard.classList.add('active');
+            } else {
+                oldCard.classList.remove('active');
+                oldCard.classList.add('hidden');
+                newCard.classList.remove('prev');
+                newCard.classList.add('active');
+            }
+            
+            currentIndex = newIndex;
+            
+            // 播放新視頻
+            newCard.querySelector('video').play();
+            
+            updateProgress();
+        }
+        
+        // 選擇寵物
+        function selectPet(pet) {
+            console.log('選擇:', pet);
+            window.location.href = `products-fresh.html?pet=${pet}`;
+        }
+        
+        // 觸控事件
+        container.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        });
+        
+        container.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            const currentY = e.touches[0].clientY;
+            const currentX = e.touches[0].clientX;
+            const deltaY = currentY - startY;
+            const deltaX = currentX - startX;
+            
+            // 左右滑動反饋
+            const leftFeedback = cards[currentIndex].querySelector('.swipe-feedback.left');
+            const rightFeedback = cards[currentIndex].querySelector('.swipe-feedback.right');
+            
+            if (Math.abs(deltaX) > 50) {
+                if (deltaX < 0) {
+                    leftFeedback.classList.add('active');
+                    rightFeedback.classList.remove('active');
+                } else {
+                    rightFeedback.classList.add('active');
+                    leftFeedback.classList.remove('active');
+                }
+            } else {
+                leftFeedback.classList.remove('active');
+                rightFeedback.classList.remove('active');
+            }
+        });
+        
+        container.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            
+            const endY = e.changedTouches[0].clientY;
+            const endX = e.changedTouches[0].clientX;
+            const deltaY = endY - startY;
+            const deltaX = endX - startX;
+            
+            isDragging = false;
+            
+            // 清除反饋
+            document.querySelectorAll('.swipe-feedback').forEach(f => f.classList.remove('active'));
+            
+            // 優先處理左右滑動
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 80) {
+                if (deltaX < 0) {
+                    // 左滑 - 返回選單
+                    window.location.href = 'index.html';
+                } else {
+                    // 右滑 - 選擇當前寵物
+                    const pet = cards[currentIndex].dataset.pet;
+                    selectPet(pet);
+                }
+                return;
+            }
+            
+            // 上下滑動切換
+            if (Math.abs(deltaY) > 80) {
+                if (deltaY < 0 && currentIndex < cards.length - 1) {
+                    // 下滑
+                    switchCard(currentIndex + 1);
+                } else if (deltaY > 0 && currentIndex > 0) {
+                    // 上滑
+                    switchCard(currentIndex - 1);
+                }
+            }
+        });
+        
+        // 滾輪事件（桌面）
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY > 0 && currentIndex < cards.length - 1) {
+                switchCard(currentIndex + 1);
+            } else if (e.deltaY < 0 && currentIndex > 0) {
+                switchCard(currentIndex - 1);
+            }
+        }, { passive: false });
+        
+        // 5秒後隱藏箭頭
+        setTimeout(() => {
+            swipeArrow.style.opacity = '0';
+        }, 5000);
+        
+        // 初始化
+        initVideos();
+        updateProgress();
+    </script>
+</body>
+</html>

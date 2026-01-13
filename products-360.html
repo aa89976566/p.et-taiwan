@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品選購 - 匠寵</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Logo 樣式 */
+        .logo-circle {
+            width: 48px;
+            height: 48px;
+            background: #2563EB;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-paw {
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+        }
+        
+        /* 360度旋轉容器 */
+        .rotation-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            height: 600px;
+            margin: 0 auto;
+            perspective: 1500px;
+        }
+        
+        .product-carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* 商品卡片 */
+        .product-card-3d {
+            position: absolute;
+            width: 400px;
+            height: 500px;
+            left: 50%;
+            top: 50%;
+            margin-left: -200px;
+            margin-top: -250px;
+            background: white;
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backface-visibility: hidden;
+        }
+        
+        .product-card-3d:hover {
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            transform: scale(1.05) translateZ(20px);
+        }
+        
+        /* 狗狗卡片 - 前面 (0度) */
+        .product-card-3d.dog {
+            transform: rotateY(0deg) translateZ(350px);
+            border: 4px solid #2563EB;
+        }
+        
+        /* 狗狗卡片 - 背面 (180度) */
+        .product-card-3d.dog-back {
+            transform: rotateY(180deg) translateZ(350px);
+            border: 4px solid #2563EB;
+        }
+        
+        /* 貓貓卡片 - 右側 (90度) */
+        .product-card-3d.cat-right {
+            transform: rotateY(90deg) translateZ(350px);
+            border: 4px solid #F97316;
+        }
+        
+        /* 貓貓卡片 - 左側 (270度) */
+        .product-card-3d.cat-left {
+            transform: rotateY(270deg) translateZ(350px);
+            border: 4px solid #F97316;
+        }
+        
+        /* 商品圖片 */
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        /* 標題樣式 */
+        .product-title {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .product-subtitle {
+            font-size: 16px;
+            color: #6B7280;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        /* 按鈕 */
+        .explore-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .explore-btn.dog {
+            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+            color: white;
+        }
+        
+        .explore-btn.dog:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.4);
+        }
+        
+        .explore-btn.cat {
+            background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+            color: white;
+        }
+        
+        .explore-btn.cat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(249, 115, 22, 0.4);
+        }
+        
+        /* 旋轉指示器 */
+        .rotation-indicator {
+            text-align: center;
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .rotate-btn {
+            padding: 12px 32px;
+            border-radius: 12px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .rotate-btn:hover {
+            border-color: #2563EB;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .rotate-icon {
+            font-size: 24px;
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* 響應式 */
+        @media (max-width: 768px) {
+            .rotation-container {
+                height: 500px;
+            }
+            
+            .product-card-3d {
+                width: 300px;
+                height: 450px;
+                margin-left: -150px;
+                margin-top: -225px;
+                padding: 24px;
+            }
+            
+            .product-card-3d.dog,
+            .product-card-3d.dog-back,
+            .product-card-3d.cat-right,
+            .product-card-3d.cat-left {
+                transform-origin: center;
+            }
+            
+            .product-card-3d.dog {
+                transform: rotateY(0deg) translateZ(200px);
+            }
+            
+            .product-card-3d.dog-back {
+                transform: rotateY(180deg) translateZ(200px);
+            }
+            
+            .product-card-3d.cat-right {
+                transform: rotateY(90deg) translateZ(200px);
+            }
+            
+            .product-card-3d.cat-left {
+                transform: rotateY(270deg) translateZ(200px);
+            }
+            
+            .product-image {
+                height: 220px;
+            }
+            
+            .product-title {
+                font-size: 24px;
+            }
+            
+            .explore-btn {
+                font-size: 16px;
+                padding: 12px;
+            }
+            
+            .rotation-indicator {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .rotate-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+        
+        /* 淡入動畫 */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="logo-circle">
+                        <div class="logo-paw"></div>
+                    </div>
+                    <span class="text-2xl font-bold" style="color: #2563EB;">匠寵</span>
+                </a>
+                
+                <div class="hidden md:flex flex-1 max-w-md mx-8">
+                    <input type="text" 
+                           placeholder="搜尋商品..." 
+                           class="w-full px-6 py-3 border-2 border-gray-200 rounded-full focus:outline-none focus:border-blue-500 transition">
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="member-center.html" class="text-gray-600 hover:text-blue-600 transition">
+                        <span class="hidden md:inline">會員中心</span>
+                    </a>
+                    <a href="cart.html" class="relative text-gray-600 hover:text-blue-600 transition">
+                        購物車
+                        <span class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="fade-in">
+            <!-- 標題 -->
+            <div class="text-center mb-8">
+                <h1 class="text-5xl font-bold mb-4" style="color: #2563EB;">您養的是？</h1>
+                <p class="text-xl text-gray-600">點擊商品或下方按鈕旋轉查看</p>
+            </div>
+            
+            <!-- 360度旋轉容器 -->
+            <div class="rotation-container">
+                <div class="product-carousel" id="carousel">
+                    <!-- 狗狗卡片 - 角度1 -->
+                    <div class="product-card-3d dog" onclick="goToDog()">
+                        <img src="dog-bed-angle1.png" alt="狗狗用品 - 側面視角" class="product-image">
+                        <h2 class="product-title" style="color: #2563EB;">狗狗專區</h2>
+                        <p class="product-subtitle">為您的愛犬提供舒適好眠</p>
+                        <button class="explore-btn dog">探索狗狗商品</button>
+                    </div>
+                    
+                    <!-- 狗狗卡片 - 角度2 (180度) -->
+                    <div class="product-card-3d dog-back" onclick="goToDog()">
+                        <img src="dog-bed-angle2.png" alt="狗狗用品 - 正面視角" class="product-image">
+                        <h2 class="product-title" style="color: #2563EB;">狗狗專區</h2>
+                        <p class="product-subtitle">舒適睡墊，優質材料</p>
+                        <button class="explore-btn dog">探索狗狗商品</button>
+                    </div>
+                    
+                    <!-- 貓貓卡片 - 角度1 (90度) -->
+                    <div class="product-card-3d cat-right" onclick="goToCat()">
+                        <img src="cat-tower.png" alt="貓貓用品" class="product-image">
+                        <h2 class="product-title" style="color: #F97316;">貓貓專區</h2>
+                        <p class="product-subtitle">為您的貓主子打造專屬樂園</p>
+                        <button class="explore-btn cat">探索貓貓商品</button>
+                    </div>
+                    
+                    <!-- 貓貓卡片 - 角度2 (270度) -->
+                    <div class="product-card-3d cat-left" onclick="goToCat()">
+                        <img src="cat-tower.png" alt="貓貓用品 - 另一側" class="product-image">
+                        <h2 class="product-title" style="color: #F97316;">貓貓專區</h2>
+                        <p class="product-subtitle">多層設計，貓咪最愛</p>
+                        <button class="explore-btn cat">探索貓貓商品</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 旋轉控制 -->
+            <div class="rotation-indicator">
+                <button class="rotate-btn" onclick="rotateTo(0)">
+                    <span style="color: #2563EB;">狗狗 - 側面</span>
+                </button>
+                
+                <button class="rotate-btn" onclick="rotateTo(90)">
+                    <span style="color: #F97316;">貓貓</span>
+                </button>
+                
+                <button class="rotate-btn" onclick="rotateTo(180)">
+                    <span style="color: #2563EB;">狗狗 - 正面</span>
+                </button>
+                
+                <button class="rotate-btn" onclick="rotateTo(270)">
+                    <span style="color: #F97316;">貓貓</span>
+                </button>
+            </div>
+            
+            <!-- 自動旋轉提示 -->
+            <div class="text-center mt-8">
+                <div class="rotate-icon">
+                    🔄
+                </div>
+                <p class="text-gray-500 text-sm mt-2">自動 360° 旋轉中 · 點擊商品或按鈕查看</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="logo-circle">
+                            <div class="logo-paw"></div>
+                        </div>
+                        <span class="text-xl font-bold" style="color: #2563EB;">匠寵</span>
+                    </div>
+                    <p class="text-gray-600 text-sm">為您的毛孩提供最好的生活品質</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">關於我們</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-blue-600">品牌理念</a></li>
+                        <li><a href="#" class="hover:text-blue-600">聯絡我們</a></li>
+                        <li><a href="#" class="hover:text-blue-600">門市據點</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">客戶服務</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-blue-600">購物指南</a></li>
+                        <li><a href="#" class="hover:text-blue-600">配送說明</a></li>
+                        <li><a href="#" class="hover:text-blue-600">退換貨政策</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">追蹤我們</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-600 text-xl">FB</a>
+                        <a href="#" class="text-gray-400 hover:text-orange-600 text-xl">IG</a>
+                        <a href="#" class="text-gray-400 hover:text-green-600 text-xl">LINE</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2026 匠寵 JiangChong Pet Shop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentRotation = 0;
+        const carousel = document.getElementById('carousel');
+        
+        // 旋轉到指定角度
+        function rotateTo(angle) {
+            currentRotation = angle;
+            carousel.style.transform = `rotateY(${currentRotation}deg)`;
+            stopAutoRotate();
+            setTimeout(startAutoRotate, 3000); // 3秒後重新啟動自動旋轉
+        }
+        
+        // 自動旋轉
+        let autoRotateInterval;
+        
+        function startAutoRotate() {
+            stopAutoRotate();
+            autoRotateInterval = setInterval(() => {
+                currentRotation += 90; // 每次旋轉90度
+                if (currentRotation >= 360) {
+                    currentRotation = 0;
+                }
+                carousel.style.transform = `rotateY(${currentRotation}deg)`;
+            }, 3000); // 每3秒旋轉一次
+        }
+        
+        function stopAutoRotate() {
+            if (autoRotateInterval) {
+                clearInterval(autoRotateInterval);
+            }
+        }
+        
+        // 頁面載入時啟動自動旋轉
+        window.addEventListener('load', () => {
+            setTimeout(startAutoRotate, 1000); // 延遲1秒開始
+        });
+        
+        // 滑鼠移入時暫停自動旋轉
+        carousel.addEventListener('mouseenter', stopAutoRotate);
+        carousel.addEventListener('mouseleave', () => {
+            setTimeout(startAutoRotate, 2000);
+        });
+        
+        // 前往商品頁
+        function goToDog() {
+            window.location.href = 'products-fresh.html?pet=dog';
+        }
+        
+        function goToCat() {
+            window.location.href = 'products-fresh.html?pet=cat';
+        }
+        
+        // 鍵盤控制
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                currentRotation -= 90;
+                if (currentRotation < 0) {
+                    currentRotation = 270;
+                }
+                rotateTo(currentRotation);
+            } else if (e.key === 'ArrowRight') {
+                currentRotation += 90;
+                if (currentRotation >= 360) {
+                    currentRotation = 0;
+                }
+                rotateTo(currentRotation);
+            }
+        });
+    </script>
+</body>
+</html>

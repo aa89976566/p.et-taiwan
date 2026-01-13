@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選擇您的寵物 - 匠寵</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: #e8f5e3;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(139, 195, 74, 0.08) 0%, transparent 3%),
+                radial-gradient(circle at 85% 30%, rgba(139, 195, 74, 0.08) 0%, transparent 3%),
+                radial-gradient(circle at 25% 70%, rgba(139, 195, 74, 0.08) 0%, transparent 3%),
+                radial-gradient(circle at 75% 80%, rgba(139, 195, 74, 0.08) 0%, transparent 3%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main-title {
+            display: none;
+        }
+        
+        /* 卡片容器 */
+        .cards-wrapper {
+            display: flex;
+            gap: 32px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+        
+        /* 視頻卡片 */
+        .video-card {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            aspect-ratio: 3 / 4;
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.15),
+                0 0 0 1px rgba(255,255,255,0.5);
+        }
+        
+        .video-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 
+                0 30px 80px rgba(0,0,0,0.25),
+                0 0 0 2px rgba(255,255,255,0.8);
+        }
+        
+        .video-card:active {
+            transform: translateY(-8px) scale(0.98);
+        }
+        
+        /* 視頻 */
+        .video-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 遮罩 */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.3) 0%,
+                rgba(0,0,0,0) 30%,
+                rgba(0,0,0,0) 60%,
+                rgba(0,0,0,0.7) 100%
+            );
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .video-card:hover .video-overlay {
+            opacity: 0.8;
+        }
+        
+        /* 內容 */
+        .card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 32px;
+            z-index: 10;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .video-card:hover .card-content {
+            transform: translateY(-8px);
+        }
+        
+        .card-title {
+            font-size: 40px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 8px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+        }
+        
+        .card-subtitle {
+            font-size: 18px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        /* 點擊提示 */
+        .click-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border: 3px solid rgba(255,255,255,0.5);
+        }
+        
+        .video-card:hover .click-hint {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .click-hint svg {
+            width: 40px;
+            height: 40px;
+            stroke: #fff;
+            stroke-width: 3;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+        
+        /* 動畫 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 響應式 */
+        @media (max-width: 968px) {
+            .container {
+                padding: 40px 20px;
+                gap: 32px;
+            }
+            
+            .cards-wrapper {
+                flex-direction: column;
+                gap: 24px;
+                max-width: 500px;
+            }
+            
+            .video-card {
+                max-width: 100%;
+                aspect-ratio: 4 / 3;
+            }
+            
+            .main-title h1 {
+                font-size: 36px;
+            }
+            
+            .card-title {
+                font-size: 32px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                gap: 24px;
+                padding: 32px 16px;
+            }
+            
+            .main-title h1 {
+                font-size: 32px;
+            }
+            
+            .main-title p {
+                font-size: 16px;
+            }
+            
+            .cards-wrapper {
+                gap: 20px;
+            }
+            
+            .video-card {
+                aspect-ratio: 1 / 1;
+            }
+            
+            .card-content {
+                padding: 20px;
+            }
+            
+            .card-title {
+                font-size: 28px;
+            }
+            
+            .card-subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主標題 -->
+        <div class="main-title">
+            <h1>您養的是？</h1>
+            <p>點擊選擇您的寵物類型</p>
+        </div>
+        
+        <!-- 卡片容器 -->
+        <div class="cards-wrapper">
+            <!-- 狗狗卡片 -->
+            <div class="video-card" onclick="selectPet('dog')">
+                <video loop muted playsinline autoplay>
+                    <source src="dog-video.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay"></div>
+                
+                <div class="card-content">
+                    <div class="card-title">我養狗狗</div>
+                    <div class="card-subtitle">探索狗狗專區</div>
+                </div>
+                
+                <div class="click-hint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 16 16 12 12 8"></polyline>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- 貓貓卡片 -->
+            <div class="video-card" onclick="selectPet('cat')">
+                <video loop muted playsinline autoplay>
+                    <source src="cat-video.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay"></div>
+                
+                <div class="card-content">
+                    <div class="card-title">我養貓貓</div>
+                    <div class="card-subtitle">探索貓貓專區</div>
+                </div>
+                
+                <div class="click-hint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 16 16 12 12 8"></polyline>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🐾 匠寵寵物選擇頁面');
+        
+        // 選擇寵物
+        function selectPet(pet) {
+            console.log('選擇:', pet);
+            // 添加點擊動畫
+            event.currentTarget.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                window.location.href = `products.html?pet=${pet}`;
+            }, 200);
+        }
+        
+        // 確保視頻自動播放
+        document.addEventListener('DOMContentLoaded', () => {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                video.play().catch(e => {
+                    console.log('視頻自動播放被阻止，等待用戶互動');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

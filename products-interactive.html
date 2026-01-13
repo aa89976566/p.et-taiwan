@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品選購 - 匠寵</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
+            min-height: 100vh;
+        }
+        
+        /* 品牌配色 */
+        :root {
+            --primary-blue: #2563EB;
+            --primary-orange: #F97316;
+            --primary-green: #10B981;
+        }
+        
+        /* Logo 樣式 */
+        .logo-circle {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-paw {
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+        }
+        
+        /* 互動式商品區塊 */
+        .interactive-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .product-category-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(249, 115, 22, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .product-category-card:hover::before {
+            opacity: 1;
+        }
+        
+        .product-category-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .product-category-card.dog:hover {
+            border-color: var(--primary-blue);
+        }
+        
+        .product-category-card.cat:hover {
+            border-color: var(--primary-orange);
+        }
+        
+        .product-category-card.general:hover {
+            border-color: var(--primary-green);
+        }
+        
+        /* 圖標容器 */
+        .icon-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            border-radius: 50%;
+            transition: all 0.4s ease;
+        }
+        
+        .product-category-card:hover .icon-container {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .category-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        
+        .category-desc {
+            color: #6B7280;
+            font-size: 14px;
+        }
+        
+        /* 動畫 */
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 響應式 */
+        @media (max-width: 768px) {
+            .interactive-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .icon-container {
+                width: 80px;
+                height: 80px;
+                font-size: 48px;
+            }
+            
+            .category-title {
+                font-size: 20px;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .interactive-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* 寵物類型選擇器 */
+        .pet-selector {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        
+        .pet-btn {
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .pet-btn.active {
+            transform: scale(1.05);
+        }
+        
+        .pet-btn.dog {
+            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+            color: white;
+        }
+        
+        .pet-btn.dog.active {
+            border-color: #1E3A8A;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+        }
+        
+        .pet-btn.cat {
+            background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+            color: white;
+        }
+        
+        .pet-btn.cat.active {
+            border-color: #C2410C;
+            box-shadow: 0 8px 16px rgba(249, 115, 22, 0.3);
+        }
+        
+        .pet-btn.all {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .pet-btn.all.active {
+            border-color: #047857;
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="logo-circle">
+                        <div class="logo-paw"></div>
+                    </div>
+                    <span class="text-2xl font-bold" style="color: #2563EB;">匠寵</span>
+                </a>
+                
+                <div class="hidden md:flex flex-1 max-w-md mx-8">
+                    <input type="text" 
+                           placeholder="搜尋商品..." 
+                           class="w-full px-6 py-3 border-2 border-gray-200 rounded-full focus:outline-none focus:border-blue-500 transition">
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="member-center.html" class="text-gray-600 hover:text-blue-600 transition">
+                        <span class="hidden md:inline">會員中心</span>
+                    </a>
+                    <a href="cart.html" class="relative text-gray-600 hover:text-blue-600 transition">
+                        購物車
+                        <span class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="fade-in">
+            <!-- 標題 -->
+            <div class="text-center mb-12">
+                <h1 class="text-5xl font-bold mb-6" style="color: #2563EB;">您養的是？</h1>
+            </div>
+            
+            <!-- 寵物類型選擇 -->
+            <div class="pet-selector">
+                <button class="pet-btn dog active" onclick="filterByPet('dog')">
+                    狗狗
+                </button>
+                <button class="pet-btn cat" onclick="filterByPet('cat')">
+                    貓貓
+                </button>
+                <button class="pet-btn all" onclick="filterByPet('all')">
+                    全部
+                </button>
+            </div>
+            
+            <!-- 互動式商品分類網格 -->
+            <div class="interactive-grid">
+                <!-- 狗狗主食 -->
+                <div class="product-category-card dog dog-item" onclick="goToCategory('dog-food')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);">
+                        🍖
+                    </div>
+                    <h3 class="category-title" style="color: #2563EB;">狗狗主食</h3>
+                    <p class="category-desc">營養均衡的狗糧、罐頭</p>
+                </div>
+                
+                <!-- 狗狗零食 -->
+                <div class="product-category-card dog dog-item" onclick="goToCategory('dog-snack')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);">
+                        🦴
+                    </div>
+                    <h3 class="category-title" style="color: #2563EB;">狗狗零食</h3>
+                    <p class="category-desc">訓練獎勵、潔牙零食</p>
+                </div>
+                
+                <!-- 狗狗玩具 -->
+                <div class="product-category-card dog dog-item" onclick="goToCategory('dog-toy')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);">
+                        🎾
+                    </div>
+                    <h3 class="category-title" style="color: #2563EB;">狗狗玩具</h3>
+                    <p class="category-desc">互動玩具、益智訓練</p>
+                </div>
+                
+                <!-- 貓貓主食 -->
+                <div class="product-category-card cat cat-item" onclick="goToCategory('cat-food')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);">
+                        🐟
+                    </div>
+                    <h3 class="category-title" style="color: #F97316;">貓貓主食</h3>
+                    <p class="category-desc">新鮮魚肉、貓糧罐頭</p>
+                </div>
+                
+                <!-- 貓貓零食 -->
+                <div class="product-category-card cat cat-item" onclick="goToCategory('cat-snack')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);">
+                        🍤
+                    </div>
+                    <h3 class="category-title" style="color: #F97316;">貓貓零食</h3>
+                    <p class="category-desc">肉泥、凍乾零食</p>
+                </div>
+                
+                <!-- 貓貓玩具 -->
+                <div class="product-category-card cat cat-item" onclick="goToCategory('cat-toy')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);">
+                        🧶
+                    </div>
+                    <h3 class="category-title" style="color: #F97316;">貓貓玩具</h3>
+                    <p class="category-desc">逗貓棒、抓板玩具</p>
+                </div>
+                
+                <!-- 寵物用品 -->
+                <div class="product-category-card general general-item" onclick="goToCategory('supplies')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);">
+                        🛁
+                    </div>
+                    <h3 class="category-title" style="color: #10B981;">清潔用品</h3>
+                    <p class="category-desc">洗毛精、護理用品</p>
+                </div>
+                
+                <!-- 健康保健 -->
+                <div class="product-category-card general general-item" onclick="goToCategory('health')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);">
+                        💊
+                    </div>
+                    <h3 class="category-title" style="color: #10B981;">健康保健</h3>
+                    <p class="category-desc">營養品、關節保健</p>
+                </div>
+                
+                <!-- 生活用品 -->
+                <div class="product-category-card general general-item" onclick="goToCategory('lifestyle')">
+                    <div class="icon-container" style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);">
+                        🏠
+                    </div>
+                    <h3 class="category-title" style="color: #10B981;">生活用品</h3>
+                    <p class="category-desc">睡墊、牽繩、碗盆</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="logo-circle">
+                            <div class="logo-paw"></div>
+                        </div>
+                        <span class="text-xl font-bold" style="color: #2563EB;">匠寵</span>
+                    </div>
+                    <p class="text-gray-600 text-sm">為您的毛孩提供最好的生活品質</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">關於我們</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-blue-600">品牌理念</a></li>
+                        <li><a href="#" class="hover:text-blue-600">聯絡我們</a></li>
+                        <li><a href="#" class="hover:text-blue-600">門市據點</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">客戶服務</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-blue-600">購物指南</a></li>
+                        <li><a href="#" class="hover:text-blue-600">配送說明</a></li>
+                        <li><a href="#" class="hover:text-blue-600">退換貨政策</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">追蹤我們</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-600 text-xl">FB</a>
+                        <a href="#" class="text-gray-400 hover:text-orange-600 text-xl">IG</a>
+                        <a href="#" class="text-gray-400 hover:text-green-600 text-xl">LINE</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2026 匠寵 JiangChong Pet Shop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 寵物類型篩選
+        function filterByPet(type) {
+            // 更新按鈕狀態
+            document.querySelectorAll('.pet-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 篩選商品卡片
+            const dogItems = document.querySelectorAll('.dog-item');
+            const catItems = document.querySelectorAll('.cat-item');
+            const generalItems = document.querySelectorAll('.general-item');
+            
+            if (type === 'dog') {
+                dogItems.forEach(item => item.style.display = 'block');
+                catItems.forEach(item => item.style.display = 'none');
+                generalItems.forEach(item => item.style.display = 'block');
+            } else if (type === 'cat') {
+                dogItems.forEach(item => item.style.display = 'none');
+                catItems.forEach(item => item.style.display = 'block');
+                generalItems.forEach(item => item.style.display = 'block');
+            } else {
+                dogItems.forEach(item => item.style.display = 'block');
+                catItems.forEach(item => item.style.display = 'block');
+                generalItems.forEach(item => item.style.display = 'block');
+            }
+        }
+        
+        // 前往商品分類頁面
+        function goToCategory(category) {
+            // 這裡可以連接到實際的商品列表頁
+            window.location.href = `products-fresh.html?category=${category}`;
+        }
+    </script>
+</body>
+</html>

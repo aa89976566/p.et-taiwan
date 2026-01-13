@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品列表 - 匠寵寵物生活館</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 統一設計系統 -->
+    <link rel="stylesheet" href="css/design-system.css">
+    
+    <style>
+        /* 狗狗視角 - 低角度效果 */
+        .dog-perspective {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: bottom center;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(74, 144, 226, 0.15);
+        }
+        
+        /* 狗掌印裝飾 */
+        .paw-print {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.05;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(10px, -10px) rotate(10deg); }
+            66% { transform: translate(-10px, 10px) rotate(-10deg); }
+        }
+        
+        /* 商品圖片懸停效果 */
+        .product-image-wrapper {
+            overflow: hidden;
+            border-radius: 16px;
+            position: relative;
+        }
+        
+        .product-image {
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.1);
+        }
+        
+        /* 篩選側邊欄 */
+        .filter-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 自定義 Tailwind 配置 */
+        @layer utilities {
+            .text-sky-blue { color: #4A90E2; }
+            .bg-sky-blue { background-color: #4A90E2; }
+            .text-warm-orange { color: #FF8C42; }
+            .bg-warm-orange { background-color: #FF8C42; }
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sky-blue': '#4A90E2',
+                        'warm-orange': '#FF8C42',
+                        'grass-green': '#7BC043',
+                        'paw-brown': '#8B6F47',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- 狗掌印背景裝飾 -->
+    <div class="paw-print" style="top: 10%; left: 5%;">🐾</div>
+    <div class="paw-print" style="top: 40%; right: 8%; animation-delay: 2s;">🐾</div>
+    <div class="paw-print" style="bottom: 20%; left: 15%; animation-delay: 4s;">🐾</div>
+    
+    <!-- 導航列 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-sky-blue to-blue-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-paw text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-sky-blue">匠寵</span>
+                </a>
+                
+                <!-- 搜尋框 -->
+                <div class="hidden md:flex flex-1 max-w-xl mx-8">
+                    <div class="relative w-full">
+                        <input type="text" 
+                               placeholder="搜尋商品..." 
+                               class="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-full focus:border-sky-blue focus:outline-none transition">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <!-- 導航按鈕 -->
+                <div class="flex items-center gap-4">
+                    <a href="member-center.html" class="hidden md:flex items-center gap-2 text-gray-700 hover:text-sky-blue transition">
+                        <i class="fas fa-user"></i>
+                        <span>會員中心</span>
+                    </a>
+                    <a href="cart.html" class="relative">
+                        <i class="fas fa-shopping-cart text-2xl text-gray-700 hover:text-warm-orange transition"></i>
+                        <span class="absolute -top-2 -right-2 bg-warm-orange text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 麵包屑 -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+            <a href="index.html" class="hover:text-sky-blue transition">首頁</a>
+            <i class="fas fa-chevron-right text-xs"></i>
+            <span class="text-sky-blue font-medium">所有商品</span>
+        </div>
+    </div>
+    
+    <!-- 主內容區 -->
+    <div class="container mx-auto px-4 pb-12">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- 左側篩選欄 -->
+            <aside class="lg:w-64 flex-shrink-0">
+                <div class="sticky top-24">
+                    
+                    <!-- 分類篩選 -->
+                    <div class="filter-section mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-list text-sky-blue"></i>
+                            商品分類
+                        </h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="checkbox" class="w-5 h-5 text-sky-blue rounded focus:ring-sky-blue">
+                                <span class="text-gray-700">全部商品</span>
+                                <span class="ml-auto text-xs text-gray-400">(128)</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="checkbox" class="w-5 h-5 text-sky-blue rounded focus:ring-sky-blue">
+                                <span class="text-gray-700">🐕 狗狗零食</span>
+                                <span class="ml-auto text-xs text-gray-400">(45)</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="checkbox" class="w-5 h-5 text-sky-blue rounded focus:ring-sky-blue">
+                                <span class="text-gray-700">🐱 貓咪零食</span>
+                                <span class="ml-auto text-xs text-gray-400">(38)</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="checkbox" class="w-5 h-5 text-sky-blue rounded focus:ring-sky-blue">
+                                <span class="text-gray-700">🍖 主食罐頭</span>
+                                <span class="ml-auto text-xs text-gray-400">(25)</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="checkbox" class="w-5 h-5 text-sky-blue rounded focus:ring-sky-blue">
+                                <span class="text-gray-700">🦴 潔牙骨</span>
+                                <span class="ml-auto text-xs text-gray-400">(20)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- 價格篩選 -->
+                    <div class="filter-section mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-dollar-sign text-warm-orange"></i>
+                            價格範圍
+                        </h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="radio" name="price" class="w-5 h-5 text-sky-blue focus:ring-sky-blue">
+                                <span class="text-gray-700">全部價格</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="radio" name="price" class="w-5 h-5 text-sky-blue focus:ring-sky-blue">
+                                <span class="text-gray-700">NT$ 0 - 200</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="radio" name="price" class="w-5 h-5 text-sky-blue focus:ring-sky-blue">
+                                <span class="text-gray-700">NT$ 200 - 500</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="radio" name="price" class="w-5 h-5 text-sky-blue focus:ring-sky-blue">
+                                <span class="text-gray-700">NT$ 500 以上</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- 品牌篩選 -->
+                    <div class="filter-section">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-star text-grass-green"></i>
+                            熱門品牌
+                        </h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="checkbox" class="w-5 h-5 text-sky-blue rounded focus:ring-sky-blue">
+                                <span class="text-gray-700">匠寵嚴選</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="checkbox" class="w-5 h-5 text-sky-blue rounded focus:ring-sky-blue">
+                                <span class="text-gray-700">健康寵品</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                                <input type="checkbox" class="w-5 h-5 text-sky-blue rounded focus:ring-sky-blue">
+                                <span class="text-gray-700">愛寵一生</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                </div>
+            </aside>
+            
+            <!-- 右側商品列表 -->
+            <main class="flex-1">
+                
+                <!-- 排序選項 -->
+                <div class="bg-white rounded-2xl p-4 mb-6 shadow-sm flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-4">
+                        <span class="text-gray-600">找到</span>
+                        <span class="text-2xl font-bold text-sky-blue">128</span>
+                        <span class="text-gray-600">件商品</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <span class="text-gray-600">排序：</span>
+                        <select class="px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-sky-blue focus:outline-none transition">
+                            <option>推薦排序</option>
+                            <option>最新上架</option>
+                            <option>價格低到高</option>
+                            <option>價格高到低</option>
+                            <option>評價最高</option>
+                        </select>
+                        
+                        <div class="flex gap-2 ml-4">
+                            <button class="p-2 border-2 border-sky-blue bg-sky-blue text-white rounded-lg transition">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="p-2 border-2 border-gray-200 text-gray-600 rounded-lg hover:border-sky-blue hover:text-sky-blue transition">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商品網格 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 dog-perspective" id="productGrid">
+                    <!-- 商品卡片將由 JavaScript 動態載入 -->
+                    <!-- 靜態示範卡片 -->
+                    <div class="product-card bg-white rounded-2xl overflow-hidden shadow-sm">
+                        <div class="product-image-wrapper relative">
+                            <img src="https://via.placeholder.com/400x400/4A90E2/FFFFFF?text=狗狗零食" 
+                                 alt="寵物零食" 
+                                 class="product-image w-full h-64 object-cover">
+                            <span class="absolute top-4 right-4 bg-warm-orange text-white px-3 py-1 rounded-full text-sm font-bold">
+                                特價
+                            </span>
+                            <button class="absolute top-4 left-4 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-400 hover:text-red-500 transition">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="p-4">
+                            <span class="text-xs text-gray-500 uppercase tracking-wide">狗狗零食</span>
+                            <h3 class="text-lg font-bold text-gray-800 mt-1 mb-2 line-clamp-2">
+                                手工鮮肉零食 雞肉條 100g
+                            </h3>
+                            
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-sm text-gray-500">(128)</span>
+                            </div>
+                            
+                            <div class="flex items-end gap-2 mb-4">
+                                <span class="text-2xl font-bold text-sky-blue">NT$ 299</span>
+                                <span class="text-sm text-gray-400 line-through">NT$ 399</span>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button class="flex-1 bg-gradient-to-r from-sky-blue to-blue-600 text-white py-3 rounded-xl font-medium hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                    <i class="fas fa-shopping-cart mr-2"></i>
+                                    加入購物車
+                                </button>
+                                <button class="w-12 h-12 border-2 border-gray-200 rounded-xl flex items-center justify-center text-gray-600 hover:border-sky-blue hover:text-sky-blue transition">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 更多商品卡片... (省略，由 JS 生成) -->
+                    
+                </div>
+                
+                <!-- 分頁 -->
+                <div class="mt-12 flex justify-center">
+                    <div class="flex items-center gap-2">
+                        <button class="w-10 h-10 border-2 border-gray-200 rounded-lg flex items-center justify-center text-gray-400 hover:border-sky-blue hover:text-sky-blue transition">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="w-10 h-10 bg-sky-blue text-white rounded-lg font-medium">1</button>
+                        <button class="w-10 h-10 border-2 border-gray-200 rounded-lg text-gray-600 hover:border-sky-blue hover:text-sky-blue transition">2</button>
+                        <button class="w-10 h-10 border-2 border-gray-200 rounded-lg text-gray-600 hover:border-sky-blue hover:text-sky-blue transition">3</button>
+                        <span class="text-gray-400">...</span>
+                        <button class="w-10 h-10 border-2 border-gray-200 rounded-lg text-gray-600 hover:border-sky-blue hover:text-sky-blue transition">10</button>
+                        <button class="w-10 h-10 border-2 border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:border-sky-blue hover:text-sky-blue transition">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+            </main>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 mt-20">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-warm-orange rounded-full flex items-center justify-center">
+                            <i class="fas fa-paw text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">匠寵</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        從狗狗的視角，為您的寵物提供最好的生活品質
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">快速連結</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">關於我們</a></li>
+                        <li><a href="#" class="hover:text-white transition">商品分類</a></li>
+                        <li><a href="#" class="hover:text-white transition">訂閱服務</a></li>
+                        <li><a href="#" class="hover:text-white transition">聯絡我們</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">客戶服務</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">配送說明</a></li>
+                        <li><a href="#" class="hover:text-white transition">退換貨政策</a></li>
+                        <li><a href="#" class="hover:text-white transition">常見問題</a></li>
+                        <li><a href="#" class="hover:text-white transition">隱私權政策</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">聯絡我們</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-phone"></i>
+                            0800-123-456
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-envelope"></i>
+                            support@jiangchong.com
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fab fa-line"></i>
+                            @jiangchong
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+                <p>© 2026 匠寵寵物生活館. All rights reserved. 🐾</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="js/api-client.js"></script>
+    <script>
+        // 動態載入商品列表
+        async function loadProducts() {
+            try {
+                const response = await window.ApiClient.get('/products');
+                if (response.success) {
+                    renderProducts(response.data.products);
+                }
+            } catch (error) {
+                console.error('載入商品失敗:', error);
+            }
+        }
+        
+        function renderProducts(products) {
+            const grid = document.getElementById('productGrid');
+            // 渲染商品卡片...
+        }
+        
+        // 頁面載入時執行
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+        });
+    </script>
+</body>
+</html>
