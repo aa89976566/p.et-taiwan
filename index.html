@@ -361,151 +361,116 @@
         </div>
     </nav>
     
-    <!-- Hero Section - 創意不對稱設計 -->
-    <section id="hero" class="relative py-12 lg:py-16 overflow-hidden pt-24" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 50%, #FED7AA 100%);">
-        <!-- 波浪分隔線 - 底部橘色 -->
+    <!-- Hero Section - 啾啾的故事 -->
+    <section id="hero" class="relative py-16 lg:py-20 overflow-hidden pt-24" style="background: linear-gradient(180deg, #FFF7ED 0%, #FFEDD5 100%);">
+        <!-- 波浪分隔 -->
         <div class="wave-divider-bottom">
             <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill-orange-light"></path>
             </svg>
         </div>
         
-        <!-- 簡化背景 -->
-        <div class="absolute top-10 right-10 w-64 h-64 bg-orange-300 rounded-full blur-3xl opacity-20"></div>
-        <div class="absolute bottom-10 left-10 w-48 h-48 bg-blue-300 rounded-full blur-3xl opacity-15"></div>
-        
         <div class="container mx-auto px-6 py-8 relative z-10">
-            <div class="grid lg:grid-cols-12 gap-8 items-start">
-                <!-- 左側：創意排版 -->
-                <div class="lg:col-span-7 space-y-6 fade-in-up">
-                    <!-- 標題區 - 不規則排版 -->
-                    <div class="space-y-3">
-                        <div class="inline-block px-4 py-1.5 bg-orange-100 rounded-full border-2 border-orange-400 mb-2">
-                            <span class="text-orange-700 font-bold text-sm">每月一次的小確幸</span>
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- 左側：故事文案 -->
+                <div class="space-y-6 fade-in-up">
+                    <!-- 角色介紹標籤 -->
+                    <div class="inline-block">
+                        <div class="flex items-center gap-2 px-4 py-2 bg-orange-100 rounded-full border border-orange-300">
+                            <div class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                            <span class="text-orange-700 font-bold text-sm">啾啾的日常</span>
                         </div>
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-tight">
-                            牠在等你回家<br>
-                            我們陪牠<span class="text-orange-600">度過</span>
+                    </div>
+                    
+                    <!-- 故事標題 -->
+                    <div class="space-y-4">
+                        <h1 class="text-4xl md:text-5xl font-black text-gray-900 leading-tight">
+                            早上八點<br>
+                            你出門上班了
                         </h1>
-                        <p class="text-base md:text-lg text-gray-600 leading-relaxed max-w-lg">
-                            台灣手作零食 + 益智玩具，讓狗狗獨處時也能開心玩耍
+                        <p class="text-lg text-gray-600 leading-relaxed">
+                            啾啾趴在窗邊，看著你的背影消失在巷口<br>
+                            接下來的十個小時，牠只能自己等待
                         </p>
                     </div>
                     
-                    <!-- 特色標籤 - 不規則排列 -->
-                    <div class="flex flex-wrap gap-3 py-4">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md border-l-4 border-orange-500">
-                            <span class="text-2xl">✨</span>
-                            <div class="text-left">
-                                <div class="text-xs text-gray-500 font-semibold">當天製作</div>
-                                <div class="text-sm font-black text-gray-900">新鮮零食</div>
-                            </div>
-                        </div>
-                        
-                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md border-l-4 border-blue-500">
-                            <span class="text-2xl">🎁</span>
-                            <div class="text-left">
-                                <div class="text-xs text-gray-500 font-semibold">每月不同</div>
-                                <div class="text-sm font-black text-gray-900">驚喜主題</div>
-                            </div>
-                        </div>
-                        
-                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md border-l-4 border-orange-500">
-                            <span class="text-2xl">🧩</span>
-                            <div class="text-left">
-                                <div class="text-xs text-gray-500 font-semibold">標準組+</div>
-                                <div class="text-sm font-black text-gray-900">益智玩具</div>
-                            </div>
-                        </div>
+                    <!-- 問題描述 -->
+                    <div class="bg-white rounded-2xl p-6 border-l-4 border-gray-300 shadow-sm">
+                        <p class="text-base text-gray-700 leading-relaxed">
+                            玩具都玩過了<br>
+                            水盆旁邊繞了好幾圈<br>
+                            沙發上睡了又醒<br>
+                            <span class="text-gray-900 font-bold">無聊，讓時間變得好長</span>
+                        </p>
                     </div>
                     
-                    <!-- CTA 按鈕 - 更自然的排列 -->
-                    <div class="flex flex-wrap gap-3 pt-2">
-                        <a href="#subscription" class="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold text-base shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
-                            看訂閱方案
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    <!-- CTA -->
+                    <div class="flex flex-wrap gap-3 pt-4">
+                        <a href="#subscription" class="inline-flex items-center gap-2 px-6 py-3.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold shadow-lg transition-all duration-300 hover:shadow-xl">
+                            給啾啾更多陪伴
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                             </svg>
                         </a>
-                        <a href="#features" class="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-50 text-gray-900 rounded-xl font-bold text-base border-2 border-gray-300 transition-all duration-300 hover:border-orange-500">
+                        <a href="#features" class="inline-flex items-center gap-2 px-6 py-3.5 bg-white hover:bg-gray-50 text-gray-900 rounded-xl font-semibold border-2 border-gray-200 transition-all duration-300">
                             了解更多
                         </a>
                     </div>
+                    
+                    <!-- 底部小標籤 -->
+                    <div class="flex flex-wrap gap-2 pt-2">
+                        <span class="px-3 py-1.5 bg-white rounded-lg text-xs font-bold text-gray-700 border border-gray-200">
+                            台灣手作
+                        </span>
+                        <span class="px-3 py-1.5 bg-white rounded-lg text-xs font-bold text-gray-700 border border-gray-200">
+                            每月配送
+                        </span>
+                        <span class="px-3 py-1.5 bg-white rounded-lg text-xs font-bold text-gray-700 border border-gray-200">
+                            當天製作
+                        </span>
+                    </div>
                 </div>
                 
-                <!-- 右側：影片 + 浮動元素 -->
-                <div class="lg:col-span-5 relative fade-in-up delay-1">
+                <!-- 右側：影片 -->
+                <div class="relative fade-in-up delay-1">
                     <div class="relative">
-                        <!-- 主影片 -->
-                        <div class="video-container video-mask-container">
-                            <video 
-                                autoplay 
-                                muted 
-                                loop 
-                                playsinline 
-                                class="w-full rounded-2xl shadow-2xl hero-video-reveal"
-                                style="max-height: 400px; object-fit: cover;"
-                                preload="auto">
-                                <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
-                            </video>
-                        </div>
+                        <video 
+                            autoplay 
+                            muted 
+                            loop 
+                            playsinline 
+                            class="w-full rounded-3xl shadow-2xl hero-video-reveal"
+                            style="max-height: 500px; object-fit: cover;"
+                            preload="auto">
+                            <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
+                        </video>
                         
-                        <!-- 浮動標籤 - 創意位置 -->
-                        <div class="absolute -top-4 -left-4 bg-yellow-400 text-gray-900 px-4 py-2 rounded-lg shadow-lg transform -rotate-3 font-black text-sm">
-                            100% 手作
-                        </div>
-                        
-                        <div class="absolute -bottom-4 -right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg transform rotate-2 font-black text-sm">
-                            無防腐劑
+                        <!-- 角色名稱標籤 -->
+                        <div class="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg">
+                            <div class="text-xs text-gray-500 font-semibold">這是</div>
+                            <div class="text-lg font-black text-gray-900">啾啾</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- 向下滾動 -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
-            <a href="#features" class="text-gray-700 hover:text-gray-900 transition-colors">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                </svg>
-            </a>
-        </div>
     </section>
 
-    <!-- Features Section - 活力橘色風格 -->
-    <!-- Section 2: 解決方案 - 匠寵的陪伴組合 -->
-    <section id="features" class="relative py-24 overflow-hidden" style="background: linear-gradient(135deg, #FB923C 0%, #F97316 50%, #EA580C 100%);">
-        <!-- 波浪分隔線 - 頂部橘色 -->
-        <div class="wave-divider-top">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill-orange-light"></path>
-            </svg>
-        </div>
-        
-        <!-- 波浪分隔線 - 底部淺橘 -->
-        <div class="wave-divider-bottom">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill-orange-light"></path>
-            </svg>
-        </div>
-        
-        <!-- 多層背景裝飾 - 活力風格 -->
-        <div class="absolute top-10 left-10 w-96 h-96 bg-white rounded-full blur-3xl opacity-20 animate-pulse"></div>
-        <div class="absolute bottom-10 right-10 w-80 h-80 bg-yellow-300 rounded-full blur-3xl opacity-15 animate-pulse" style="animation-delay: 1s;"></div>
-        
-
-        
+    <!-- Features Section - 啾啾的改變 -->
+    <section id="features" class="relative py-20 overflow-hidden bg-white">
         <div class="container mx-auto px-6 relative z-10">
-            <!-- 標題區 - Years 風格活力文案 -->
-            <div class="text-center mb-16 fade-in-up">
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight drop-shadow-lg hover:scale-105 transition-transform">
-                    你上班的時候<br>
-                    <span class="text-yellow-300 animate-pulse">牠也在享受生活</span>
+            <!-- 故事轉折 -->
+            <div class="max-w-3xl mx-auto text-center mb-16 fade-in-up">
+                <div class="inline-block px-4 py-2 bg-orange-100 rounded-full mb-4">
+                    <span class="text-orange-700 font-bold text-sm">但現在不一樣了</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4 leading-tight">
+                    每個月<br>
+                    啾啾都會收到一份驚喜
                 </h2>
-                <p class="text-2xl md:text-3xl text-orange-50 max-w-3xl mx-auto font-bold drop-shadow-md">
-                    每兩週一次的驚喜包裹<br>
-                    <span class="font-black text-white">讓等待變成期待</span>
+                <p class="text-lg text-gray-600 leading-relaxed">
+                    門鈴響起，牠知道那是專屬於牠的包裹<br>
+                    新鮮的零食、好玩的玩具，讓每一天都值得期待
                 </p>
             </div>
             
