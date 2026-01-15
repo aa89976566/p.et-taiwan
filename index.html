@@ -362,42 +362,40 @@
     </nav>
     
     <!-- Hero Section -->
-    <section id="hero" class="relative min-h-screen flex items-center bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-50">
-        <div class="container mx-auto px-6 h-full">
-            <div class="grid lg:grid-cols-2 gap-0 items-stretch min-h-screen">
-                <!-- 左側：文字 -->
-                <div class="flex items-center justify-center lg:justify-start py-20">
-                    <div class="text-center lg:text-left">
-                        <!-- 大標題 - 分兩排 -->
-                        <h1 class="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black leading-tight fade-in-up">
-                            <span class="bg-gradient-to-r from-orange-500 to-yellow-500 text-transparent bg-clip-text">
-                                它，<br>
-                                在等待什麼？
-                            </span>
-                        </h1>
-                    </div>
-                </div>
-                
-                <!-- 右側：影片展滿全區 -->
-                <div class="relative h-screen fade-in-up delay-1">
-                    <video 
-                        autoplay 
-                        muted 
-                        loop 
-                        playsinline 
-                        class="absolute inset-0 w-full h-full object-cover"
-                        preload="auto">
-                        <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
-                    </video>
-                    <!-- 漸層遮罩（左側淡出效果） -->
-                    <div class="absolute inset-0 bg-gradient-to-r from-orange-50 via-transparent to-transparent pointer-events-none"></div>
+    <section id="hero" class="relative min-h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-50">
+        <!-- 背景影片（展滿整個螢幕，從右側和下方包圍文字） -->
+        <div class="absolute inset-0">
+            <video 
+                autoplay 
+                muted 
+                loop 
+                playsinline 
+                class="w-full h-full object-cover"
+                preload="auto">
+                <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
+            </video>
+            <!-- 遮罩層：左上角較亮，其他區域較暗 -->
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-50/90 via-orange-50/40 to-transparent"></div>
+        </div>
+        
+        <!-- 文字區域（左上角，佔 40% 寬度） -->
+        <div class="relative z-10 min-h-screen flex items-start pt-32 lg:pt-40">
+            <div class="container mx-auto px-6">
+                <div class="max-w-2xl">
+                    <!-- 大標題 - 分兩排 -->
+                    <h1 class="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black leading-tight fade-in-up">
+                        <span class="bg-gradient-to-r from-orange-500 to-yellow-500 text-transparent bg-clip-text drop-shadow-lg">
+                            它，<br>
+                            在等待什麼？
+                        </span>
+                    </h1>
                 </div>
             </div>
         </div>
         
         <!-- 向下滾動提示 -->
-        <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
-            <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
+            <svg class="w-8 h-8 text-gray-700 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
             </svg>
         </div>
