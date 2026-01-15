@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品選購 - 匠寵</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
+            min-height: 100vh;
+        }
+        
+        /* 品牌配色 */
+        :root {
+            --primary-blue: #2563EB;
+            --primary-orange: #F97316;
+            --primary-green: #10B981;
+            --light-green: #F0FDF4;
+            --bg-green: #DCFCE7;
+        }
+        
+        /* Logo 樣式 - 與首頁一致 */
+        .logo-circle {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .logo-paw {
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+        }
+        
+        /* 寵物選擇卡片 - 活潑設計 */
+        .pet-choice-card {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 4px solid transparent;
+        }
+        
+        .pet-choice-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+        }
+        
+        .pet-choice-card.dog:hover {
+            border-color: var(--primary-blue);
+            background: linear-gradient(135deg, #EFF6FF 0%, white 100%);
+        }
+        
+        .pet-choice-card.cat:hover {
+            border-color: var(--primary-orange);
+            background: linear-gradient(135deg, #FFF7ED 0%, white 100%);
+        }
+        
+        /* 商品卡片 - 活潑設計 */
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-img-wrapper {
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .product-card:hover .product-img {
+            transform: scale(1.08);
+        }
+        
+        /* 篩選器樣式 */
+        .filter-sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 100px;
+        }
+        
+        .filter-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #E5E7EB;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+            margin: 4px;
+        }
+        
+        .filter-tag:hover {
+            border-color: var(--primary-blue);
+            background: #EFF6FF;
+        }
+        
+        .filter-tag.active {
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        /* 按鈕樣式 */
+        .btn-blue {
+            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-blue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-orange {
+            background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-orange:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(249, 115, 22, 0.3);
+        }
+        
+        .btn-green {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-green:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* 隱藏/顯示動畫 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 動畫視頻樣式 */
+        .pet-video {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            margin: 0 auto 24px;
+            display: block;
+        }
+        
+        /* 響應式 */
+        @media (max-width: 768px) {
+            .filter-sidebar {
+                position: static;
+                margin-bottom: 24px;
+            }
+            
+            .pet-video {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo - 與首頁一致 -->
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="logo-circle">
+                        <div class="logo-paw"></div>
+                    </div>
+                    <span class="text-2xl font-bold" style="color: #2563EB;">匠寵</span>
+                </a>
+                
+                <!-- 搜尋框 -->
+                <div class="hidden md:flex flex-1 max-w-md mx-8">
+                    <input type="text" 
+                           placeholder="搜尋商品..." 
+                           class="w-full px-6 py-3 border-2 border-gray-200 rounded-full focus:outline-none focus:border-blue-500 transition">
+                </div>
+                
+                <!-- 右側按鈕 -->
+                <div class="flex items-center space-x-4">
+                    <a href="member-center.html" class="text-gray-600 hover:text-blue-600 transition">
+                        <span class="hidden md:inline">會員中心</span>
+                    </a>
+                    <a href="cart.html" class="relative text-gray-600 hover:text-blue-600 transition">
+                        購物車
+                        <span class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- 寵物選擇界面 - 初次進入顯示 -->
+        <div id="petChoiceScreen" class="fade-in">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl font-bold mb-6" style="color: #2563EB;">您養的是？</h1>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                <!-- 狗狗選項 -->
+                <div class="pet-choice-card dog" onclick="selectPet('dog')">
+                    <div class="text-center">
+                        <video class="pet-video" autoplay loop muted playsinline>
+                            <source src="dog-icon.webm" type="video/webm">
+                        </video>
+                        <h2 class="text-3xl font-bold mb-4" style="color: #2563EB;">狗狗</h2>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">主食</span>
+                            <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">零食</span>
+                            <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">玩具</span>
+                            <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">用品</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 貓貓選項 -->
+                <div class="pet-choice-card cat" onclick="selectPet('cat')">
+                    <div class="text-center">
+                        <video class="pet-video" autoplay loop muted playsinline>
+                            <source src="cat-icon.webm" type="video/webm">
+                        </video>
+                        <h2 class="text-3xl font-bold mb-4" style="color: #F97316;">貓貓</h2>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <span class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-medium">主食</span>
+                            <span class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-medium">零食</span>
+                            <span class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-medium">玩具</span>
+                            <span class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-medium">用品</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 或者瀏覽全部 -->
+            <div class="text-center mt-12">
+                <button onclick="selectPet('all')" class="btn-green">
+                    瀏覽全部商品
+                </button>
+            </div>
+        </div>
+
+        <!-- 商品列表界面 - 選擇後顯示 -->
+        <div id="productsScreen" class="hidden fade-in">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- 左側篩選欄 -->
+                <aside class="lg:w-64 flex-shrink-0">
+                    <div class="filter-sidebar">
+                        <h3 class="text-lg font-bold mb-4">篩選</h3>
+                        
+                        <!-- 寵物類型 -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold mb-3 text-gray-700">寵物類型</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2" value="dog">
+                                    <span>狗狗</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2" value="cat">
+                                    <span>貓貓</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- 商品分類 -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold mb-3 text-gray-700">商品分類</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>主食罐頭</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>零食點心</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>營養保健</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>玩具用品</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- 價格範圍 -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold mb-3 text-gray-700">價格範圍</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>NT$0 - NT$200</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>NT$200 - NT$500</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>NT$500 以上</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- 品牌 -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold mb-3 text-gray-700">品牌</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>匠寵嚴選</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>天然好食</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" class="mr-2">
+                                    <span>健康首選</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full btn-blue">套用篩選</button>
+                    </div>
+                </aside>
+
+                <!-- 右側商品網格 -->
+                <div class="flex-1">
+                    <!-- 麵包屑 + 切換按鈕 -->
+                    <div class="flex justify-between items-center mb-8">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <a href="index.html" class="text-gray-500 hover:text-blue-600">首頁</a>
+                            <span class="text-gray-400">›</span>
+                            <span id="currentCategory" class="text-gray-900 font-medium">所有商品</span>
+                        </div>
+                        
+                        <button onclick="showPetChoice()" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                            重新選擇寵物類型
+                        </button>
+                    </div>
+                    
+                    <!-- 商品網格 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- 商品卡片 1 -->
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400" 
+                                     alt="狗狗主食罐" 
+                                     class="product-img">
+                                <span class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">新品</span>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg mb-2">狗狗健康主食罐</h3>
+                                <p class="text-gray-600 text-sm mb-4">高蛋白雞肉配方，營養均衡</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl font-bold" style="color: #2563EB;">NT$399</span>
+                                    <span class="text-sm text-gray-500 line-through">NT$499</span>
+                                </div>
+                                <button class="w-full btn-blue">加入購物車</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 商品卡片 2 -->
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400" 
+                                     alt="貓咪零食" 
+                                     class="product-img">
+                                <span class="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold">熱賣</span>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg mb-2">貓咪肉泥零食包</h3>
+                                <p class="text-gray-600 text-sm mb-4">鮮嫩鮪魚口味，貓咪最愛</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl font-bold" style="color: #F97316;">NT$199</span>
+                                    <span class="text-sm text-gray-500">10入組</span>
+                                </div>
+                                <button class="w-full btn-orange">加入購物車</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 商品卡片 3 -->
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400" 
+                                     alt="寵物玩具" 
+                                     class="product-img">
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg mb-2">互動益智玩具球</h3>
+                                <p class="text-gray-600 text-sm mb-4">訓練智力，消耗精力</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl font-bold" style="color: #10B981;">NT$599</span>
+                                    <span class="text-sm text-gray-500">耐咬材質</span>
+                                </div>
+                                <button class="w-full btn-green">加入購物車</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 商品卡片 4 -->
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400" 
+                                     alt="貓砂" 
+                                     class="product-img">
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg mb-2">環保豆腐貓砂</h3>
+                                <p class="text-gray-600 text-sm mb-4">除臭力強，可沖馬桶</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl font-bold" style="color: #10B981;">NT$299</span>
+                                    <span class="text-sm text-gray-500">6L裝</span>
+                                </div>
+                                <button class="w-full btn-green">加入購物車</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 商品卡片 5 -->
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400" 
+                                     alt="狗狗牽繩" 
+                                     class="product-img">
+                                <span class="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">推薦</span>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg mb-2">反光安全牽繩</h3>
+                                <p class="text-gray-600 text-sm mb-4">夜間散步更安全</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl font-bold" style="color: #2563EB;">NT$450</span>
+                                    <span class="text-sm text-gray-500">可調長度</span>
+                                </div>
+                                <button class="w-full btn-blue">加入購物車</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 商品卡片 6 -->
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=400" 
+                                     alt="寵物營養品" 
+                                     class="product-img">
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg mb-2">關節保健營養錠</h3>
+                                <p class="text-gray-600 text-sm mb-4">呵護行動力，預防關節炎</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl font-bold" style="color: #F97316;">NT$899</span>
+                                    <span class="text-sm text-gray-500">60錠裝</span>
+                                </div>
+                                <button class="w-full btn-orange">加入購物車</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 分頁 -->
+                    <div class="flex justify-center mt-12 space-x-2">
+                        <button class="px-4 py-2 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">上一頁</button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">1</button>
+                        <button class="px-4 py-2 border-2 border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50">2</button>
+                        <button class="px-4 py-2 border-2 border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50">3</button>
+                        <button class="px-4 py-2 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">下一頁</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="logo-circle">
+                            <div class="logo-paw"></div>
+                        </div>
+                        <span class="text-xl font-bold" style="color: #2563EB;">匠寵</span>
+                    </div>
+                    <p class="text-gray-600 text-sm">為您的毛孩提供最好的生活品質</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">關於我們</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-blue-600">品牌理念</a></li>
+                        <li><a href="#" class="hover:text-blue-600">聯絡我們</a></li>
+                        <li><a href="#" class="hover:text-blue-600">門市據點</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">客戶服務</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-blue-600">購物指南</a></li>
+                        <li><a href="#" class="hover:text-blue-600">配送說明</a></li>
+                        <li><a href="#" class="hover:text-blue-600">退換貨政策</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">追蹤我們</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-600 text-xl">FB</a>
+                        <a href="#" class="text-gray-400 hover:text-orange-600 text-xl">IG</a>
+                        <a href="#" class="text-gray-400 hover:text-green-600 text-xl">LINE</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2026 匠寵 JiangChong Pet Shop. All rights reserved.</p>
+            </div>
+        </footer>
+    </footer>
+
+    <script>
+        // 寵物選擇功能
+        function selectPet(type) {
+            document.getElementById('petChoiceScreen').classList.add('hidden');
+            document.getElementById('productsScreen').classList.remove('hidden');
+            
+            // 更新麵包屑
+            const categoryNames = {
+                'dog': '狗狗專區',
+                'cat': '貓貓專區',
+                'all': '所有商品'
+            };
+            document.getElementById('currentCategory').textContent = categoryNames[type];
+            
+            // 平滑滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 顯示寵物選擇界面
+        function showPetChoice() {
+            document.getElementById('productsScreen').classList.add('hidden');
+            document.getElementById('petChoiceScreen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 檢查是否已有選擇記錄（可選功能）
+        window.onload = function() {
+            const savedChoice = localStorage.getItem('petChoice');
+            if (savedChoice && savedChoice !== 'none') {
+                selectPet(savedChoice);
+            }
+        };
+        
+        // 保存用戶選擇
+        function selectPet(type) {
+            localStorage.setItem('petChoice', type);
+            document.getElementById('petChoiceScreen').classList.add('hidden');
+            document.getElementById('productsScreen').classList.remove('hidden');
+            
+            const categoryNames = {
+                'dog': '狗狗專區',
+                'cat': '貓貓專區',
+                'all': '所有商品'
+            };
+            document.getElementById('currentCategory').textContent = categoryNames[type];
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

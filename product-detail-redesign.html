@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品詳情 - 匠寵寵物生活館</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/design-system.css">
+    
+    <style>
+        .image-gallery-thumb {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .image-gallery-thumb:hover {
+            transform: scale(1.05);
+            border-color: #4A90E2;
+        }
+        .image-gallery-thumb.active {
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 2px #4A90E2;
+        }
+        
+        .quantity-input {
+            -moz-appearance: textfield;
+        }
+        .quantity-input::-webkit-outer-spin-button,
+        .quantity-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .sticky-buy-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 50;
+        }
+        
+        .sticky-buy-btn.show {
+            transform: translateY(0);
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sky-blue': '#4A90E2',
+                        'warm-orange': '#FF8C42',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- 導航列 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-sky-blue to-blue-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-paw text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-sky-blue">匠寵</span>
+                </a>
+                
+                <div class="flex items-center gap-4">
+                    <a href="member-center.html" class="hidden md:flex items-center gap-2 text-gray-700 hover:text-sky-blue transition">
+                        <i class="fas fa-user"></i>
+                        <span>會員中心</span>
+                    </a>
+                    <a href="cart.html" class="relative">
+                        <i class="fas fa-shopping-cart text-2xl text-gray-700 hover:text-warm-orange transition"></i>
+                        <span class="absolute -top-2 -right-2 bg-warm-orange text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold" id="cartCount">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 麵包屑 -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+            <a href="index.html" class="hover:text-sky-blue transition">首頁</a>
+            <i class="fas fa-chevron-right text-xs"></i>
+            <a href="products-redesign.html" class="hover:text-sky-blue transition">商品列表</a>
+            <i class="fas fa-chevron-right text-xs"></i>
+            <span class="text-sky-blue font-medium" id="productCategory">狗狗零食</span>
+        </div>
+    </div>
+    
+    <!-- 商品詳情 -->
+    <div class="container mx-auto px-4 pb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- 左側：圖片區 -->
+            <div class="space-y-4">
+                <!-- 主圖 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+                    <img id="mainImage" 
+                         src="https://via.placeholder.com/600x600/4A90E2/FFFFFF?text=商品圖片" 
+                         alt="商品圖片" 
+                         class="w-full h-auto">
+                </div>
+                
+                <!-- 縮圖列表 -->
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="image-gallery-thumb active border-3 border-gray-200 rounded-xl overflow-hidden">
+                        <img src="https://via.placeholder.com/150x150/4A90E2/FFFFFF?text=1" alt="圖1" class="w-full h-auto">
+                    </div>
+                    <div class="image-gallery-thumb border-3 border-gray-200 rounded-xl overflow-hidden">
+                        <img src="https://via.placeholder.com/150x150/FF8C42/FFFFFF?text=2" alt="圖2" class="w-full h-auto">
+                    </div>
+                    <div class="image-gallery-thumb border-3 border-gray-200 rounded-xl overflow-hidden">
+                        <img src="https://via.placeholder.com/150x150/7BC043/FFFFFF?text=3" alt="圖3" class="w-full h-auto">
+                    </div>
+                    <div class="image-gallery-thumb border-3 border-gray-200 rounded-xl overflow-hidden">
+                        <img src="https://via.placeholder.com/150x150/8B6F47/FFFFFF?text=4" alt="圖4" class="w-full h-auto">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右側：商品資訊 -->
+            <div class="space-y-6">
+                
+                <!-- 商品標題 -->
+                <div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="bg-warm-orange text-white px-3 py-1 rounded-full text-sm font-bold">
+                            限時特價
+                        </span>
+                        <span class="bg-grass-green text-white px-3 py-1 rounded-full text-sm font-bold">
+                            熱銷商品
+                        </span>
+                    </div>
+                    
+                    <h1 class="text-3xl font-bold text-gray-800 mb-3" id="productName">
+                        手工鮮肉零食 雞肉條 100g
+                    </h1>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="flex text-yellow-400 text-lg">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="text-gray-600">4.5 / 5.0</span>
+                        <span class="text-gray-400">|</span>
+                        <a href="#reviews" class="text-sky-blue hover:underline">128 則評價</a>
+                        <span class="text-gray-400">|</span>
+                        <span class="text-gray-600">已售出 <span class="font-bold text-sky-blue">1,234</span> 件</span>
+                    </div>
+                </div>
+                
+                <!-- 價格 -->
+                <div class="bg-gradient-to-r from-blue-50 to-orange-50 rounded-2xl p-6">
+                    <div class="flex items-end gap-4">
+                        <div>
+                            <span class="text-sm text-gray-600 block mb-1">限時特價</span>
+                            <span class="text-4xl font-bold text-sky-blue">NT$ 299</span>
+                        </div>
+                        <div class="mb-1">
+                            <span class="text-lg text-gray-400 line-through">NT$ 399</span>
+                            <span class="ml-2 text-warm-orange font-bold">省 NT$ 100</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 規格選擇 -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">選擇規格</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- 尺寸 -->
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">尺寸</label>
+                            <div class="flex gap-3">
+                                <button class="px-6 py-3 border-2 border-sky-blue bg-sky-blue text-white rounded-xl font-medium transition">
+                                    100g
+                                </button>
+                                <button class="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-medium hover:border-sky-blue hover:text-sky-blue transition">
+                                    200g
+                                </button>
+                                <button class="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-medium hover:border-sky-blue hover:text-sky-blue transition">
+                                    500g
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 口味 -->
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">口味</label>
+                            <div class="flex gap-3">
+                                <button class="px-6 py-3 border-2 border-sky-blue bg-sky-blue text-white rounded-xl font-medium transition">
+                                    雞肉
+                                </button>
+                                <button class="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-medium hover:border-sky-blue hover:text-sky-blue transition">
+                                    牛肉
+                                </button>
+                                <button class="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-medium hover:border-sky-blue hover:text-sky-blue transition">
+                                    鮭魚
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 數量選擇 -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-lg font-bold text-gray-800">數量</span>
+                        <div class="flex items-center gap-4">
+                            <button class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-sky-blue hover:text-white transition" onclick="decreaseQuantity()">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" 
+                                   value="1" 
+                                   min="1" 
+                                   max="99" 
+                                   class="quantity-input w-16 text-center text-lg font-bold border-2 border-gray-200 rounded-lg py-2"
+                                   id="quantity">
+                            <button class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-sky-blue hover:text-white transition" onclick="increaseQuantity()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                        <span class="text-gray-600">庫存</span>
+                        <span class="font-bold text-grass-green">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            剩餘 50 件
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- 購買按鈕 -->
+                <div class="flex gap-4">
+                    <button class="flex-1 bg-gradient-to-r from-sky-blue to-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2" id="buyNowBtn">
+                        <i class="fas fa-bolt"></i>
+                        立即購買
+                    </button>
+                    <button class="flex-1 bg-gradient-to-r from-warm-orange to-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2" id="addToCartBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        加入購物車
+                    </button>
+                </div>
+                
+                <button class="w-full border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-medium hover:border-sky-blue hover:text-sky-blue transition flex items-center justify-center gap-2">
+                    <i class="far fa-heart"></i>
+                    加入收藏
+                </button>
+                
+                <!-- 商品特色 -->
+                <div class="bg-blue-50 rounded-2xl p-6">
+                    <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-check-circle text-sky-blue"></i>
+                        商品特色
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-paw text-warm-orange mt-1"></i>
+                            <span>100% 天然食材，無添加防腐劑</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-paw text-warm-orange mt-1"></i>
+                            <span>低溫烘焙技術，保留營養成分</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-paw text-warm-orange mt-1"></i>
+                            <span>適合各年齡層寵物食用</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-paw text-warm-orange mt-1"></i>
+                            <span>台灣在地生產，品質有保證</span>
+                        </li>
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- 商品詳細資訊 -->
+        <div class="mt-12">
+            <!-- Tab 導航 -->
+            <div class="bg-white rounded-t-2xl shadow-sm">
+                <div class="flex border-b border-gray-200">
+                    <button class="px-8 py-4 font-bold text-sky-blue border-b-3 border-sky-blue" onclick="showTab('description')">
+                        商品說明
+                    </button>
+                    <button class="px-8 py-4 font-medium text-gray-600 hover:text-sky-blue transition" onclick="showTab('nutrition')">
+                        營養成分
+                    </button>
+                    <button class="px-8 py-4 font-medium text-gray-600 hover:text-sky-blue transition" onclick="showTab('reviews')">
+                        用戶評價 (128)
+                    </button>
+                    <button class="px-8 py-4 font-medium text-gray-600 hover:text-sky-blue transition" onclick="showTab('qa')">
+                        常見問題
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tab 內容 -->
+            <div class="bg-white rounded-b-2xl shadow-sm p-8" id="tabContent">
+                <div id="description">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">商品說明</h2>
+                    <div class="prose max-w-none text-gray-700 leading-relaxed">
+                        <p class="mb-4">
+                            匠寵手工鮮肉零食系列，採用100%天然食材製作，不添加任何人工色素、香料或防腐劑。
+                            我們堅持使用台灣在地優質肉品，經過嚴格的品質把關，確保每一口都是最純淨的美味。
+                        </p>
+                        <p class="mb-4">
+                            使用低溫烘焙技術，完整保留肉品的營養成分與天然風味，同時達到適當的含水量，
+                            讓您的毛孩享受到既美味又健康的零食。
+                        </p>
+                        <h3 class="text-xl font-bold mt-6 mb-3">適用對象</h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>適合所有年齡層的狗狗</li>
+                            <li>挑食的毛孩也會愛上的美味</li>
+                            <li>訓練獎勵的最佳選擇</li>
+                            <li>增進主人與寵物互動的好幫手</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 相關商品推薦 -->
+        <div class="mt-16">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                <i class="fas fa-heart text-warm-orange"></i>
+                你可能也喜歡
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 推薦商品卡片 (簡化版) -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition">
+                    <img src="https://via.placeholder.com/300x300" alt="推薦商品" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 mb-2">推薦商品 1</h3>
+                        <p class="text-sky-blue font-bold text-xl">NT$ 199</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 固定購買按鈕 (滾動時顯示) -->
+    <div class="sticky-buy-btn" id="stickyBuyBtn">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">手工鮮肉零食 雞肉條</p>
+                    <p class="text-2xl font-bold text-sky-blue">NT$ 299</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="px-8 py-3 bg-warm-orange text-white rounded-xl font-bold hover:shadow-lg transition">
+                        加入購物車
+                    </button>
+                    <button class="px-8 py-3 bg-sky-blue text-white rounded-xl font-bold hover:shadow-lg transition">
+                        立即購買
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api-client.js"></script>
+    <script>
+        // 圖片切換
+        document.querySelectorAll('.image-gallery-thumb').forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                document.querySelectorAll('.image-gallery-thumb').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('mainImage').src = this.querySelector('img').src.replace('150x150', '600x600');
+            });
+        });
+        
+        // 數量控制
+        function increaseQuantity() {
+            const input = document.getElementById('quantity');
+            input.value = Math.min(parseInt(input.value) + 1, 99);
+        }
+        
+        function decreaseQuantity() {
+            const input = document.getElementById('quantity');
+            input.value = Math.max(parseInt(input.value) - 1, 1);
+        }
+        
+        // 固定購買按鈕顯示/隱藏
+        window.addEventListener('scroll', function() {
+            const btn = document.getElementById('stickyBuyBtn');
+            if (window.scrollY > 800) {
+                btn.classList.add('show');
+            } else {
+                btn.classList.remove('show');
+            }
+        });
+        
+        // Tab 切換
+        function showTab(tabName) {
+            // 實作 tab 切換邏輯
+            console.log('切換到:', tabName);
+        }
+        
+        // 載入商品詳情
+        async function loadProductDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            
+            if (productId) {
+                try {
+                    const response = await window.ApiClient.get(`/products/${productId}`);
+                    if (response.success) {
+                        renderProduct(response.data.product);
+                    }
+                } catch (error) {
+                    console.error('載入商品失敗:', error);
+                }
+            }
+        }
+        
+        function renderProduct(product) {
+            document.getElementById('productName').textContent = product.name;
+            // 更新其他商品資訊...
+        }
+        
+        // 頁面載入時執行
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProductDetail();
+        });
+    </script>
+</body>
+</html>

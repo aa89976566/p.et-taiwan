@@ -3,780 +3,841 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="匠寵 - 產品詳情頁面">
-    <title>產品詳情 - 匠寵</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    
-    <!-- Local Cart System -->
-    <script src="js/local-cart.js"></script>
-    
-    <!-- Tailwind Config -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#FF6B6B',
-                        secondary: '#4ECDC4',
-                        accent: '#FFD93D',
-                        dark: '#2C3E50',
-                        light: '#F7F9FC'
-                    },
-                    fontFamily: {
-                        'sans': ['Nunito', 'Noto Sans TC', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    
+    <title>商品詳情 - 匠寵嚴選</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        * { font-family: 'Nunito', 'Noto Sans TC', sans-serif; }
-        
-        .product-image-main {
-            transition: transform 0.3s ease;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .product-image-main:hover {
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #fff5f5 0%, #ffe8e8 50%, #ffd4d4 100%);
+            min-height: 100vh;
+        }
+        
+        /* 頂部導航 */
+        .top-nav {
+            background: #fff;
+            padding: 16px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .back-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #f5f5f5;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #e8f5e3;
+            transform: translateX(-2px);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #8bc34a 0%, #558b2f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .cart-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #f5f5f5;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .cart-btn:hover {
+            background: #e8f5e3;
             transform: scale(1.05);
         }
         
-        .thumbnail {
-            transition: all 0.3s ease;
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 6px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        
+        /* 商品主區域 */
+        .product-main {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.12);
+            margin-bottom: 32px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            padding: 48px;
+        }
+        
+        /* 圖片區 */
+        .image-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .main-image {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 24px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fff8f8 0%, #ffe8e8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.1);
+        }
+        
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .main-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* 商品資訊區 */
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #fff;
+            width: fit-content;
+            box-shadow: 0 2px 12px rgba(255, 154, 158, 0.3);
+        }
+        
+        .product-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            line-height: 1.5;
+            letter-spacing: 0.5px;
+        }
+        
+        .price-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 24px;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 107, 107, 0.15);
+        }
+        
+        .current-price {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #f57c00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .old-price {
+            font-size: 24px;
+            font-weight: 600;
+            color: #999;
+            text-decoration: line-through;
+        }
+        
+        .discount-badge {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 12px;
+        }
+        
+        .product-description {
+            font-size: 15px;
+            line-height: 1.9;
+            color: #555;
+            padding: 24px;
+            background: linear-gradient(135deg, #fff8f8 0%, #fff 100%);
+            border-radius: 16px;
+            border-left: 4px solid #ff9a9e;
+        }
+        
+        .quantity-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .quantity-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .quantity-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: #f5f5f5;
             cursor: pointer;
+            font-size: 20px;
+            font-weight: 700;
+            color: #555;
+            transition: all 0.2s ease;
         }
-        .thumbnail:hover {
-            transform: scale(1.1);
-            border-color: #FF6B6B;
+        
+        .quantity-btn:hover {
+            background: #8bc34a;
+            color: #fff;
         }
-        .thumbnail.active {
-            border-color: #FF6B6B;
-            border-width: 3px;
+        
+        .quantity-display {
+            width: 60px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            background: #fff;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .add-to-cart-btn {
+            flex: 1;
+            padding: 18px 32px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255, 154, 158, 0.35);
+        }
+        
+        .add-to-cart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 154, 158, 0.45);
+        }
+        
+        .add-to-cart-btn:active {
+            transform: translateY(0);
+        }
+        
+        .buy-now-btn {
+            flex: 1;
+            padding: 18px 32px;
+            border: 2px solid #ff9a9e;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #ff6b6b;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .buy-now-btn:hover {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #fff;
+            transform: translateY(-3px);
+            border-color: transparent;
+        }
+        
+        /* 詳細資訊區 */
+        .details-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 32px;
+            padding: 48px;
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.12);
+            backdrop-filter: blur(10px);
+        }
+        
+        .details-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 3px solid #ff9a9e;
+        }
+        
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .spec-item {
+            display: flex;
+            padding: 18px;
+            background: linear-gradient(135deg, #fff8f8 0%, #fff 100%);
+            border-radius: 16px;
+            gap: 12px;
+            border: 1px solid rgba(255, 154, 158, 0.15);
+        }
+        
+        .spec-label {
+            font-weight: 700;
+            color: #555;
+            min-width: 100px;
+        }
+        
+        .spec-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .features-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 18px;
+            background: linear-gradient(135deg, #fff8f8 0%, #fff 100%);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 154, 158, 0.1);
+        }
+        
+        .feature-item:hover {
+            background: linear-gradient(135deg, #ffe8e8 0%, #fff5f5 100%);
+            transform: translateX(8px);
+            border-color: rgba(255, 154, 158, 0.3);
+        }
+        
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(255, 154, 158, 0.3);
+        }
+        
+        .feature-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        /* 響應式 */
+        @media (max-width: 968px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                padding: 32px;
+            }
+            
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .product-title {
+                font-size: 20px;
+            }
+            
+            .current-price {
+                font-size: 28px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .product-grid {
+                padding: 24px;
+            }
+            
+            .details-section {
+                padding: 24px;
+            }
+            
+            .product-title {
+                font-size: 18px;
+            }
+        }
+        
+        /* 載入中狀態 */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            font-size: 18px;
+            color: #999;
+        }
+        
+        /* 錯誤狀態 */
+        .error-state {
+            text-align: center;
+            padding: 64px 32px;
+        }
+        
+        .error-icon {
+            font-size: 64px;
+            color: #ff6b6b;
+            margin-bottom: 24px;
+        }
+        
+        .error-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 16px;
+        }
+        
+        .error-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 32px;
+        }
+        
+        .back-to-products-btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #8bc34a 0%, #689f38 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-products-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 195, 74, 0.3);
         }
     </style>
 </head>
-<body class="bg-white">
+<body>
     <!-- 頂部導航 -->
-    <nav class="fixed top-0 w-full bg-white shadow-md z-50 transition-all duration-300" id="navbar">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center space-x-2">
-                    
-                    <span class="text-2xl font-bold text-dark">匠寵</span>
-                </a>
-                
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="products.html" class="text-dark hover:text-primary transition">產品系列</a>
-                    <a href="index.html#crowdfunding" class="text-dark hover:text-primary transition">集資項目</a>
-                    <a href="index.html#quiz" class="text-dark hover:text-primary transition">找適合方案</a>
-                    <a href="index.html#jar-exchange" class="text-dark hover:text-primary transition">換罐計畫</a>
-                    <a href="index.html#subscription" class="text-dark hover:text-primary transition">訂閱方案</a>
-                    <a href="index.html#about" class="text-dark hover:text-primary transition">關於我們</a>
-                    
-                    <!-- 購物車 -->
-                    <div class="flex items-center space-x-3">
-                        <button onclick="toggleCart()" class="relative text-dark hover:text-primary transition">
-                            <i class="fas fa-shopping-cart text-xl"></i>
-                            <span id="cart-badge" class="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">
-                                0
-                            </span>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Mobile Menu Button -->
-                <button onclick="toggleMobileMenu()" class="md:hidden text-dark">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-            </div>
-            
-            <!-- Mobile Menu -->
-            <div class="hidden md:hidden mt-4 pb-4" id="mobile-menu">
-                <a href="products.html" class="block py-2 text-dark hover:text-primary transition">產品系列</a>
-                <a href="index.html#crowdfunding" class="block py-2 text-dark hover:text-primary transition">集資項目</a>
-                <a href="index.html#quiz" class="block py-2 text-dark hover:text-primary transition">找適合方案</a>
-                <a href="index.html#jar-exchange" class="block py-2 text-dark hover:text-primary transition">換罐計畫</a>
-                <a href="index.html#subscription" class="block py-2 text-dark hover:text-primary transition">訂閱方案</a>
-                <a href="index.html#about" class="block py-2 text-dark hover:text-primary transition">關於我們</a>
-            </div>
+    <div class="top-nav">
+        <div class="nav-left">
+            <button class="back-btn" onclick="goBack()">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <span class="logo">匠寵</span>
         </div>
-    </nav>
-    
-    <!-- 導航欄佔位 -->
-    <div class="h-20"></div>
-
-    <!-- 麵包屑導航 -->
-    <div class="bg-white border-b border-gray-200 py-4">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center space-x-2 text-sm">
-                <a href="index.html" class="text-gray-600 hover:text-primary transition">首頁</a>
-                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                <a href="products.html" class="text-gray-600 hover:text-primary transition">產品列表</a>
-                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                <span id="breadcrumb-category" class="text-gray-600">產品分類</span>
-                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                <span id="breadcrumb-product" class="text-primary font-semibold">產品名稱</span>
-            </div>
-        </div>
+        <button class="cart-btn" onclick="goToCart()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="cart-badge" id="cartCount">0</span>
+        </button>
     </div>
 
-    <!-- 產品詳情內容 -->
-    <div class="container mx-auto px-4 py-8" id="product-detail-container">
-        <!-- 載入中 -->
-        <div id="loading" class="text-center py-20">
-            <i class="fas fa-spinner text-4xl text-primary animate-spin"></i>
-            <p class="mt-4 text-gray-600">載入中...</p>
-        </div>
-        
-        <!-- 產品不存在 -->
-        <div id="not-found" class="hidden text-center py-20">
-            <i class="fas fa-exclamation-triangle text-6xl text-gray-300 mb-4"></i>
-            <h2 class="text-2xl font-bold text-gray-600 mb-2">找不到產品</h2>
-            <p class="text-gray-500 mb-6">請檢查產品 ID 是否正確</p>
-            <a href="products.html" class="inline-block bg-primary text-white px-6 py-3 rounded-lg hover:bg-red-600 transition">
-                <i class="fas fa-arrow-left mr-2"></i>返回產品列表
-            </a>
-        </div>
-        
-        <!-- 產品內容（動態生成） -->
-        <div id="product-content" class="hidden">
-            <!-- 產品主區 -->
-            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-8">
-                <div class="grid md:grid-cols-2 gap-8">
-                    <!-- 左側：產品圖片 -->
-                    <div>
-                        <div class="mb-4">
-                            <img id="product-main-image" src="" alt="" class="w-full rounded-lg product-image-main">
-                        </div>
-                        <div id="product-thumbnails" class="grid grid-cols-5 gap-2">
-                            <!-- 縮圖將動態生成 -->
-                        </div>
-                    </div>
-                    
-                    <!-- 右側：產品資訊 -->
-                    <div>
-                        <div class="mb-4">
-                            <div id="product-tags" class="flex flex-wrap gap-2 mb-3">
-                                <!-- 標籤將動態生成 -->
-                            </div>
-                            <h1 id="product-title" class="text-3xl md:text-4xl font-bold text-dark mb-2"></h1>
-                            <div class="flex items-center space-x-4 mb-4">
-                                <div class="flex items-center">
-                                    <div id="product-rating" class="flex text-yellow-400 mr-2"></div>
-                                    <span id="product-rating-text" class="text-gray-600"></span>
-                                </div>
-                                <span class="text-gray-400">|</span>
-                                <span id="product-sales" class="text-gray-600"></span>
-                                <span class="text-gray-400">|</span>
-                                <span id="product-reviews" class="text-gray-600"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="border-t border-b border-gray-200 py-6 mb-6">
-                            <div class="flex items-baseline space-x-3 mb-2">
-                                <span id="product-price" class="text-4xl font-bold text-primary"></span>
-                                <span id="product-original-price" class="text-2xl text-gray-400 line-through"></span>
-                            </div>
-                            <p id="product-description" class="text-gray-700 leading-relaxed"></p>
-                        </div>
-                        
-                        <!-- 規格選擇（如果有） -->
-                        <div id="product-specs" class="mb-6 hidden">
-                            <label class="block text-gray-700 font-semibold mb-3">選擇規格：</label>
-                            <div id="specs-options" class="flex flex-wrap gap-3">
-                                <!-- 規格選項將動態生成 -->
-                            </div>
-                        </div>
-                        
-                        <!-- 數量選擇 -->
-                        <div class="mb-6">
-                            <label class="block text-gray-700 font-semibold mb-3">數量：</label>
-                            <div class="flex items-center border-2 border-gray-300 rounded-lg w-fit">
-                                <button onclick="decreaseQuantity()" class="px-4 py-2 hover:bg-gray-100 transition">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input type="number" id="product-quantity" value="1" min="1" 
-                                       class="w-20 text-center border-x-2 border-gray-300 py-2 focus:outline-none">
-                                <button onclick="increaseQuantity()" class="px-4 py-2 hover:bg-gray-100 transition">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- 操作按鈕 -->
-                        <div class="flex space-x-4">
-                            <button onclick="addToCart()" class="flex-1 bg-gradient-to-r from-primary to-secondary text-white px-6 py-4 rounded-lg font-bold hover:shadow-lg transition">
-                                <i class="fas fa-shopping-cart mr-2"></i>加入購物車
-                            </button>
-                            <button onclick="buyNow()" class="flex-1 bg-orange-500 text-white px-6 py-4 rounded-lg font-bold hover:bg-orange-600 transition">
-                                <i class="fas fa-bolt mr-2"></i>立即購買
-                            </button>
-                        </div>
-                        
-                        <!-- 服務說明 -->
-                        <div class="mt-6 space-y-3 pt-6 border-t border-gray-200">
-                            <div class="flex items-center text-sm text-gray-600">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span>庫存充足</span>
-                            </div>
-                            <div class="flex items-center text-sm text-gray-600">
-                                <i class="fas fa-truck text-blue-500 mr-2"></i>
-                                <span>免運費（滿 NT$1,000）</span>
-                            </div>
-                            <div class="flex items-center text-sm text-gray-600">
-                                <i class="fas fa-shield-alt text-purple-500 mr-2"></i>
-                                <span>七天鑑賞期</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 產品詳細資訊 -->
-            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                <h2 class="text-2xl font-bold text-dark mb-6">產品詳細資訊</h2>
-                <div id="product-details" class="prose max-w-none">
-                    <!-- 詳細資訊將動態生成 -->
-                </div>
-            </div>
+    <!-- 主容器 -->
+    <div class="container">
+        <div id="productContent">
+            <div class="loading">載入中...</div>
         </div>
     </div>
 
     <script>
-        // 產品數據（對象格式，以 ID 為 key）
-        const PRODUCTS = {
-            'chicken-crisp': {
-                id: 'chicken-crisp',
-                name: '手作雞肉脆片',
-                category: 'snacks',
-                categoryName: '手作零食',
-                price: 180,
-                originalPrice: 250,
-                images: [
-                    'https://picsum.photos/800/800?random=11',
-                    'https://picsum.photos/800/800?random=21',
-                    'https://picsum.photos/800/800?random=31',
-                    'https://picsum.photos/800/800?random=41',
-                    'https://picsum.photos/800/800?random=51'
-                ],
-                description: '精選台灣雞胸肉，低溫烘烤保留營養，富含蛋白質，適合訓練獎勵。採用新鮮雞胸肉，經過精心處理，保留食材的天然風味和營養價值。',
-                rating: 4.8,
-                sales: 856,
-                reviews: 128,
-                tags: ['熱銷', '推薦'],
-                stock: 999,
-                specs: ['100g', '200g', '500g']
+        // 商品數據（與 products.html 保持一致，增強版本包含完整成分、好處、品牌故事）
+        const allProducts = [
+            { 
+                id: 1, 
+                name: '台灣出貨 可水洗 冰絲寵物涼墊', 
+                category: '匠寵嚴選', 
+                price: 50, 
+                image: 'https://sspark.genspark.ai/cfimages?u1=Y8aJlnLk%2BUEMqafbbtpFUACw%2BoMa1qrnMLeDG3Lrv%2BjMFaF15EHEkJsoRAEodkzqTdpLTGVeLMirUbHirsUG9fnWpxUzUl3qgpbGIf7PMO4RR2L5LUL3989P%2FANeCy1R9LRlXl3Y1ErCXIEYeFB88N0wXBbLJA6E6pRxk70oyAIS6G4HdB4w0b3NDxB%2FcqJLsbxZoG26OQLpZShPh%2F%2FTkW4PSfEQkR%2Fp6mydhDXDLoQIAJL7zGbwIzCqCvJhh01bRFrAz2fL&u2=0HIO8yOymc4xJqiO&width=1024', 
+                pet: 'all', 
+                description: '夏季必備！台灣出貨的冰絲材質寵物涼墊，可水洗設計讓清潔更方便。透氣涼爽的材質能有效降溫，讓您的寵物在炎熱夏天也能保持舒適。', 
+                features: ['冰絲材質涼感舒適', '可水洗易於清潔', '防滑底部設計', '多種尺寸可選', '台灣快速出貨'],
+                ingredients: ['100% 冰絲聚酯纖維', '防滑橡膠底層', '透氣網格夾層', '環保無毒染料'],
+                keyBenefits: ['降低體溫：冰絲材質可立即降低寵物體表溫度2-3度', '預防中暑：有效幫助寵物在炎熱天氣保持涼爽舒適', '易於清潔：可機洗材質，清潔方便衛生', '耐用持久：高品質纖維，耐磨耐用不易變形'],
+                usage: '將涼墊平鋪於寵物經常休息的位置，定期清洗保持衛生。建議每週清洗一次，可機洗或手洗，自然晾乾即可。',
+                brandStory: '匠寵嚴選專注於為寵物提供高品質、實用的生活用品。我們從全球精選優質產品，經過嚴格品質把關，確保每一件商品都能為您的毛孩帶來最好的照顧。'
             },
-            'sweet-potato': {
-                id: 'sweet-potato',
-                name: '地瓜餅乾',
-                category: 'snacks',
-                categoryName: '手作零食',
-                price: 150,
-                originalPrice: 200,
-                images: [
-                    'https://picsum.photos/800/800?random=12',
-                    'https://picsum.photos/800/800?random=22',
-                    'https://picsum.photos/800/800?random=32',
-                    'https://picsum.photos/800/800?random=42',
-                    'https://picsum.photos/800/800?random=52'
-                ],
-                description: '天然地瓜手工製作，無添加糖分，富含膳食纖維，健康美味。選用台灣優質地瓜，經過低溫烘烤，保留地瓜的天然甜味和營養。',
-                rating: 4.6,
-                sales: 623,
-                reviews: 95,
-                tags: ['新品'],
-                stock: 999,
-                specs: ['100g', '200g']
+            { 
+                id: 2, 
+                name: '預購 單片精緻包裝 寵物手作肉乾', 
+                category: '匠寵嚴選', 
+                price: 79, 
+                image: 'https://sspark.genspark.ai/cfimages?u1=2wqDcTGiijNxMmvvp8l2ZafKDVy3fyfzIIp0oQLU3%2FO0%2FU3OZkdUG5sYKi9yvNKKiN2hTCc0XXQkVstDfBjh93oMlKQn7DNYUUgWVK2tATdls0oCbOL%2Brkxat%2BLx%2Fhl%2Bwy7ym0vnDNm94YCL6vu5Q9c4EpCp94joXmNATpFioieyT9CeoWZbg2ktLxa6F8j0npMFUNHbl%2FmNkAj2JnHVEPxyYjDr1Aq90cPzknYPaL1gktZY7xMTc4aoepYldclBQgm69muB&u2=K3%2FL%2BkWWBe4gPww7&width=1024', 
+                pet: 'dog', 
+                description: '精選新鮮雞肉手作而成的寵物肉乾，單片精緻包裝方便攜帶。無添加防腐劑，保留食材原始風味，是狗狗最愛的健康零食。', 
+                features: ['100%真實雞肉製作', '無防腐劑添加', '單片獨立包裝', '方便攜帶外出', '適口性極佳'],
+                ingredients: ['新鮮雞胸肉 95%', '天然甘油 3%', '維生素E 1%', '天然抗氧化劑 1%'],
+                keyBenefits: ['高蛋白質：每100克含蛋白質65克以上，提供狗狗成長所需營養', '低脂肪：脂肪含量低於5%，適合需要控制體重的狗狗', '增強免疫：富含維生素E，幫助提升免疫系統功能', '健康零食：無人工添加物，是訓練和獎勵的最佳選擇'],
+                usage: '適合作為訓練獎勵或日常零食。建議每日餵食量不超過狗狗體重的10%。開封後請密封保存，並於7日內食用完畢。',
+                brandStory: '我們堅持使用人類食用級別的新鮮食材，透過低溫烘乾技術保留最多營養。每一片肉乾都經過嚴格品質檢驗，讓您的狗狗吃得健康、吃得安心。'
             },
-            'beef-jerky': {
-                id: 'beef-jerky',
-                name: '牛肉乾',
-                category: 'snacks',
-                categoryName: '手作零食',
-                price: 280,
-                originalPrice: 350,
-                images: [
-                    'https://picsum.photos/800/800?random=13',
-                    'https://picsum.photos/800/800?random=23',
-                    'https://picsum.photos/800/800?random=33',
-                    'https://picsum.photos/800/800?random=43',
-                    'https://picsum.photos/800/800?random=53'
-                ],
-                description: '紐西蘭草飼牛肉，慢火烘烤，口感Q彈，富含優質蛋白質。採用頂級紐西蘭草飼牛肉，經過特殊工藝處理，保留牛肉的鮮美和營養。',
-                rating: 4.9,
-                sales: 1234,
-                reviews: 201,
-                tags: ['熱銷', '限時優惠'],
-                stock: 999,
-                specs: ['100g', '200g', '500g']
+            { 
+                id: 3, 
+                name: '預購 真空袋量販包 超大雞排乾', 
+                category: '匠寵嚴選', 
+                price: 379, 
+                image: 'https://sspark.genspark.ai/cfimages?u1=dp1O6sJC8dVwZIBQaFk8J45YuaLt8YY8tmBy7A2EZGpO5FlQQ811hxjURN4fy6kmMNX3C5s23oMewaVivgGAo%2FIr86Y0GcACpB8Ec6q%2BN6UUP2MjRDHmZPQmnFAh3yeHaxlADeoPbmqxHqXx4MLmyq%2FMyqYzW%2FUug3K8nGPys2IzQSFNBp8Zegc84mecWoyFuCswsqnV8w5UOENDFlnJVSMOpkv6YhidmTmHPMUJ7WDIy8OEGrTXfufuWxoHTxOBdauBouz%2F&u2=R8R0whMfe8F4gS4F&width=1024', 
+                pet: 'dog', 
+                description: '超值量販包！整片雞排低溫烘乾製成，保留完整營養。真空包裝確保新鮮度，大容量適合多寵家庭。', 
+                features: ['超大份量經濟實惠', '真空包裝保鮮', '整片雞排製作', '低溫烘乾工藝', '富含蛋白質'],
+                ingredients: ['去骨雞腿肉 98%', '天然海鹽 1%', '迷迭香萃取物 1%（天然防腐）'],
+                keyBenefits: ['經濟實惠：大容量包裝，平均每克價格最優惠', '營養完整：整片雞排含豐富蛋白質、維生素B群及礦物質', '真空保鮮：開封前可保存12個月，鎖住新鮮度', '適合多犬：大容量適合多寵物家庭或大型犬'],
+                usage: '可直接餵食或撕成小塊作為訓練零食。建議根據狗狗體重調整份量：小型犬每日10-20克，中型犬20-40克，大型犬40-80克。開封後請密封冷藏，於30日內食用完畢。',
+                brandStory: '匠寵嚴選與台灣在地食品工廠合作，採用符合人類食品標準的生產線製作寵物零食。我們相信，只有給寵物吃得和人一樣好，才能真正照顧好他們的健康。'
             },
-            'puzzle-toy': {
-                id: 'puzzle-toy',
-                name: '益智拼圖玩具',
-                category: 'toys',
-                categoryName: '益智玩具',
-                price: 450,
-                originalPrice: 600,
-                images: [
-                    'https://picsum.photos/800/800?random=14',
-                    'https://picsum.photos/800/800?random=24',
-                    'https://picsum.photos/800/800?random=34',
-                    'https://picsum.photos/800/800?random=44',
-                    'https://picsum.photos/800/800?random=54'
-                ],
-                description: '基於維也納大學研究，訓練狗狗智力，延緩老化，增進親子互動。設計精巧，難度適中，適合各年齡層的狗狗使用。',
-                rating: 4.7,
-                sales: 432,
-                reviews: 67,
-                tags: ['推薦'],
-                stock: 999,
-                specs: ['初級', '中級', '高級']
-            },
-            'snuffle-mat': {
-                id: 'snuffle-mat',
-                name: '嗅聞墊',
-                category: 'toys',
-                categoryName: '益智玩具',
-                price: 380,
-                originalPrice: 500,
-                images: [
-                    'https://picsum.photos/800/800?random=15',
-                    'https://picsum.photos/800/800?random=25',
-                    'https://picsum.photos/800/800?random=35',
-                    'https://picsum.photos/800/800?random=45',
-                    'https://picsum.photos/800/800?random=55'
-                ],
-                description: '刺激狗狗嗅覺，消耗精力，減緩焦慮，適合各年齡層。採用環保材質製作，安全無毒，易於清洗。',
-                rating: 4.5,
-                sales: 345,
-                reviews: 52,
-                tags: ['新品'],
-                stock: 999,
-                specs: ['小', '中', '大']
-            },
-            'memory-game': {
-                id: 'memory-game',
-                name: '記憶按鈕組',
-                category: 'toys',
-                categoryName: '益智玩具',
-                price: 580,
-                originalPrice: 750,
-                images: [
-                    'https://picsum.photos/800/800?random=16',
-                    'https://picsum.photos/800/800?random=26',
-                    'https://picsum.photos/800/800?random=36',
-                    'https://picsum.photos/800/800?random=46',
-                    'https://picsum.photos/800/800?random=56'
-                ],
-                description: '訓練狗狗記憶力與反應，互動性強，增進人犬關係。適合訓練和遊戲，讓狗狗在玩樂中學習。',
-                rating: 4.8,
-                sales: 567,
-                reviews: 89,
-                tags: ['熱銷', '推薦'],
-                stock: 999,
-                specs: ['基礎版', '進階版']
-            },
-            'subscription-basic': {
-                id: 'subscription-basic',
-                name: '基礎訂閱方案',
-                category: 'subscription',
-                categoryName: '訂閱方案',
-                price: 699,
-                originalPrice: 0,
-                images: [
-                    'https://picsum.photos/800/800?random=17',
-                    'https://picsum.photos/800/800?random=27',
-                    'https://picsum.photos/800/800?random=37',
-                    'https://picsum.photos/800/800?random=47',
-                    'https://picsum.photos/800/800?random=57'
-                ],
-                description: '每月配送 2 罐新鮮營養罐頭，滿足毛孩基本營養需求。包含多種口味，營養均衡，適合日常餵食。',
-                rating: 4.6,
-                sales: 234,
-                reviews: 38,
-                tags: [],
-                stock: 999,
-                specs: []
-            },
-            'subscription-premium': {
-                id: 'subscription-premium',
-                name: '尊享訂閱方案',
-                category: 'subscription',
-                categoryName: '訂閱方案',
-                price: 1299,
-                originalPrice: 0,
-                images: [
-                    'https://picsum.photos/800/800?random=18',
-                    'https://picsum.photos/800/800?random=28',
-                    'https://picsum.photos/800/800?random=38',
-                    'https://picsum.photos/800/800?random=48',
-                    'https://picsum.photos/800/800?random=58'
-                ],
-                description: '每月配送 4 罐 + 零食 + 玩具，全方位照顧毛孩健康。包含營養罐頭、手作零食和益智玩具，一次滿足所有需求。',
-                rating: 4.9,
-                sales: 456,
-                reviews: 72,
-                tags: ['推薦', '熱銷'],
-                stock: 999,
-                specs: []
-            }
-        };
-
-        let currentProduct = null;
-        let selectedImageIndex = 0;
-        let selectedSpec = null;
-
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📦 產品詳情頁初始化...');
-            
-            // 從 URL 讀取產品 ID
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('id');
-            
-            if (!productId) {
-                showNotFound();
-                return;
-            }
-            
-            // 載入產品數據
-            loadProduct(productId);
-            
-            // 更新購物車徽章
-            updateCartBadge();
-            
-            // 監聽購物車更新事件
-            window.addEventListener('cartUpdated', function() {
-                updateCartBadge();
-            });
-        });
-
-        // 載入產品
-        function loadProduct(productId) {
-            currentProduct = PRODUCTS[productId];
-            
-            if (!currentProduct) {
-                console.error('找不到產品:', productId);
-                showNotFound();
-                return;
-            }
-            
-            console.log('✅ 載入產品:', currentProduct);
-            
-            // 隱藏載入中，顯示產品內容
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('product-content').classList.remove('hidden');
-            
-            // 渲染產品資訊
-            renderProduct();
-        }
-
-        // 渲染產品資訊
+            { id: 4, name: '寵物手工雨衣 寵物透明雨衣', category: '匠寵嚴選', price: 520, oldPrice: 680, image: 'https://sspark.genspark.ai/cfimages?u1=oG1AJjmh21ZDbCKmxVwY2OxWepRsBfcIF1Jm33Vr82qdZG3plX%2Bn90W1voPMtZoNyI8EV18DL%2BG3S3UDh9n2xgkmFoGK5Q4YVRgGdbEKyxou1Q9FzOI6ghfnowW3SwO035aeppNIcHBscLcX3xxU8FlfFoZXHUls3kOzB0pvw5UjzSfX%2B51CteG6NCbO%2ByvQNOzg6%2FfKa%2Fic%2F89Z8O5kpApVWxnfjjqfz%2Fr5Vtp%2BJHhkzY4lWkKfm%2B1y03z0%2BdqEbwcQ43Bt&u2=tS4hhu%2FqiSzmaqpp&width=1024', pet: 'all', description: '雨天必備！透明材質雨衣，讓您在雨天也能看見寵物狀態。連帽設計完整保護，防水效果極佳。', features: ['透明材質設計', '連帽完整保護', '防水效果極佳', '輕便易穿脫', '多種尺寸選擇'] },
+            { id: 5, name: '狗狗行軍床 可拆洗 折疊床', category: '匠寵嚴選', price: 320, oldPrice: 399, image: 'https://sspark.genspark.ai/cfimages?u1=3SQVMNg9StoQLlPcefq4C0q6Pqn029mvY0ncfwOMx8l50RmxS9nfZB1t%2BkatbhcBrnvCiwC%2FlKXBycxpP%2BoKHKptzAFg6sT%2FdM0SyIsIO8Efe7zDdSyS82WFygpuYK1vTQ3jo6f%2FIHHHeo9pUmm46XCafXbu9VQSIsEan1qpa08Vrsc%2BnKBiyRlZjaf9IZP1op9ITMFQhQARm9qTNWQ4UpygwBw1RBP%2Fgud89Dw27gU4bqKMIc4hjpgW%2FW1fdhpetwOAIzu1&u2=KClw2VDgEG1VJMMI&width=1024', pet: 'dog', description: '高架設計的狗狗行軍床，透氣舒適不悶熱。可拆洗設計方便清潔，折疊收納不佔空間。', features: ['高架透氣設計', '可拆洗布套', '折疊收納方便', '耐用鋼架結構', '適合中大型犬'] },
+            { id: 6, name: '貓砂盆 特大號防外濺貓廁所', category: '匠寵嚴選', price: 259, image: 'https://sspark.genspark.ai/cfimages?u1=%2BkEBB0SEstBVovjgqbZXSwIA3OoRIepNhttuZ9cAgUmV0IdqI8tvsKmpAk1pOwW55NmzOt%2FQvLu8zKwv%2FbgKIxdhAsdySJ5ttc1xUka%2BAJGDEiDFZqvENSJJ04%2BSvsKRaRjdjNsfdhuDzMPn7LHTiw71DW4nsQtGvBcNXEPT0nUqhhxqew3zBHNGEoAy6LcEsAKpesoFAjDZMhk2zg4RlZM11LwPZqK8oIOirMpPOiGSEaMX4x%2BrhJ7tulcuG6qggVKgeT2Z&u2=wyHQHn1tc7al%2B3M7&width=1024', pet: 'cat', description: '超大空間的貓砂盆，高邊設計有效防止貓砂外濺。附贈貓砂鏟，清潔更方便。', features: ['超大活動空間', '高邊防外濺設計', '易於清潔', '附贈貓砂鏟', '適合大型貓咪'] },
+            { id: 7, name: '木天蓼棒 貓咪磨牙棒', category: '匠寵嚴選', price: 15, image: 'https://sspark.genspark.ai/cfimages?u1=%2FdGfxp2%2BUZNYt9PCiV%2BBy3k5yBSVzMWjLXqiEXt61oJxZQSyW9%2FgF6%2BJsiPos8M29b7Z%2FSQ4ejUSNqH%2BpFquhNsCceK%2BjOk1nRsfnLEi55nDtLLMeSGGr%2BjbPQqfwRMuBHx5nNNFdfKv28huMscZY92uPXLWMztOM8GljTsq1Koc1v%2BrM0O5hgwUZjoxJi0LSWkCh71DQHxNYV5dy807Ekcm9K9Y4a2o%2F5FbCakujWZu5eXudg6Ha8nye7HUFEAVjCxbMUJc&u2=lJgblMPxeUfrgajw&width=1024', pet: 'cat', description: '天然木天蓼材質磨牙棒，幫助貓咪清潔牙齒。獨特香氣吸引貓咪，讓磨牙變成樂趣。', features: ['天然木天蓼材質', '幫助清潔牙齒', '吸引貓咪注意', '安全無毒', '經濟實惠'] },
+            { id: 8, name: '台灣出貨 寵物洗腳泡沫', category: '匠寵嚴選', price: 65, image: 'https://sspark.genspark.ai/cfimages?u1=wpbse2umNgoxWU991tWMWyNTdr52z57J3KJ3DnJK7aigErCHNn7FjE82qxeNVl1PhqpF7yQ1g0HTKDP5sJcm7PLsEw1aR9UikHllAyx%2FYP5C8Shg5%2FU0MTlseu%2F%2Fz9jcQooqoC%2BypdEUIonOslWjPayZH2FrGoxgLQ56QgDsEJPgGVmwXXIDLCSMWPGr5rXxUfWyl%2Fe0rVh9URdEhlgfgTrCDt7Vor8UXTT1n%2BUBCo9V1BsWXdqWC%2FAAZaYncwAyC5kS2KtQ&u2=TaglG9MqDfbLGj57&width=1024', pet: 'all', description: '外出散步後必備！免沖洗泡沫設計，輕鬆清潔寵物腳掌。溫和配方不刺激，除臭效果佳。', features: ['免沖洗配方', '泡沫質地好用', '溫和不刺激', '除臭效果佳', '攜帶方便'] },
+            { id: 9, name: '寵物床 寵物涼墊 涼爽寵物床', category: '匠寵嚴選', price: 100, oldPrice: 125, image: 'https://sspark.genspark.ai/cfimages?u1=qoU%2BIxjXmRaZaSSvb%2FbuUFX9pE%2F2IZhxF9wBzKNSCZxTRAtszENUvplXLSPk9VgnLC%2BdD9v8UWI27DDYXxcHLASVKa0vjae4et%2FpM21AqlMXdRY6VLGDBLkjTR9rh5rxgH1grQnraEJ9jHdw0J8O%2BjE8aDqNMLVuTzHhDokEqfcG3iYfp8Z8Z9AhrW1RPSdPfAfFJxcJJdgOg4wVC%2BlK5Y3u%2FxOl9aY4OX1vybXjhKW0%2FIaXyImYw1V2A%2Fv5no47yOxRPnQf&u2=bR%2BBQqfBV6vQlgnG&width=1024', pet: 'all', description: '四季適用的寵物床墊，夏天涼爽冬天溫暖。柔軟舒適的材質，給寵物最好的休息環境。', features: ['四季適用', '柔軟舒適材質', '易於清洗', '防滑底部', '多種尺寸'] },
+            { id: 10, name: '台灣出貨 寵物帳篷 通風迷你帳篷', category: '匠寵嚴選', price: 288, oldPrice: 359, image: 'https://sspark.genspark.ai/cfimages?u1=uRIy4z8kTkkKjQTMNc72M9L8d3VApL4sC4y%2BzYKrw4NOZqti4bkzygwJU7Nc92b9XaZk%2B8evjbbNICr20F3NsdWA9lqHr3wh54b4lDJbqcgpZQ%2F8R7LKtO4vvqAaxXaWw0Auel6J%2BajofssLmmVybYkesBAesDfoRPisly5R8yz%2BNgEXNPiYrA4kl6jg8rWoWrp5fQT2j%2BwQP62KgTWb8Lr3j2zaPIXPZ2fb1a%2Fxs6%2BmewbgoTy%2FuuANJLyL3akNEXVHgAXX&u2=Ng7jsUdCTXc5vJod&width=1024', pet: 'dog', description: '可愛的寵物專屬小帳篷，通風網眼設計不悶熱。輕便易組裝，室內外都適用。', features: ['通風網眼設計', '輕便易組裝', '室內外適用', '可折疊收納', '給寵物專屬空間'] },
+            { id: 11, name: '貓咪枕頭 貓咪靠枕 寵物護頸靠枕', category: '匠寵嚴選', price: 112, oldPrice: 159, image: 'https://sspark.genspark.ai/cfimages?u1=zeDoFM9Rzz%2FiZAgCBTX3Nf6QTrDfe0raXnxI3I38f2JzxbMGej7ANfcK%2FMb%2B8LglE7Rd1KTcDD3%2FDsg5Mjy3SV9%2BJilAQhdcrrtJ0XDMfInZZHxfYkX0gRWl7ipaLABtAKDqxTpSGrqv9JCmybVPXA6PbQQlJp%2BQF0hQfIwDLrnvXo1XXBCMBbHOqz%2FZXYSlqU3lUbSPPLkas47M8UWmuwwaBM72l3%2FV9XGsoqRUPREwtyEdo749FoQwMQtaCKnWML1w1FaC&u2=ZEr9Vda9jh9a4Xtk&width=1024', pet: 'cat', description: '人體工學設計的寵物護頸枕，柔軟舒適支撐頸部。可當枕頭也可當靠墊使用。', features: ['人體工學設計', '柔軟舒適', '護頸支撐', '多用途使用', '易於清洗'] },
+            { id: 12, name: '貓抓板 黃麻貓爬架 貓抓柱耐抓', category: '匠寵嚴選', price: 140, oldPrice: 279, image: 'https://sspark.genspark.ai/cfimages?u1=0OwUoyIMhXmN1MwaHrcZLrbXjsHJ8sNRSgrmAK8jcZhZ%2BmLNFZ2Z989%2FP1D1nEFnQBfbbeC912Vzv5aAWqYO%2BgtkLKt8uRUidf4ZApMBZPCpiaEpEix7iYcw7GQa6ajhfEDTN8RsAhFhN2s6lBrtPX%2FQqlHi6hAYF3N0UDbCJ5FYIGZBsF4PWJmhqkhhkk%2FSpz0Hr9cfYau4Wiwu8%2FE1RzM0pCBHT1t0qPLUf6kbYneZIi%2FtThldOemukpPBpnFHLTAhZm1g&u2=LXXrnJhwtfqEjQFR&width=1024', pet: 'cat', description: '天然黃麻材質貓抓板，耐抓耐磨。立式設計節省空間，滿足貓咪磨爪需求。', features: ['天然黃麻材質', '耐抓耐磨', '立式節省空間', '穩固不易倒', '保護家具'] },
+        ];
+        
+        // 從 URL 獲取商品 ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = parseInt(urlParams.get('id'));
+        
+        // 當前數量
+        let currentQuantity = 1;
+        
+        // 渲染商品詳情
         function renderProduct() {
-            if (!currentProduct) return;
+            const product = allProducts.find(p => p.id === productId);
+            const contentDiv = document.getElementById('productContent');
             
-            // 更新麵包屑
-            document.getElementById('breadcrumb-category').textContent = currentProduct.categoryName || '產品分類';
-            document.getElementById('breadcrumb-product').textContent = currentProduct.name;
-            
-            // 更新標題
-            document.getElementById('product-title').textContent = currentProduct.name;
-            
-            // 更新標籤
-            const tagsContainer = document.getElementById('product-tags');
-            tagsContainer.innerHTML = currentProduct.tags.map(tag => 
-                `<span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">${tag}</span>`
-            ).join('');
-            
-            // 更新評分
-            const rating = Math.floor(currentProduct.rating);
-            const ratingContainer = document.getElementById('product-rating');
-            ratingContainer.innerHTML = Array(5).fill(0).map((_, i) => 
-                i < rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>'
-            ).join('');
-            document.getElementById('product-rating-text').textContent = `${currentProduct.rating} 分`;
-            
-            // 更新銷售和評價
-            document.getElementById('product-sales').textContent = `已售 ${currentProduct.sales}`;
-            document.getElementById('product-reviews').textContent = `${currentProduct.reviews || 0} 則評價`;
-            
-            // 更新價格
-            document.getElementById('product-price').textContent = `NT$ ${currentProduct.price}`;
-            if (currentProduct.originalPrice > 0) {
-                document.getElementById('product-original-price').textContent = `NT$ ${currentProduct.originalPrice}`;
-                document.getElementById('product-original-price').classList.remove('hidden');
-            } else {
-                document.getElementById('product-original-price').classList.add('hidden');
-            }
-            
-            // 更新描述
-            document.getElementById('product-description').textContent = currentProduct.description;
-            
-            // 更新圖片
-            if (currentProduct.images && currentProduct.images.length > 0) {
-                document.getElementById('product-main-image').src = currentProduct.images[0];
-                document.getElementById('product-main-image').alt = currentProduct.name;
-                
-                // 渲染縮圖
-                const thumbnailsContainer = document.getElementById('product-thumbnails');
-                thumbnailsContainer.innerHTML = currentProduct.images.map((img, index) => 
-                    `<img src="${img}" alt="${currentProduct.name}" 
-                          class="thumbnail w-full h-20 object-cover rounded-lg border-2 ${index === 0 ? 'active' : 'border-gray-200'}"
-                          onclick="selectImage(${index})">`
-                ).join('');
-            } else if (currentProduct.image) {
-                // 如果只有單張圖片
-                document.getElementById('product-main-image').src = currentProduct.image;
-                document.getElementById('product-main-image').alt = currentProduct.name;
-                document.getElementById('product-thumbnails').innerHTML = '';
-            }
-            
-            // 更新規格（如果有）
-            if (currentProduct.specs && currentProduct.specs.length > 0) {
-                document.getElementById('product-specs').classList.remove('hidden');
-                const specsContainer = document.getElementById('specs-options');
-                specsContainer.innerHTML = currentProduct.specs.map((spec, index) => 
-                    `<button onclick="selectSpec('${spec}')" 
-                            class="spec-option px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-primary transition ${index === 0 ? 'border-primary bg-primary bg-opacity-10' : ''}">
-                        ${spec}
-                    </button>`
-                ).join('');
-                selectedSpec = currentProduct.specs[0];
-            } else {
-                document.getElementById('product-specs').classList.add('hidden');
-            }
-            
-            // 更新詳細資訊
-            const detailsContainer = document.getElementById('product-details');
-            detailsContainer.innerHTML = `
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-xl font-bold mb-4">產品特色</h3>
-                        <ul class="space-y-2 text-gray-700">
-                            <li><i class="fas fa-check text-primary mr-2"></i>${currentProduct.description}</li>
-                            <li><i class="fas fa-check text-primary mr-2"></i>高品質原料，安全無添加</li>
-                            <li><i class="fas fa-check text-primary mr-2"></i>適合各年齡層的毛孩</li>
-                        </ul>
+            if (!product) {
+                contentDiv.innerHTML = `
+                    <div class="product-main">
+                        <div class="error-state">
+                            <div class="error-icon">😕</div>
+                            <div class="error-title">找不到商品</div>
+                            <div class="error-message">抱歉，您查找的商品不存在或已下架</div>
+                            <a href="products.html" class="back-to-products-btn">返回商品列表</a>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-4">產品資訊</h3>
-                        <ul class="space-y-2 text-gray-700">
-                            <li><strong>分類：</strong>${currentProduct.categoryName}</li>
-                            <li><strong>評分：</strong>${currentProduct.rating} / 5.0</li>
-                            <li><strong>已售：</strong>${currentProduct.sales} 件</li>
-                            <li><strong>庫存：</strong>${currentProduct.stock === 999 ? '充足' : currentProduct.stock}</li>
+                `;
+                return;
+            }
+            
+            const discount = product.oldPrice ? Math.round((1 - product.price / product.oldPrice) * 100) : 0;
+            
+            contentDiv.innerHTML = `
+                <!-- 商品主區域 -->
+                <div class="product-main">
+                    <div class="product-grid">
+                        <!-- 圖片區 -->
+                        <div class="image-section">
+                            <div class="main-image">
+                                <img src="${product.image}" alt="${product.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23f5f5f5%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22 fill=%22%23ccc%22%3E${product.name}%3C/text%3E%3C/svg%3E'">
+                            </div>
+                        </div>
+                        
+                        <!-- 商品資訊區 -->
+                        <div class="info-section">
+                            <div class="category-badge">${product.category}</div>
+                            
+                            <h1 class="product-title">${product.name}</h1>
+                            
+                            <div class="price-section">
+                                <div class="current-price">NT$ ${product.price}</div>
+                                ${product.oldPrice ? `
+                                    <div class="old-price">NT$ ${product.oldPrice}</div>
+                                    <div class="discount-badge">省 ${discount}%</div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="product-description">${product.description || '優質寵物用品，為您的毛孩帶來最好的照顧。'}</div>
+                            
+                            <div class="quantity-section">
+                                <div class="quantity-label">數量</div>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" onclick="decreaseQuantity()">−</button>
+                                    <div class="quantity-display" id="quantityDisplay">1</div>
+                                    <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="add-to-cart-btn" onclick="addToCart()">
+                                    加入購物車
+                                </button>
+                                <button class="buy-now-btn" onclick="buyNow()">
+                                    立即購買
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 詳細資訊區 -->
+                <div class="details-section">
+                    <h2 class="details-title">商品詳情</h2>
+                    
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <div class="spec-label">商品編號</div>
+                            <div class="spec-value">#${String(product.id).padStart(6, '0')}</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">商品分類</div>
+                            <div class="spec-value">${product.category}</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">適用對象</div>
+                            <div class="spec-value">${product.pet === 'dog' ? '狗狗' : product.pet === 'cat' ? '貓貓' : '通用'}</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">商品狀態</div>
+                            <div class="spec-value">現貨供應</div>
+                        </div>
+                    </div>
+                    
+                    ${product.features ? `
+                        <h3 class="details-title" style="font-size: 22px; margin-top: 32px;">產品特色</h3>
+                        <ul class="features-list">
+                            ${product.features.map((feature, index) => `
+                                <li class="feature-item">
+                                    <div class="feature-icon">✓</div>
+                                    <div class="feature-text">${feature}</div>
+                                </li>
+                            `).join('')}
                         </ul>
+                    ` : ''}
+                    
+                    ${product.ingredients ? `
+                        <h3 class="details-title" style="font-size: 22px; margin-top: 32px;">成分</h3>
+                        <ul class="features-list">
+                            ${product.ingredients.map((ingredient, index) => `
+                                <li class="feature-item">
+                                    <div class="feature-icon" style="background: linear-gradient(135deg, #fecfef 0%, #ff9a9e 100%);">◆</div>
+                                    <div class="feature-text">${ingredient}</div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : ''}
+                    
+                    ${product.keyBenefits ? `
+                        <h3 class="details-title" style="font-size: 22px; margin-top: 32px;">主要好處</h3>
+                        <ul class="features-list">
+                            ${product.keyBenefits.map((benefit, index) => `
+                                <li class="feature-item">
+                                    <div class="feature-icon" style="background: linear-gradient(135deg, #f57c00 0%, #ff6b6b 100%);">★</div>
+                                    <div class="feature-text">${benefit}</div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : ''}
+                    
+                    ${product.usage ? `
+                        <h3 class="details-title" style="font-size: 22px; margin-top: 32px;">使用方法</h3>
+                        <div class="product-description" style="margin-top: 16px;">
+                            ${product.usage}
+                        </div>
+                    ` : ''}
+                    
+                    ${product.brandStory ? `
+                        <h3 class="details-title" style="font-size: 22px; margin-top: 32px;">關於品牌</h3>
+                        <div class="product-description" style="margin-top: 16px; border-left: 4px solid #fecfef;">
+                            ${product.brandStory}
+                        </div>
+                    ` : ''}
+                    
+                    <h3 class="details-title" style="font-size: 22px; margin-top: 32px;">配送資訊</h3>
+                    <div class="specs-grid" style="margin-top: 16px;">
+                        <div class="spec-item">
+                            <div class="spec-label">📦 配送方式</div>
+                            <div class="spec-value">宅配到府 / 超商取貨</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">🚚 配送時間</div>
+                            <div class="spec-value">3-5個工作天</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">💰 運費說明</div>
+                            <div class="spec-value">訂單滿 NT$ 999 免運費</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">🔄 退換貨</div>
+                            <div class="spec-value">7天鑑賞期，未拆封可退換</div>
+                        </div>
                     </div>
                 </div>
             `;
         }
-
-        // 選擇圖片
-        function selectImage(index) {
-            selectedImageIndex = index;
-            if (currentProduct && currentProduct.images) {
-                document.getElementById('product-main-image').src = currentProduct.images[index];
-                
-                // 更新縮圖狀態
-                document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
-                    if (i === index) {
-                        thumb.classList.add('active');
-                        thumb.classList.remove('border-gray-200');
-                    } else {
-                        thumb.classList.remove('active');
-                        thumb.classList.add('border-gray-200');
-                    }
-                });
-            }
-        }
-
-        // 選擇規格
-        function selectSpec(spec) {
-            selectedSpec = spec;
-            document.querySelectorAll('.spec-option').forEach(btn => {
-                if (btn.textContent.trim() === spec) {
-                    btn.classList.add('border-primary', 'bg-primary', 'bg-opacity-10');
-                    btn.classList.remove('border-gray-300');
-                } else {
-                    btn.classList.remove('border-primary', 'bg-primary', 'bg-opacity-10');
-                    btn.classList.add('border-gray-300');
-                }
-            });
-        }
-
-        // 數量增減
+        
+        // 數量控制
         function increaseQuantity() {
-            const input = document.getElementById('product-quantity');
-            input.value = parseInt(input.value) + 1;
-        }
-
-        function decreaseQuantity() {
-            const input = document.getElementById('product-quantity');
-            if (parseInt(input.value) > 1) {
-                input.value = parseInt(input.value) - 1;
-            }
-        }
-
-        // 加入購物車
-        function addToCart() {
-            if (!currentProduct) {
-                console.error('沒有選擇的產品');
-                return;
-            }
-            
-            const quantity = parseInt(document.getElementById('product-quantity').value) || 1;
-            
-            console.log('🛒 加入購物車:', currentProduct, '數量:', quantity);
-            
-            // 優先使用全局 addToCart 函數
-            if (window.addToCart && typeof window.addToCart === 'function') {
-                try {
-                    window.addToCart(
-                        currentProduct.id,
-                        currentProduct.name,
-                        currentProduct.price,
-                        currentProduct.images ? currentProduct.images[0] : currentProduct.image || '',
-                        quantity
-                    );
-                    updateCartBadge();
-                    showNotification(`已加入購物車：${currentProduct.name} x ${quantity}`, 'success');
-                } catch (error) {
-                    console.error('加入購物車失敗:', error);
-                    showNotification('加入購物車失敗，請重試', 'error');
-                }
-            }
-            // 備用方案：直接使用 localCart
-            else if (window.localCart && typeof window.localCart.addItem === 'function') {
-                try {
-                    window.localCart.addItem(
-                        currentProduct.id,
-                        currentProduct.name,
-                        currentProduct.price,
-                        currentProduct.images ? currentProduct.images[0] : currentProduct.image || '',
-                        quantity
-                    );
-                    updateCartBadge();
-                    showNotification(`已加入購物車：${currentProduct.name} x ${quantity}`, 'success');
-                } catch (error) {
-                    console.error('加入購物車失敗:', error);
-                    showNotification('加入購物車失敗，請重試', 'error');
-                }
-            } else {
-                console.error('購物車系統未載入');
-                showNotification('購物車系統未載入，請重新整理頁面', 'error');
-            }
-        }
-
-        // 立即購買
-        function buyNow() {
-            if (!currentProduct) {
-                console.error('沒有選擇的產品');
-                return;
-            }
-            
-            const quantity = parseInt(document.getElementById('product-quantity').value) || 1;
-            
-            // 先加入購物車
-            addToCart();
-            
-            // 跳轉到結帳頁面
-            setTimeout(() => {
-                window.location.href = 'checkout.html';
-            }, 500);
-        }
-
-        // 切換購物車
-        function toggleCart() {
-            if (window.localCart && typeof window.localCart.toggleCart === 'function') {
-                window.localCart.toggleCart();
-            } else {
-                window.location.href = 'cart.html';
+            if (currentQuantity < 99) {
+                currentQuantity++;
+                document.getElementById('quantityDisplay').textContent = currentQuantity;
             }
         }
         
-        // 手機版選單切換
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            if (menu) {
-                menu.classList.toggle('hidden');
+        function decreaseQuantity() {
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                document.getElementById('quantityDisplay').textContent = currentQuantity;
             }
         }
-
+        
+        // 加入購物車
+        function addToCart() {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // 簡單的購物車邏輯（可以擴展）
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += currentQuantity;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: currentQuantity
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartBadge();
+            
+            alert(`已將 ${currentQuantity} 件「${product.name}」加入購物車！`);
+        }
+        
+        // 立即購買
+        function buyNow() {
+            addToCart();
+            window.location.href = 'cart.html';
+        }
+        
+        // 返回上一頁
+        function goBack() {
+            window.history.back();
+        }
+        
+        // 前往購物車
+        function goToCart() {
+            window.location.href = 'cart.html';
+        }
+        
         // 更新購物車徽章
         function updateCartBadge() {
-            let count = 0;
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cartCount');
             
-            if (window.localCart && typeof window.localCart.getItemCount === 'function') {
-                count = window.localCart.getItemCount() || 0;
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.style.display = 'block';
             } else {
-                try {
-                    const cartData = localStorage.getItem('jiangchong_cart');
-                    if (cartData) {
-                        const cart = JSON.parse(cartData);
-                        count = cart.reduce((total, item) => {
-                            return total + (parseInt(item.quantity) || 1);
-                        }, 0);
-                    }
-                } catch (error) {
-                    console.error('讀取購物車失敗:', error);
-                }
-            }
-            
-            const badge = document.getElementById('cart-badge');
-            if (badge) {
-                badge.textContent = count;
-                
-                if (count > 0) {
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
+                badge.style.display = 'none';
             }
         }
-
-        // 顯示通知
-        function showNotification(message, type = 'info') {
-            const colors = {
-                success: 'bg-green-500',
-                error: 'bg-red-500',
-                info: 'bg-blue-500'
-            };
-            
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50`;
-            notification.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // 顯示找不到產品
-        function showNotFound() {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('not-found').classList.remove('hidden');
-        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProduct();
+            updateCartBadge();
+        });
     </script>
 </body>
 </html>
-

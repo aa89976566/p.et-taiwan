@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>匠寵商品 - 專業寵物用品</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #fff5f5 0%, #ffe8e8 50%, #ffd4d4 100%);
+            min-height: 100vh;
+        }
+        
+        /* 頂部導航 */
+        .top-nav {
+            background: #fff;
+            padding: 16px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .back-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #f5f5f5;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #ffe8e8;
+            transform: translateX(-2px);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff9a9e 0%, #f57c00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-subtitle {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #999;
+            margin-top: -4px;
+            letter-spacing: 2px;
+        }
+        
+        .pet-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-left: 12px;
+        }
+        
+        .pet-badge.dog {
+            background: linear-gradient(135deg, #64b5f6 0%, #1976d2 100%);
+            color: #fff;
+        }
+        
+        .pet-badge.cat {
+            background: linear-gradient(135deg, #ffb74d 0%, #f57c00 100%);
+            color: #fff;
+        }
+        
+        .nav-right {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #f5f5f5;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .icon-btn:hover {
+            background: #ffe8e8;
+            transform: scale(1.05);
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 6px;
+            box-shadow: 0 2px 8px rgba(255,107,107,0.4);
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        
+        /* 分類標籤 - 創意設計 */
+        .category-section {
+            margin-bottom: 40px;
+        }
+        
+        .category-tabs {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #8bc34a #f5f5f5;
+        }
+        
+        .category-tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .category-tabs::-webkit-scrollbar-track {
+            background: #f5f5f5;
+            border-radius: 3px;
+        }
+        
+        .category-tabs::-webkit-scrollbar-thumb {
+            background: #8bc34a;
+            border-radius: 3px;
+        }
+        
+        .category-tab {
+            padding: 14px 28px;
+            border-radius: 50px;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139,195,74,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .category-tab:hover::before {
+            left: 100%;
+        }
+        
+        .category-tab:hover {
+            border-color: #ff9a9e;
+            color: #ff6b6b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,154,158,0.2);
+        }
+        
+        .category-tab.active {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-color: #ff9a9e;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(255,154,158,0.4);
+        }
+        
+        /* 商品網格 - 創意布局 */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+            margin-bottom: 48px;
+        }
+        
+        /* 商品卡片 - 創意設計 */
+        .product-card {
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8bc34a 0%, #ffa726 50%, #8bc34a 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .product-image-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+        }
+        
+        .product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .product-image.primary {
+            opacity: 1;
+            z-index: 2;
+        }
+        
+        .product-image.secondary {
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .product-card:hover .product-image.primary {
+            opacity: 0;
+        }
+        
+        .product-card:hover .product-image.secondary {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            color: #f57c00;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .product-info {
+            padding: 24px;
+        }
+        
+        .product-category {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ff6b6b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .product-name {
+            font-size: 19px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+        
+        .product-price-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .product-price {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b6b 0%, #f57c00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .product-old-price {
+            font-size: 16px;
+            font-weight: 500;
+            color: #999;
+            text-decoration: line-through;
+        }
+        
+        .add-to-cart {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255,154,158,0.3);
+        }
+        
+        .add-to-cart:hover {
+            transform: scale(1.15) rotate(90deg);
+            box-shadow: 0 6px 20px rgba(255,154,158,0.5);
+        }
+        
+        .add-to-cart:active {
+            transform: scale(0.95);
+        }
+        
+        /* 空狀態 */
+        .empty-state {
+            text-align: center;
+            padding: 100px 20px;
+            background: #fff;
+            border-radius: 24px;
+            margin: 40px 0;
+        }
+        
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            opacity: 0.2;
+            margin-bottom: 24px;
+        }
+        
+        .empty-state h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .empty-state p {
+            font-size: 16px;
+            color: #bbb;
+        }
+        
+        /* 載入動畫 */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f5f5f5;
+            border-top: 4px solid #8bc34a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 響應式 */
+        @media (max-width: 968px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .top-nav {
+                padding: 12px 16px;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            .pet-badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            
+            .container {
+                padding: 20px 16px;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            .product-name {
+                font-size: 16px;
+            }
+            
+            .product-price {
+                font-size: 22px;
+            }
+            
+            .product-info {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div class="top-nav">
+        <div class="nav-left">
+            <button class="back-btn" onclick="goBack()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div>
+                <div>
+                    <span class="logo">匠寵</span>
+                    <span class="logo-subtitle">PREMIUM SELECT</span>
+                </div>
+                <span class="pet-badge" id="petBadge"></span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button class="icon-btn" onclick="goToSearch()">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </button>
+            <button class="icon-btn" onclick="goToCart()">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span class="cart-badge" id="cartCount">0</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 分類標籤 -->
+        <div class="category-section">
+            <div class="category-tabs" id="categoryTabs"></div>
+        </div>
+        
+        <!-- 商品網格 -->
+        <div class="products-grid" id="productsGrid"></div>
+        
+        <!-- 空狀態 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+            </svg>
+            <h3>暫無商品</h3>
+            <p>該分類下還沒有商品喔</p>
+        </div>
+    </div>
+
+    <script>
+        // 獲取 URL 參數
+        const urlParams = new URLSearchParams(window.location.search);
+        const petType = urlParams.get('pet') || 'all';
+        
+        console.log('當前寵物類型:', petType);
+        
+        // 設置徽章
+        const petBadge = document.getElementById('petBadge');
+        if (petType === 'dog') {
+            petBadge.textContent = '狗狗專區';
+            petBadge.className = 'pet-badge dog';
+        } else if (petType === 'cat') {
+            petBadge.textContent = '貓貓專區';
+            petBadge.className = 'pet-badge cat';
+        } else {
+            petBadge.textContent = '全部商品';
+            petBadge.style.background = 'linear-gradient(135deg, #8bc34a 0%, #689f38 100%)';
+            petBadge.style.color = '#fff';
+        }
+        
+        // 商品數據（從您的網站獲取真實圖片 - GenSpark 代理 URL）
+        // 這些商品均為「匠寵嚴選」系列（阿里巴巴精選商品）
+        // 每個商品都有兩張圖片：主圖(image) 和 hover圖(image2)
+        const allProducts = [
+            { id: 1, name: '台灣出貨 可水洗 冰絲寵物涼墊', category: '匠寵嚴選', price: 50, image: 'https://sspark.genspark.ai/cfimages?u1=Y8aJlnLk%2BUEMqafbbtpFUACw%2BoMa1qrnMLeDG3Lrv%2BjMFaF15EHEkJsoRAEodkzqTdpLTGVeLMirUbHirsUG9fnWpxUzUl3qgpbGIf7PMO4RR2L5LUL3989P%2FANeCy1R9LRlXl3Y1ErCXIEYeFB88N0wXBbLJA6E6pRxk70oyAIS6G4HdB4w0b3NDxB%2FcqJLsbxZoG26OQLpZShPh%2F%2FTkW4PSfEQkR%2Fp6mydhDXDLoQIAJL7zGbwIzCqCvJhh01bRFrAz2fL&u2=0HIO8yOymc4xJqiO&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=Y8aJlnLk%2BUEMqafbbtpFUACw%2BoMa1qrnMLeDG3Lrv%2BjMFaF15EHEkJsoRAEodkzqTdpLTGVeLMirUbHirsUG9fnWpxUzUl3qgpbGIf7PMO4RR2L5LUL3989P%2FANeCy1R9LRlXl3Y1ErCXIEYeFB88N0wXBbLJA6E6pRxk70oyAIS6G4HdB4w0b3NDxB%2FcqJLsbxZoG26OQLpZShPh%2F%2FTkW4PSfEQkR%2Fp6mydhDXDLoQIAJL7zGbwIzCqCvJhh01bRFrAz2fL&u2=0HIO8yOymc4xJqiO&width=1024', pet: 'all' },
+            { id: 2, name: '預購 單片精緻包裝 寵物手作肉乾', category: '匠寵嚴選', price: 79, image: 'https://sspark.genspark.ai/cfimages?u1=2wqDcTGiijNxMmvvp8l2ZafKDVy3fyfzIIp0oQLU3%2FO0%2FU3OZkdUG5sYKi9yvNKKiN2hTCc0XXQkVstDfBjh93oMlKQn7DNYUUgWVK2tATdls0oCbOL%2Brkxat%2BLx%2Fhl%2Bwy7ym0vnDNm94YCL6vu5Q9c4EpCp94joXmNATpFioieyT9CeoWZbg2ktLxa6F8j0npMFUNHbl%2FmNkAj2JnHVEPxyYjDr1Aq90cPzknYPaL1gktZY7xMTc4aoepYldclBQgm69muB&u2=K3%2FL%2BkWWBe4gPww7&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=2wqDcTGiijNxMmvvp8l2ZafKDVy3fyfzIIp0oQLU3%2FO0%2FU3OZkdUG5sYKi9yvNKKiN2hTCc0XXQkVstDfBjh93oMlKQn7DNYUUgWVK2tATdls0oCbOL%2Brkxat%2BLx%2Fhl%2Bwy7ym0vnDNm94YCL6vu5Q9c4EpCp94joXmNATpFioieyT9CeoWZbg2ktLxa6F8j0npMFUNHbl%2FmNkAj2JnHVEPxyYjDr1Aq90cPzknYPaL1gktZY7xMTc4aoepYldclBQgm69muB&u2=K3%2FL%2BkWWBe4gPww7&width=1024', pet: 'dog' },
+            { id: 3, name: '預購 真空袋量販包 超大雞排乾', category: '匠寵嚴選', price: 379, image: 'https://sspark.genspark.ai/cfimages?u1=dp1O6sJC8dVwZIBQaFk8J45YuaLt8YY8tmBy7A2EZGpO5FlQQ811hxjURN4fy6kmMNX3C5s23oMewaVivgGAo%2FIr86Y0GcACpB8Ec6q%2BN6UUP2MjRDHmZPQmnFAh3yeHaxlADeoPbmqxHqXx4MLmyq%2FMyqYzW%2FUug3K8nGPys2IzQSFNBp8Zegc84mecWoyFuCswsqnV8w5UOENDFlnJVSMOpkv6YhidmTmHPMUJ7WDIy8OEGrTXfufuWxoHTxOBdauBouz%2F&u2=R8R0whMfe8F4gS4F&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=dp1O6sJC8dVwZIBQaFk8J45YuaLt8YY8tmBy7A2EZGpO5FlQQ811hxjURN4fy6kmMNX3C5s23oMewaVivgGAo%2FIr86Y0GcACpB8Ec6q%2BN6UUP2MjRDHmZPQmnFAh3yeHaxlADeoPbmqxHqXx4MLmyq%2FMyqYzW%2FUug3K8nGPys2IzQSFNBp8Zegc84mecWoyFuCswsqnV8w5UOENDFlnJVSMOpkv6YhidmTmHPMUJ7WDIy8OEGrTXfufuWxoHTxOBdauBouz%2F&u2=R8R0whMfe8F4gS4F&width=1024', pet: 'dog' },
+            { id: 4, name: '寵物手工雨衣 寵物透明雨衣', category: '匠寵嚴選', price: 520, oldPrice: 680, image: 'https://sspark.genspark.ai/cfimages?u1=oG1AJjmh21ZDbCKmxVwY2OxWepRsBfcIF1Jm33Vr82qdZG3plX%2Bn90W1voPMtZoNyI8EV18DL%2BG3S3UDh9n2xgkmFoGK5Q4YVRgGdbEKyxou1Q9FzOI6ghfnowW3SwO035aeppNIcHBscLcX3xxU8FlfFoZXHUls3kOzB0pvw5UjzSfX%2B51CteG6NCbO%2ByvQNOzg6%2FfKa%2Fic%2F89Z8O5kpApVWxnfjjqfz%2Fr5Vtp%2BJHhkzY4lWkKfm%2B1y03z0%2BdqEbwcQ43Bt&u2=tS4hhu%2FqiSzmaqpp&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=oG1AJjmh21ZDbCKmxVwY2OxWepRsBfcIF1Jm33Vr82qdZG3plX%2Bn90W1voPMtZoNyI8EV18DL%2BG3S3UDh9n2xgkmFoGK5Q4YVRgGdbEKyxou1Q9FzOI6ghfnowW3SwO035aeppNIcHBscLcX3xxU8FlfFoZXHUls3kOzB0pvw5UjzSfX%2B51CteG6NCbO%2ByvQNOzg6%2FfKa%2Fic%2F89Z8O5kpApVWxnfjjqfz%2Fr5Vtp%2BJHhkzY4lWkKfm%2B1y03z0%2BdqEbwcQ43Bt&u2=tS4hhu%2FqiSzmaqpp&width=1024', pet: 'all' },
+            { id: 5, name: '狗狗行軍床 可拆洗 折疊床', category: '匠寵嚴選', price: 320, oldPrice: 399, image: 'https://sspark.genspark.ai/cfimages?u1=3SQVMNg9StoQLlPcefq4C0q6Pqn029mvY0ncfwOMx8l50RmxS9nfZB1t%2BkatbhcBrnvCiwC%2FlKXBycxpP%2BoKHKptzAFg6sT%2FdM0SyIsIO8Efe7zDdSyS82WFygpuYK1vTQ3jo6f%2FIHHHeo9pUmm46XCafXbu9VQSIsEan1qpa08Vrsc%2BnKBiyRlZjaf9IZP1op9ITMFQhQARm9qTNWQ4UpygwBw1RBP%2Fgud89Dw27gU4bqKMIc4hjpgW%2FW1fdhpetwOAIzu1&u2=KClw2VDgEG1VJMMI&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=3SQVMNg9StoQLlPcefq4C0q6Pqn029mvY0ncfwOMx8l50RmxS9nfZB1t%2BkatbhcBrnvCiwC%2FlKXBycxpP%2BoKHKptzAFg6sT%2FdM0SyIsIO8Efe7zDdSyS82WFygpuYK1vTQ3jo6f%2FIHHHeo9pUmm46XCafXbu9VQSIsEan1qpa08Vrsc%2BnKBiyRlZjaf9IZP1op9ITMFQhQARm9qTNWQ4UpygwBw1RBP%2Fgud89Dw27gU4bqKMIc4hjpgW%2FW1fdhpetwOAIzu1&u2=KClw2VDgEG1VJMMI&width=1024', pet: 'dog' },
+            { id: 6, name: '貓砂盆 特大號防外濺貓廁所', category: '匠寵嚴選', price: 259, image: 'https://sspark.genspark.ai/cfimages?u1=%2BkEBB0SEstBVovjgqbZXSwIA3OoRIepNhttuZ9cAgUmV0IdqI8tvsKmpAk1pOwW55NmzOt%2FQvLu8zKwv%2FbgKIxdhAsdySJ5ttc1xUka%2BAJGDEiDFZqvENSJJ04%2BSvsKRaRjdjNsfdhuDzMPn7LHTiw71DW4nsQtGvBcNXEPT0nUqhhxqew3zBHNGEoAy6LcEsAKpesoFAjDZMhk2zg4RlZM11LwPZqK8oIOirMpPOiGSEaMX4x%2BrhJ7tulcuG6qggVKgeT2Z&u2=wyHQHn1tc7al%2B3M7&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=%2BkEBB0SEstBVovjgqbZXSwIA3OoRIepNhttuZ9cAgUmV0IdqI8tvsKmpAk1pOwW55NmzOt%2FQvLu8zKwv%2FbgKIxdhAsdySJ5ttc1xUka%2BAJGDEiDFZqvENSJJ04%2BSvsKRaRjdjNsfdhuDzMPn7LHTiw71DW4nsQtGvBcNXEPT0nUqhhxqew3zBHNGEoAy6LcEsAKpesoFAjDZMhk2zg4RlZM11LwPZqK8oIOirMpPOiGSEaMX4x%2BrhJ7tulcuG6qggVKgeT2Z&u2=wyHQHn1tc7al%2B3M7&width=1024', pet: 'cat' },
+            { id: 7, name: '木天蓼棒 貓咪磨牙棒', category: '匠寵嚴選', price: 15, image: 'https://sspark.genspark.ai/cfimages?u1=%2FdGfxp2%2BUZNYt9PCiV%2BBy3k5yBSVzMWjLXqiEXt61oJxZQSyW9%2FgF6%2BJsiPos8M29b7Z%2FSQ4ejUSNqH%2BpFquhNsCceK%2BjOk1nRsfnLEi55nDtLLMeSGGr%2BjbPQqfwRMuBHx5nNNFdfKv28huMscZY92uPXLWMztOM8GljTsq1Koc1v%2BrM0O5hgwUZjoxJi0LSWkCh71DQHxNYV5dy807Ekcm9K9Y4a2o%2F5FbCakujWZu5eXudg6Ha8nye7HUFEAVjCxbMUJc&u2=lJgblMPxeUfrgajw&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=%2FdGfxp2%2BUZNYt9PCiV%2BBy3k5yBSVzMWjLXqiEXt61oJxZQSyW9%2FgF6%2BJsiPos8M29b7Z%2FSQ4ejUSNqH%2BpFquhNsCceK%2BjOk1nRsfnLEi55nDtLLMeSGGr%2BjbPQqfwRMuBHx5nNNFdfKv28huMscZY92uPXLWMztOM8GljTsq1Koc1v%2BrM0O5hgwUZjoxJi0LSWkCh71DQHxNYV5dy807Ekcm9K9Y4a2o%2F5FbCakujWZu5eXudg6Ha8nye7HUFEAVjCxbMUJc&u2=lJgblMPxeUfrgajw&width=1024', pet: 'cat' },
+            { id: 8, name: '台灣出貨 寵物洗腳泡沫', category: '匠寵嚴選', price: 65, image: 'https://sspark.genspark.ai/cfimages?u1=wpbse2umNgoxWU991tWMWyNTdr52z57J3KJ3DnJK7aigErCHNn7FjE82qxeNVl1PhqpF7yQ1g0HTKDP5sJcm7PLsEw1aR9UikHllAyx%2FYP5C8Shg5%2FU0MTlseu%2F%2Fz9jcQooqoC%2BypdEUIonOslWjPayZH2FrGoxgLQ56QgDsEJPgGVmwXXIDLCSMWPGr5rXxUfWyl%2Fe0rVh9URdEhlgfgTrCDt7Vor8UXTT1n%2BUBCo9V1BsWXdqWC%2FAAZaYncwAyC5kS2KtQ&u2=TaglG9MqDfbLGj57&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=wpbse2umNgoxWU991tWMWyNTdr52z57J3KJ3DnJK7aigErCHNn7FjE82qxeNVl1PhqpF7yQ1g0HTKDP5sJcm7PLsEw1aR9UikHllAyx%2FYP5C8Shg5%2FU0MTlseu%2F%2Fz9jcQooqoC%2BypdEUIonOslWjPayZH2FrGoxgLQ56QgDsEJPgGVmwXXIDLCSMWPGr5rXxUfWyl%2Fe0rVh9URdEhlgfgTrCDt7Vor8UXTT1n%2BUBCo9V1BsWXdqWC%2FAAZaYncwAyC5kS2KtQ&u2=TaglG9MqDfbLGj57&width=1024', pet: 'all' },
+            { id: 9, name: '寵物床 寵物涼墊 涼爽寵物床', category: '匠寵嚴選', price: 100, oldPrice: 125, image: 'https://sspark.genspark.ai/cfimages?u1=qoU%2BIxjXmRaZaSSvb%2FbuUFX9pE%2F2IZhxF9wBzKNSCZxTRAtszENUvplXLSPk9VgnLC%2BdD9v8UWI27DDYXxcHLASVKa0vjae4et%2FpM21AqlMXdRY6VLGDBLkjTR9rh5rxgH1grQnraEJ9jHdw0J8O%2BjE8aDqNMLVuTzHhDokEqfcG3iYfp8Z8Z9AhrW1RPSdPfAfFJxcJJdgOg4wVC%2BlK5Y3u%2FxOl9aY4OX1vybXjhKW0%2FIaXyImYw1V2A%2Fv5no47yOxRPnQf&u2=bR%2BBQqfBV6vQlgnG&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=qoU%2BIxjXmRaZaSSvb%2FbuUFX9pE%2F2IZhxF9wBzKNSCZxTRAtszENUvplXLSPk9VgnLC%2BdD9v8UWI27DDYXxcHLASVKa0vjae4et%2FpM21AqlMXdRY6VLGDBLkjTR9rh5rxgH1grQnraEJ9jHdw0J8O%2BjE8aDqNMLVuTzHhDokEqfcG3iYfp8Z8Z9AhrW1RPSdPfAfFJxcJJdgOg4wVC%2BlK5Y3u%2FxOl9aY4OX1vybXjhKW0%2FIaXyImYw1V2A%2Fv5no47yOxRPnQf&u2=bR%2BBQqfBV6vQlgnG&width=1024', pet: 'all' },
+            { id: 10, name: '台灣出貨 寵物帳篷 通風迷你帳篷', category: '匠寵嚴選', price: 288, oldPrice: 359, image: 'https://sspark.genspark.ai/cfimages?u1=uRIy4z8kTkkKjQTMNc72M9L8d3VApL4sC4y%2BzYKrw4NOZqti4bkzygwJU7Nc92b9XaZk%2B8evjbbNICr20F3NsdWA9lqHr3wh54b4lDJbqcgpZQ%2F8R7LKtO4vvqAaxXaWw0Auel6J%2BajofssLmmVybYkesBAesDfoRPisly5R8yz%2BNgEXNPiYrA4kl6jg8rWoWrp5fQT2j%2BwQP62KgTWb8Lr3j2zaPIXPZ2fb1a%2Fxs6%2BmewbgoTy%2FuuANJLyL3akNEXVHgAXX&u2=Ng7jsUdCTXc5vJod&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=uRIy4z8kTkkKjQTMNc72M9L8d3VApL4sC4y%2BzYKrw4NOZqti4bkzygwJU7Nc92b9XaZk%2B8evjbbNICr20F3NsdWA9lqHr3wh54b4lDJbqcgpZQ%2F8R7LKtO4vvqAaxXaWw0Auel6J%2BajofssLmmVybYkesBAesDfoRPisly5R8yz%2BNgEXNPiYrA4kl6jg8rWoWrp5fQT2j%2BwQP62KgTWb8Lr3j2zaPIXPZ2fb1a%2Fxs6%2BmewbgoTy%2FuuANJLyL3akNEXVHgAXX&u2=Ng7jsUdCTXc5vJod&width=1024', pet: 'dog' },
+            { id: 11, name: '貓咪枕頭 貓咪靠枕 寵物護頸靠枕', category: '匠寵嚴選', price: 112, oldPrice: 159, image: 'https://sspark.genspark.ai/cfimages?u1=zeDoFM9Rzz%2FiZAgCBTX3Nf6QTrDfe0raXnxI3I38f2JzxbMGej7ANfcK%2FMb%2B8LglE7Rd1KTcDD3%2FDsg5Mjy3SV9%2BJilAQhdcrrtJ0XDMfInZZHxfYkX0gRWl7ipaLABtAKDqxTpSGrqv9JCmybVPXA6PbQQlJp%2BQF0hQfIwDLrnvXo1XXBCMBbHOqz%2FZXYSlqU3lUbSPPLkas47M8UWmuwwaBM72l3%2FV9XGsoqRUPREwtyEdo749FoQwMQtaCKnWML1w1FaC&u2=ZEr9Vda9jh9a4Xtk&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=zeDoFM9Rzz%2FiZAgCBTX3Nf6QTrDfe0raXnxI3I38f2JzxbMGej7ANfcK%2FMb%2B8LglE7Rd1KTcDD3%2FDsg5Mjy3SV9%2BJilAQhdcrrtJ0XDMfInZZHxfYkX0gRWl7ipaLABtAKDqxTpSGrqv9JCmybVPXA6PbQQlJp%2BQF0hQfIwDLrnvXo1XXBCMBbHOqz%2FZXYSlqU3lUbSPPLkas47M8UWmuwwaBM72l3%2FV9XGsoqRUPREwtyEdo749FoQwMQtaCKnWML1w1FaC&u2=ZEr9Vda9jh9a4Xtk&width=1024', pet: 'cat' },
+            { id: 12, name: '貓抓板 黃麻貓爬架 貓抓柱耐抓', category: '匠寵嚴選', price: 140, oldPrice: 279, image: 'https://sspark.genspark.ai/cfimages?u1=0OwUoyIMhXmN1MwaHrcZLrbXjsHJ8sNRSgrmAK8jcZhZ%2BmLNFZ2Z989%2FP1D1nEFnQBfbbeC912Vzv5aAWqYO%2BgtkLKt8uRUidf4ZApMBZPCpiaEpEix7iYcw7GQa6ajhfEDTN8RsAhFhN2s6lBrtPX%2FQqlHi6hAYF3N0UDbCJ5FYIGZBsF4PWJmhqkhhkk%2FSpz0Hr9cfYau4Wiwu8%2FE1RzM0pCBHT1t0qPLUf6kbYneZIi%2FtThldOemukpPBpnFHLTAhZm1g&u2=LXXrnJhwtfqEjQFR&width=1024', image2: 'https://sspark.genspark.ai/cfimages?u1=0OwUoyIMhXmN1MwaHrcZLrbXjsHJ8sNRSgrmAK8jcZhZ%2BmLNFZ2Z989%2FP1D1nEFnQBfbbeC912Vzv5aAWqYO%2BgtkLKt8uRUidf4ZApMBZPCpiaEpEix7iYcw7GQa6ajhfEDTN8RsAhFhN2s6lBrtPX%2FQqlHi6hAYF3N0UDbCJ5FYIGZBsF4PWJmhqkhhkk%2FSpz0Hr9cfYau4Wiwu8%2FE1RzM0pCBHT1t0qPLUf6kbYneZIi%2FtThldOemukpPBpnFHLTAhZm1g&u2=LXXrnJhwtfqEjQFR&width=1024', pet: 'cat' },
+        ];
+        
+        // 分類數據
+        const categories = {
+            dog: ['全部商品', '匠寵嚴選'],
+            cat: ['全部商品', '匠寵嚴選'],
+            all: ['全部商品', '匠寵嚴選']
+        };
+        
+        let currentCategory = '全部商品';
+        
+        // 渲染分類標籤
+        function renderCategories() {
+            const tabsContainer = document.getElementById('categoryTabs');
+            const petCategories = categories[petType] || categories.all;
+            
+            tabsContainer.innerHTML = petCategories.map((cat, index) => 
+                `<div class="category-tab ${index === 0 ? 'active' : ''}" onclick="filterByCategory('${cat}')">${cat}</div>`
+            ).join('');
+        }
+        
+        // 渲染商品
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            let products = allProducts.filter(p => {
+                if (petType === 'all') return true;
+                return p.pet === petType || p.pet === 'all';
+            });
+            
+            if (currentCategory !== '全部商品') {
+                products = products.filter(p => p.category === currentCategory);
+            }
+            
+            if (products.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            grid.innerHTML = products.map(product => `
+                <div class="product-card" onclick="viewProduct(${product.id})">
+                    <div class="product-image-wrapper">
+                        <img src="${product.image}" alt="${product.name}" class="product-image primary" 
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23f5f5f5%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2230%22 fill=%22%23ccc%22%3E${product.name}%3C/text%3E%3C/svg%3E'">
+                        <img src="${product.image2 || product.image}" alt="${product.name}" class="product-image secondary" 
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23f5f5f5%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2230%22 fill=%22%23ccc%22%3E${product.name}%3C/text%3E%3C/svg%3E'">
+                        ${product.oldPrice ? '<div class="product-badge">優惠中</div>' : ''}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">${product.category}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-footer">
+                            <div class="product-price-wrapper">
+                                <div class="product-price">NT$ ${product.price}</div>
+                                ${product.oldPrice ? `<div class="product-old-price">NT$ ${product.oldPrice}</div>` : ''}
+                            </div>
+                            <button class="add-to-cart" onclick="addToCart(event, ${product.id})">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 分類篩選
+        function filterByCategory(category) {
+            console.log('篩選分類:', category);
+            currentCategory = category;
+            
+            // 更新標籤狀態
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent === category) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            renderProducts();
+        }
+        
+        // 查看商品詳情
+        function viewProduct(productId) {
+            console.log('查看商品:', productId);
+            window.location.href = `product-detail.html?id=${productId}`;
+        }
+        
+        // 加入購物車
+        function addToCart(event, productId) {
+            event.stopPropagation();
+            console.log('加入購物車:', productId);
+            
+            const cartCount = document.getElementById('cartCount');
+            const currentCount = parseInt(cartCount.textContent);
+            cartCount.textContent = currentCount + 1;
+            
+            // 簡單動畫反饋
+            const btn = event.currentTarget;
+            btn.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 200);
+        }
+        
+        // 返回
+        function goBack() {
+            window.history.back();
+        }
+        
+        // 搜尋
+        function goToSearch() {
+            console.log('打開搜尋');
+        }
+        
+        // 前往購物車
+        function goToCart() {
+            window.location.href = 'cart.html';
+        }
+        
+        // 初始化
+        renderCategories();
+        renderProducts();
+    </script>
+</body>
+</html>
