@@ -362,9 +362,9 @@
     </nav>
     
     <!-- Hero Section -->
-    <section id="hero" class="relative min-h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-50">
-        <!-- 背景影片（展滿整個螢幕，從右側和下方包圍文字） -->
-        <div class="absolute inset-0">
+    <section id="hero" class="relative min-h-screen overflow-hidden bg-black">
+        <!-- 背景影片（全屏展示） -->
+        <div class="absolute inset-0 z-0">
             <video 
                 autoplay 
                 muted 
@@ -374,20 +374,18 @@
                 preload="auto">
                 <source src="videos/shutterstock_1068328004.mp4" type="video/mp4">
             </video>
-            <!-- 遮罩層：左上角較亮，其他區域較暗 -->
-            <div class="absolute inset-0 bg-gradient-to-br from-orange-50/90 via-orange-50/40 to-transparent"></div>
+            <!-- 輕微遮罩層：讓文字更清晰 -->
+            <div class="absolute inset-0 bg-black/30"></div>
         </div>
         
-        <!-- 文字區域（左上角，佔 40% 寬度） -->
+        <!-- 文字區域（左上角） -->
         <div class="relative z-10 min-h-screen flex items-start pt-32 lg:pt-40">
             <div class="container mx-auto px-6">
                 <div class="max-w-2xl">
-                    <!-- 大標題 - 分兩排 -->
-                    <h1 class="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black leading-tight fade-in-up">
-                        <span class="bg-gradient-to-r from-orange-500 to-yellow-500 text-transparent bg-clip-text drop-shadow-lg">
-                            它，<br>
-                            在等待什麼？
-                        </span>
+                    <!-- 大標題 - 分兩排，純色白字 -->
+                    <h1 class="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black leading-tight fade-in-up text-white drop-shadow-2xl">
+                        它，<br>
+                        在等待什麼？
                     </h1>
                 </div>
             </div>
@@ -395,7 +393,7 @@
         
         <!-- 向下滾動提示 -->
         <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
-            <svg class="w-8 h-8 text-gray-700 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 text-white drop-shadow-xl" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
             </svg>
         </div>
